@@ -65,7 +65,7 @@ interface ContentRow {
 
 const contentRows: ContentRow[] = [
   {
-    title: 'Monster Hunter Wilds - 초반 무기 가이드',
+    title: 'Monster Hunter Wilds - Early Weapon Guide',
     type: 'drop',
     views: '48.2K',
     revenue: 820.0,
@@ -73,7 +73,7 @@ const contentRows: ContentRow[] = [
     status: 'published',
   },
   {
-    title: 'Elden Ring DLC - 보스 공략 완전판',
+    title: 'Elden Ring DLC - Complete Boss Walkthrough',
     type: 'drop',
     views: '35.1K',
     revenue: 640.0,
@@ -81,7 +81,7 @@ const contentRows: ContentRow[] = [
     status: 'published',
   },
   {
-    title: 'Stellar Blade - 정직 리뷰',
+    title: 'Stellar Blade - Honest Review',
     type: 'review',
     views: '22.8K',
     revenue: 310.0,
@@ -89,7 +89,7 @@ const contentRows: ContentRow[] = [
     status: 'published',
   },
   {
-    title: 'Palworld 멀티 세팅 가이드',
+    title: 'Palworld Multiplayer Setup Guide',
     type: 'drop',
     views: '18.5K',
     revenue: 280.0,
@@ -97,7 +97,7 @@ const contentRows: ContentRow[] = [
     status: 'published',
   },
   {
-    title: 'GTA VI 예약 구매 링크',
+    title: 'GTA VI Pre-Order Link',
     type: 'shop',
     views: '12.3K',
     revenue: 190.0,
@@ -105,7 +105,7 @@ const contentRows: ContentRow[] = [
     status: 'published',
   },
   {
-    title: 'Hollow Knight: Silksong 리뷰 (Draft)',
+    title: 'Hollow Knight: Silksong Review (Draft)',
     type: 'review',
     views: '--',
     revenue: 0,
@@ -411,16 +411,16 @@ const DashboardPage: FC = () => {
           transition={{ delay: 0.55 }}
         >
           <Button variant="primary" size="lg">
-            새 Drop 작성
+            Create New Drop
           </Button>
           <Button variant="secondary" size="lg">
-            리뷰 작성
+            Write Review
           </Button>
           <Button variant="secondary" size="lg">
-            Shop 링크 추가
+            Add Shop Link
           </Button>
           <Button variant="ghost" size="lg" className="!text-pn-green">
-            Wire 출금
+            Wire Withdrawal
           </Button>
         </motion.div>
       </main>

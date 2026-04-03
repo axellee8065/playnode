@@ -41,12 +41,12 @@ const stagger = {
 // Mock data
 // ---------------------------------------------------------------------------
 const DROP = {
-  title: "몬스터 헌터 와일즈: 차지블레이드 마스터 가이드",
+  title: "Monster Hunter Wilds: Charge Blade Master Guide",
   author: {
     name: "GameMaster_KR",
     avatar: null,
     rank: "DIAMOND",
-    bio: "몬스터 헌터 시리즈 10년차 베테랑. 차지블레이드 전문 크리에이터. MH:W 올 무기 솔로 클리어.",
+    bio: "10-year Monster Hunter series veteran. Charge Blade specialist creator. MH:W all-weapon solo clear.",
     verified: true,
   },
   date: "2024.03.15",
@@ -63,40 +63,40 @@ const COMMUNITY_TIPS = [
   {
     avatar: "HN",
     name: "HunterNova",
-    text: "SAED 타이밍 가이드가 정말 도움됐습니다. 특히 와일즈에서 새로 추가된 카운터 윈도우 설명이 최고예요.",
+    text: "The SAED timing guide was really helpful. Especially the explanation of the new counter window added in Wilds was the best.",
     helpful: 47,
   },
   {
     avatar: "SW",
     name: "SwordMaster_92",
-    text: "GP 카운터에서 AED 연계 부분 추가 설명 부탁드립니다. 프레임 데이터도 있으면 좋겠어요!",
+    text: "Could you add more explanation on the GP counter to AED transition? Frame data would be great too!",
     helpful: 23,
   },
   {
     avatar: "MK",
-    name: "몬헌킹",
-    text: "3.99달러 아깝지 않습니다. 솔직히 유튜브 가이드보다 훨씬 체계적이에요. 특히 매치업별 팁이 실전에서 바로 써먹을 수 있어서 좋았습니다.",
+    name: "MH_King",
+    text: "Worth every penny of $3.99. Honestly way more organized than YouTube guides. The matchup-specific tips are especially useful and immediately applicable in practice.",
     helpful: 91,
   },
 ];
 
 const RELATED_DROPS = [
   {
-    title: "태도 마스터 가이드",
+    title: "Long Sword Master Guide",
     author: "BladeRunner_KR",
     price: 2.99,
     views: "18.1K",
     tag: "MONSTER_HUNTER_WILDS",
   },
   {
-    title: "대검 카운터 타이밍 완전 정복",
+    title: "Great Sword Counter Timing Complete Guide",
     author: "GreatSword_Main",
     price: 1.99,
     views: "12.7K",
     tag: "MONSTER_HUNTER_WILDS",
   },
   {
-    title: "와일즈 엔드게임 장비 세팅 총정리",
+    title: "Wilds Endgame Gear Setup Complete Guide",
     author: "MetaHunter",
     price: 4.99,
     views: "31.5K",
@@ -289,12 +289,12 @@ export default function DropDetailPage() {
                   <div>
                     <UsdcAmount amount={drop.price} size="lg" showLabel />
                     <p className="mt-1.5 text-xs text-pn-muted">
-                      이 가이드를 구매하면 크리에이터에게 80%가 직접 전달됩니다.
+                      80% of your purchase goes directly to the creator.
                     </p>
                   </div>
                   <Button variant="primary" size="lg" className="shrink-0">
                     <ShoppingCart className="h-4 w-4" />
-                    구매하기
+                    Purchase
                   </Button>
                 </div>
               </div>
@@ -306,20 +306,22 @@ export default function DropDetailPage() {
                 {/* Visible section */}
                 <div className="p-6 sm:p-8 space-y-5">
                   <h2 className="text-xl font-bold text-pn-white">
-                    1. 차지블레이드 기본 메카닉
+                    1. Charge Blade Basic Mechanics
                   </h2>
                   <p className="text-sm leading-relaxed text-pn-text">
-                    차지블레이드는 몬스터 헌터 시리즈에서 가장 복잡한 무기 중 하나입니다.
-                    검 모드와 도끼 모드를 자유롭게 전환하며, 병 에너지를 축적하고
-                    방출하는 독특한 시스템을 갖추고 있습니다. 와일즈에서는 새로운
-                    &quot;와일드 카운터&quot; 시스템이 추가되어 가드 포인트의 활용도가
-                    더욱 높아졌습니다.
+                    The Charge Blade is one of the most complex weapons in the
+                    Monster Hunter series. It freely switches between sword mode
+                    and axe mode, featuring a unique system of accumulating and
+                    releasing phial energy. In Wilds, the new &quot;Wild
+                    Counter&quot; system has been added, making guard points even
+                    more versatile.
                   </p>
                   <p className="text-sm leading-relaxed text-pn-text">
-                    기본적으로 검 모드에서 공격을 통해 병 에너지를 충전하고, 충전된
-                    에너지를 도끼 모드의 강력한 방출 공격에 사용합니다. 효율적인 플레이를
-                    위해서는 GP(가드 포인트) 타이밍, 충전 사이클, 그리고 AED/SAED
-                    선택의 판단력이 중요합니다.
+                    Fundamentally, you charge phial energy through attacks in
+                    sword mode and use that charged energy for powerful discharge
+                    attacks in axe mode. For efficient play, mastering GP (Guard
+                    Point) timing, charge cycles, and AED/SAED decision-making
+                    is essential.
                   </p>
 
                   {/* Mock screenshot placeholder */}
@@ -334,13 +336,13 @@ export default function DropDetailPage() {
                 <div className="relative">
                   <div className="p-6 sm:p-8 space-y-4 blur-sm select-none pointer-events-none">
                     <h2 className="text-xl font-bold text-pn-white">
-                      2. 고급 콤보 루트 & 프레임 데이터
+                      2. Advanced Combo Routes & Frame Data
                     </h2>
                     <p className="text-sm leading-relaxed text-pn-text">
-                      이 섹션에서는 차지블레이드의 모든 고급 콤보 루트를 프레임
-                      데이터와 함께 상세히 분석합니다. 각 공격의 모션 값, 히트
-                      프레임, 캔슬 윈도우를 정리하여 실전에서 최적의 DPS를 뽑아낼
-                      수 있도록 안내합니다.
+                      This section provides a detailed analysis of all advanced
+                      Charge Blade combo routes along with frame data. It covers
+                      motion values, hit frames, and cancel windows for each
+                      attack to help you achieve optimal DPS in practice.
                     </p>
                     <div className="flex h-32 items-center justify-center rounded-lg border border-pn-border bg-pn-dark">
                       <span className="font-mono text-sm text-pn-muted">
@@ -348,12 +350,12 @@ export default function DropDetailPage() {
                       </span>
                     </div>
                     <h2 className="text-xl font-bold text-pn-white">
-                      3. 매치업 가이드 — 몬스터별 공략
+                      3. Matchup Guide — Monster-by-Monster Walkthrough
                     </h2>
                     <p className="text-sm leading-relaxed text-pn-text">
-                      와일즈의 주요 몬스터 25종에 대한 차지블레이드 전용 매치업
-                      가이드입니다. 몬스터별 최적의 포지셔닝, GP 활용 타이밍,
-                      추천 장비 세팅을 모두 다룹니다.
+                      A Charge Blade-specific matchup guide for all 25 major
+                      monsters in Wilds. Covers optimal positioning, GP timing,
+                      and recommended gear setups for each monster.
                     </p>
                   </div>
 
@@ -363,10 +365,10 @@ export default function DropDetailPage() {
                       <Lock className="h-6 w-6 text-pn-muted" />
                     </div>
                     <p className="text-sm font-medium text-pn-text-bright">
-                      전체 가이드를 보려면 구매하세요
+                      Purchase to unlock the full guide
                     </p>
                     <p className="mt-1 text-xs text-pn-muted">
-                      총 5개 섹션 &middot; 약 4,200자 &middot; 스크린샷 12장
+                      5 sections &middot; ~4,200 words &middot; 12 screenshots
                     </p>
                   </div>
                 </div>
@@ -392,7 +394,7 @@ export default function DropDetailPage() {
                         </p>
                         <button className="mt-2 inline-flex items-center gap-1.5 text-xs text-pn-muted hover:text-pn-green transition-colors">
                           <ThumbsUp className="h-3 w-3" />
-                          도움이 됐어요 ({tip.helpful})
+                          Helpful ({tip.helpful})
                         </button>
                       </div>
                     </div>
@@ -458,7 +460,7 @@ export default function DropDetailPage() {
                 </p>
                 <div className="space-y-2">
                   <Button variant="primary" size="sm" className="w-full">
-                    Node 방문
+                    Visit Node
                   </Button>
                   <div className="grid grid-cols-2 gap-2">
                     <Button variant="secondary" size="sm" className="w-full">
@@ -467,7 +469,7 @@ export default function DropDetailPage() {
                     </Button>
                     <Button variant="secondary" size="sm" className="w-full">
                       <Link2 className="h-3.5 w-3.5" />
-                      Link 구독
+                      Link Subscribe
                     </Button>
                   </div>
                 </div>
@@ -500,7 +502,7 @@ export default function DropDetailPage() {
                   href="#"
                   className="mt-3 inline-flex items-center gap-1 text-xs text-pn-green hover:underline"
                 >
-                  이 가이드에 광고하기
+                  Advertise on this guide
                   <ExternalLink className="h-3 w-3" />
                 </a>
               </Card>
@@ -518,7 +520,7 @@ export default function DropDetailPage() {
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-semibold text-pn-text-bright leading-snug">
-                      몬스터 헌터 와일즈
+                      Monster Hunter Wilds
                     </p>
                     <p className="text-[11px] text-pn-muted">
                       Steam &middot; Action RPG
@@ -544,10 +546,10 @@ export default function DropDetailPage() {
                 </div>
                 <Button variant="secondary" size="sm" className="w-full mb-2">
                   <ExternalLink className="h-3.5 w-3.5" />
-                  구매하기
+                  Purchase
                 </Button>
                 <p className="text-[10px] text-pn-muted text-center">
-                  이 링크로 구매 시 크리에이터를 지원합니다
+                  Purchasing through this link supports the creator
                 </p>
               </Card>
             </motion.div>
@@ -580,7 +582,7 @@ export default function DropDetailPage() {
                       <span>
                         {drop.version}{" "}
                         <span className="text-pn-muted text-[11px]">
-                          (최종 업데이트: {drop.lastUpdate})
+                          (Last updated: {drop.lastUpdate})
                         </span>
                       </span>
                     }

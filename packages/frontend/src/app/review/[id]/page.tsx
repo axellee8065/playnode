@@ -36,7 +36,7 @@ const fadeUp = {
 /* ------------------------------------------------------------------ */
 
 const review = {
-  title: '엘든 링: Shadow of the Erdtree 완벽 리뷰',
+  title: 'Elden Ring: Shadow of the Erdtree Complete Review',
   game: 'Elden Ring: Shadow of the Erdtree',
   author: {
     name: 'SoulsMaster_KR',
@@ -65,27 +65,27 @@ const review = {
 
 const reviewContent = [
   {
-    heading: '그림자 땅의 새로운 도전',
-    body: 'Shadow of the Erdtree는 프롬소프트웨어가 만든 DLC 중 가장 야심찬 확장팩입니다. 광활한 그림자 땅은 본편의 사이 사이에 숨겨진 비밀로 가득하며, 새로운 NPC들과의 만남은 엘든 링 세계관에 깊이를 더합니다. 메시머의 이야기는 마리카와 황금률의 이면을 탐구하며, 시리즈 전체를 관통하는 주제에 새로운 시각을 제공합니다.',
+    heading: 'A New Challenge in the Shadow Lands',
+    body: 'Shadow of the Erdtree is the most ambitious expansion FromSoftware has ever created. The vast Shadow Lands are filled with secrets hidden between the main story, and encounters with new NPCs add depth to the Elden Ring universe. Messmer\'s story explores the other side of Marika and the Golden Order, offering a fresh perspective on themes that run through the entire series.',
   },
   {
-    heading: '전투 시스템의 진화',
-    body: '새로운 무기 카테고리와 전투 기술은 기존 빌드에 신선한 변화를 가져왔습니다. 특히 이도류 시스템과 경무기 스탠스는 액션의 깊이를 한 단계 끌어올렸습니다. 보스전은 여전히 도전적이지만, DLC 전용 스켈트리 레벨링 시스템 덕분에 난이도 곡선이 더 매끄럽게 느껴집니다. 다만 일부 후반 보스의 패턴이 반복적으로 느껴지는 점은 아쉬운 부분입니다.',
+    heading: 'Evolution of the Combat System',
+    body: 'New weapon categories and combat arts bring a fresh twist to existing builds. The dual-wielding system and light weapon stances in particular elevate the depth of action to a new level. Boss fights remain challenging, but the DLC-exclusive Scadutree leveling system makes the difficulty curve feel smoother. However, some late-game boss patterns feeling repetitive is a minor disappointment.',
   },
   {
-    heading: '비주얼과 사운드',
-    body: '레이 트레이싱이 적용된 그림자 땅의 풍경은 숨막히게 아름답습니다. 황혼빛이 감도는 들판, 붉은 안개에 뒤덮인 성채, 그리고 지하 세계의 형광빛 동굴까지 — 각 지역의 아트 디렉션은 완벽에 가깝습니다. 사운드트랙 역시 오케스트라 편성이 확대되어 보스전의 긴장감을 극대화합니다.',
+    heading: 'Visuals and Sound',
+    body: 'The ray-traced landscapes of the Shadow Lands are breathtakingly beautiful. From twilight-bathed fields and fortresses shrouded in red mist to the fluorescent caves of the underground world -- the art direction of each area is near-perfect. The soundtrack also features an expanded orchestral arrangement that maximizes the tension of boss encounters.',
   },
   {
-    heading: '종합 평가',
-    body: '842시간의 플레이타임 동안 Shadow of the Erdtree는 한 번도 지루하지 않았습니다. 본편을 사랑한 플레이어라면 반드시 경험해야 할 DLC이며, 올해 최고의 확장팩이라 단언할 수 있습니다. 엔드게임 콘텐츠의 반복성과 일부 밸런스 이슈가 완벽한 점수를 주지 못하게 했지만, 그럼에도 불구하고 최고 수준의 게임 경험입니다.',
+    heading: 'Final Verdict',
+    body: 'Over 842 hours of playtime, Shadow of the Erdtree never once felt boring. It is a must-play DLC for anyone who loved the base game, and I can confidently call it the best expansion of the year. Endgame content repetitiveness and some balance issues kept me from giving a perfect score, but it remains a top-tier gaming experience nonetheless.',
   },
 ];
 
 const relatedReviews = [
-  { title: 'Stellar Blade — 액션의 새로운 기준', author: 'GameHunter_KR', score: 8.2 },
-  { title: 'Black Myth: Wukong 심층 리뷰', author: 'RPG_Master', score: 9.0 },
-  { title: 'Armored Core VI 완벽 분석', author: 'MechaPilot', score: 8.5 },
+  { title: 'Stellar Blade — A New Standard for Action', author: 'GameHunter_KR', score: 8.2 },
+  { title: 'Black Myth: Wukong In-Depth Review', author: 'RPG_Master', score: 9.0 },
+  { title: 'Armored Core VI Complete Analysis', author: 'MechaPilot', score: 8.5 },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -216,7 +216,7 @@ const ReviewPage: FC = () => {
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-pn-cyan" />
                     <span className="font-mono text-lg font-bold text-pn-cyan">
-                      {displayReview.verification.playtime}시간
+                      {displayReview.verification.playtime} hrs
                     </span>
                     <span className="text-sm text-pn-text">Verified</span>
                   </div>
@@ -234,7 +234,7 @@ const ReviewPage: FC = () => {
                     </span>
                   </div>
                   <span className="font-mono text-[10px] text-pn-muted uppercase tracking-wider">
-                    검증된 플레이타임
+                    Verified Playtime
                   </span>
                 </div>
               </div>
@@ -329,10 +329,10 @@ const ReviewPage: FC = () => {
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div>
                     <p className="text-pn-white text-sm font-medium mb-1">
-                      이 리뷰가 도움이 되었나요?
+                      Was this review helpful?
                     </p>
                     <p className="font-mono text-[11px] text-pn-muted">
-                      {helpfulCount.toLocaleString()}명이 도움됨
+                      {helpfulCount.toLocaleString()} people found this helpful
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
@@ -347,7 +347,7 @@ const ReviewPage: FC = () => {
                       }`}
                     >
                       <ThumbsUp className="w-4 h-4" />
-                      도움됨
+                      Helpful
                     </motion.button>
                     <motion.button
                       whileHover={{ scale: 1.05 }}
@@ -360,7 +360,7 @@ const ReviewPage: FC = () => {
                       }`}
                     >
                       <ThumbsDown className="w-4 h-4" />
-                      아니요
+                      No
                     </motion.button>
                   </div>
                 </div>
@@ -411,7 +411,7 @@ const ReviewPage: FC = () => {
                     </div>
                   </div>
                   <Button variant="secondary" size="sm" className="w-full">
-                    프로필 보기
+                    View Profile
                   </Button>
                 </div>
               </Card>
@@ -421,7 +421,7 @@ const ReviewPage: FC = () => {
             <motion.div variants={fadeUp}>
               <Card>
                 <p className="font-mono text-[10px] uppercase tracking-wider text-pn-muted mb-3">
-                  이 게임 구매하기
+                  Buy This Game
                 </p>
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-sm font-semibold text-pn-white">
@@ -430,7 +430,7 @@ const ReviewPage: FC = () => {
                 </div>
                 <Button variant="primary" size="sm" className="w-full">
                   <ExternalLink className="w-3.5 h-3.5" />
-                  Shop에서 보기
+                  View in Shop
                 </Button>
               </Card>
             </motion.div>
@@ -439,7 +439,7 @@ const ReviewPage: FC = () => {
             <motion.div variants={fadeUp}>
               <Card>
                 <p className="font-mono text-[10px] uppercase tracking-wider text-pn-muted mb-4">
-                  관련 리뷰
+                  Related Reviews
                 </p>
                 <div className="space-y-3">
                   {relatedReviews.map((r) => (
@@ -469,7 +469,7 @@ const ReviewPage: FC = () => {
                   whileHover={{ x: 2 }}
                   className="w-full flex items-center justify-center gap-1 mt-3 pt-3 border-t border-pn-border text-xs text-pn-muted hover:text-pn-cyan transition-colors font-mono"
                 >
-                  모든 리뷰 보기
+                  View All Reviews
                   <ChevronRight className="w-3 h-3" />
                 </motion.button>
               </Card>

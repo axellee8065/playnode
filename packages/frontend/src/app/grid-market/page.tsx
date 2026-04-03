@@ -48,7 +48,7 @@ interface GridListing {
 const gridListings: GridListing[] = [
   {
     creator: 'GameMaster_KR',
-    pageTitle: '몬헌 와일즈 종합 공략',
+    pageTitle: 'MH Wilds Complete Walkthrough',
     pixels: [
       [true, true, true, false, false, true, true, false, false, false],
       [true, true, false, false, true, true, false, false, false, false],
@@ -64,7 +64,7 @@ const gridListings: GridListing[] = [
   },
   {
     creator: 'SoulsBorne_Pro',
-    pageTitle: '엘든 링 DLC 보스 가이드',
+    pageTitle: 'Elden Ring DLC Boss Guide',
     pixels: [
       [true, true, true, true, true, false, false, false, false, false],
       [true, true, true, true, false, false, false, true, false, false],
@@ -80,7 +80,7 @@ const gridListings: GridListing[] = [
   },
   {
     creator: 'RPG_Queen',
-    pageTitle: 'FF7 리버스 완전 공략',
+    pageTitle: 'FF7 Rebirth Complete Walkthrough',
     pixels: [
       [true, true, false, true, true, true, false, false, true, false],
       [true, false, false, true, true, false, false, true, true, false],
@@ -96,7 +96,7 @@ const gridListings: GridListing[] = [
   },
   {
     creator: 'IndieDev_Lee',
-    pageTitle: '발더스 게이트 3 멀티 가이드',
+    pageTitle: "Baldur's Gate 3 Multiplayer Guide",
     pixels: [
       [true, true, true, true, true, true, true, false, false, false],
       [true, true, true, true, true, true, false, false, false, false],
@@ -112,7 +112,7 @@ const gridListings: GridListing[] = [
   },
   {
     creator: 'FPS_Hawk',
-    pageTitle: 'Valorant 에이전트 티어 리스트',
+    pageTitle: 'Valorant Agent Tier List',
     pixels: [
       [true, false, false, false, false, false, false, false, false, false],
       [true, true, false, false, false, false, false, false, false, false],
@@ -128,7 +128,7 @@ const gridListings: GridListing[] = [
   },
   {
     creator: 'MMO_Sage',
-    pageTitle: '로스트아크 시즌3 레이드 가이드',
+    pageTitle: 'Lost Ark Season 3 Raid Guide',
     pixels: [
       [true, true, true, true, false, true, true, true, false, false],
       [true, true, true, false, false, true, true, false, false, false],
@@ -147,18 +147,18 @@ const gridListings: GridListing[] = [
 const howItWorks = [
   {
     step: 1,
-    title: '그리드 선택',
-    description: '인기 크리에이터 페이지의 광고 그리드를 탐색하고 원하는 그리드를 선택하세요.',
+    title: 'Choose a Grid',
+    description: 'Browse ad grids on popular creator pages and select the one you want.',
   },
   {
     step: 2,
-    title: '픽셀 구매',
-    description: 'USDC로 원하는 픽셀 영역을 직접 구매하세요. 가격은 페이지 트래픽에 따라 결정됩니다.',
+    title: 'Buy Pixels',
+    description: 'Purchase your desired pixel area directly with USDC. Pricing is determined by page traffic.',
   },
   {
     step: 3,
-    title: '광고 게재',
-    description: '구매한 픽셀에 배너, 이미지, 링크를 등록하면 즉시 광고가 게재됩니다.',
+    title: 'Place Your Ad',
+    description: 'Register banners, images, and links on your purchased pixels and your ad goes live instantly.',
   },
 ];
 
@@ -230,9 +230,9 @@ const GridMarketPage: FC = () => {
     : stats;
 
   const sortLabels: Record<SortOption, string> = {
-    popular: '인기순',
-    price: '가격순',
-    availability: '잔여율순',
+    popular: 'Popular',
+    price: 'Price',
+    availability: 'Availability',
   };
 
   return (
@@ -258,7 +258,7 @@ const GridMarketPage: FC = () => {
               PIXEL GRID MARKET
             </h1>
             <p className="text-pn-muted text-base sm:text-lg max-w-xl mx-auto">
-              크리에이터 페이지에 광고하고, USDC로 직접 결제하세요.
+              Advertise on creator pages and pay directly with USDC.
             </p>
           </div>
         </motion.div>
@@ -389,7 +389,7 @@ const GridMarketPage: FC = () => {
                     size="md"
                     className="!bg-pn-purple/10 !border-pn-purple/30 !text-pn-purple hover:!bg-pn-purple/20 w-full"
                   >
-                    광고하기
+                    Advertise
                   </Button>
                 </div>
               </Card>
@@ -409,7 +409,7 @@ const GridMarketPage: FC = () => {
               HOW IT WORKS
             </span>
             <h2 className="text-pn-white text-2xl sm:text-3xl font-bold">
-              3단계로 광고 시작하기
+              Start Advertising in 3 Steps
             </h2>
           </div>
 
@@ -449,11 +449,11 @@ const GridMarketPage: FC = () => {
                 DYNAMIC PRICING
               </span>
               <h2 className="text-pn-white text-xl sm:text-2xl font-bold mb-2">
-                트래픽 기반 동적 가격
+                Traffic-Based Dynamic Pricing
               </h2>
               <p className="text-pn-muted text-sm max-w-lg mx-auto">
-                픽셀 가격은 크리에이터 페이지의 월간 페이지뷰(PV)에 따라 동적으로 결정됩니다.
-                높은 트래픽의 페이지일수록 광고 가치가 높습니다.
+                Pixel prices are dynamically determined by the monthly page views (PV) of creator pages.
+                Higher traffic pages have greater advertising value.
               </p>
             </div>
 

@@ -38,7 +38,7 @@ const fadeUp = {
 
 const game = {
   title: 'Monster Hunter Wilds',
-  subtitle: '몬스터 헌터 와일즈',
+  subtitle: 'The ultimate hunting experience awaits',
   developer: 'Capcom',
   releaseDate: '2025-02-28',
   stats: {
@@ -62,42 +62,42 @@ const categoryBadges: Record<string, 'drop' | 'review' | 'shop' | 'quest' | 'ran
 
 const drops = [
   {
-    title: '차전룡 지누오가 소셜 완벽 공략',
+    title: 'Zinogre Complete Boss Walkthrough',
     author: 'HunterPro_KR',
     price: 4.99,
     views: '32.1K',
     category: 'BOSS',
   },
   {
-    title: '대검 빌드 시즌2 메타 가이드',
+    title: 'Great Sword Build Season 2 Meta Guide',
     author: 'WeaponMaster',
     price: 6.99,
     views: '28.7K',
     category: 'BUILD',
   },
   {
-    title: '마스터랭크 긴급퀘 전체 클리어 루트',
+    title: 'Master Rank Urgent Quest Full Clear Route',
     author: 'SpeedRunner_JP',
     price: 3.99,
     views: '24.5K',
     category: 'QUEST',
   },
   {
-    title: '초심자 완벽 입문 가이드 2026',
+    title: 'Beginner Complete Starter Guide 2026',
     author: 'NewbieHelper',
     price: 0,
     views: '45.2K',
     category: 'GUIDE',
   },
   {
-    title: '활 빌드 DPS 극대화 세팅',
+    title: 'Bow Build Max DPS Setup',
     author: 'BowGod',
     price: 5.49,
     views: '19.8K',
     category: 'BUILD',
   },
   {
-    title: '레어 장식주 효율 파밍 루트',
+    title: 'Rare Jewel Efficient Farming Route',
     author: 'FarmKing',
     price: 2.99,
     views: '22.3K',
@@ -119,10 +119,10 @@ const shopLinks = [
 ];
 
 const reviewItems = [
-  { title: '400시간 후 솔직 리뷰', author: 'HunterPro_KR', score: 9.1, helpful: 842 },
-  { title: '캐주얼 게이머의 시점에서', author: 'CasualPlayer', score: 7.8, helpful: 356 },
-  { title: '시리즈 팬이 본 와일즈', author: 'MH_Veteran', score: 8.9, helpful: 621 },
-  { title: 'PC 성능 & 그래픽 분석', author: 'TechReviewer', score: 8.2, helpful: 489 },
+  { title: 'Honest Review After 400 Hours', author: 'HunterPro_KR', score: 9.1, helpful: 842 },
+  { title: 'From a Casual Gamer\'s Perspective', author: 'CasualPlayer', score: 7.8, helpful: 356 },
+  { title: 'Wilds Through a Series Fan\'s Eyes', author: 'MH_Veteran', score: 8.9, helpful: 621 },
+  { title: 'PC Performance & Graphics Analysis', author: 'TechReviewer', score: 8.2, helpful: 489 },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -417,7 +417,7 @@ const GameHubPage: FC = () => {
                           by {r.author}
                         </span>
                         <span className="font-mono text-[10px] text-pn-muted">
-                          {r.helpful.toLocaleString()}명이 도움됨
+                          {r.helpful.toLocaleString()} people found this helpful
                         </span>
                       </div>
                     </div>
@@ -433,7 +433,7 @@ const GameHubPage: FC = () => {
             ))}
             <motion.div variants={fadeUp} className="flex justify-center pt-2">
               <Button variant="ghost" size="sm">
-                모든 리뷰 보기
+                View All Reviews
                 <ChevronRight className="w-3.5 h-3.5" />
               </Button>
             </motion.div>
@@ -450,7 +450,7 @@ const GameHubPage: FC = () => {
           >
             <motion.div variants={fadeUp}>
               <p className="font-mono text-[10px] uppercase tracking-wider text-pn-muted mb-4">
-                구매 링크 (Affiliate)
+                Purchase Links (Affiliate)
               </p>
             </motion.div>
             {shopLinks.map((link, i) => (
@@ -477,7 +477,7 @@ const GameHubPage: FC = () => {
                       <UsdcAmount amount={link.price} size="md" />
                       <Button variant="primary" size="sm">
                         <ExternalLink className="w-3.5 h-3.5" />
-                        구매
+                        Buy
                       </Button>
                     </div>
                   </div>
@@ -503,7 +503,7 @@ const GameHubPage: FC = () => {
                       Game Pixel Grid
                     </p>
                     <p className="text-sm text-pn-text">
-                      픽셀을 구매하여 이 게임 페이지에 광고를 게재하세요
+                      Purchase pixels to advertise on this game page
                     </p>
                   </div>
                   <Badge variant="grid">PIXEL GRID</Badge>
@@ -577,7 +577,7 @@ const GameHubPage: FC = () => {
             transition={{ delay: 0.5 }}
           >
             <p className="font-mono text-[10px] uppercase tracking-wider text-pn-muted mb-4">
-              이 게임 구매하기
+              Buy This Game
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {shopLinks.map((link, i) => (

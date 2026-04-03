@@ -25,21 +25,21 @@ const notoSansKR = Noto_Sans_KR({
 export const metadata: Metadata = {
   title: "PlayNode — Play. Share. Earn.",
   description:
-    "게임 공략이 수익이 되는 곳. PlayNode는 Sui 블록체인 기반의 Game Creator Economy Platform입니다. 공략을 작성하고, 리뷰하고, 거래하세요.",
+    "Where game guides become revenue. PlayNode is a Game Creator Economy Platform built on the Sui blockchain. Write guides, review, and trade.",
   keywords: [
     "PlayNode",
     "Sui",
     "blockchain",
     "gaming",
     "creator economy",
-    "게임 공략",
+    "game guides",
     "NFT",
   ],
   openGraph: {
     title: "PlayNode — Play. Share. Earn.",
-    description: "게임 공략이 수익이 되는 곳. Game Creator Economy Platform on Sui.",
+    description: "Where game guides become revenue. Game Creator Economy Platform on Sui.",
     type: "website",
-    locale: "ko_KR",
+    locale: "en_US",
   },
 };
 
@@ -50,7 +50,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="ko"
+      lang="en"
       className={`dark ${outfit.variable} ${jetbrainsMono.variable} ${notoSansKR.variable}`}
     >
       <body className="relative min-h-screen overflow-x-hidden">

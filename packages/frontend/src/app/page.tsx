@@ -328,13 +328,13 @@ export default function LandingPage() {
             PLAY&nbsp;&nbsp;&middot;&nbsp;&nbsp;SHARE&nbsp;&nbsp;&middot;&nbsp;&nbsp;EARN
           </motion.p>
 
-          {/* Korean subtitle */}
+          {/* Subtitle */}
           <motion.p
             custom={3}
             variants={fadeUp}
             className="mb-10 text-lg text-pn-text-bright sm:text-xl"
           >
-            공략이 수익이 되는 곳.
+            Where your guides become revenue.
           </motion.p>
 
           {/* Feature badges */}
@@ -360,11 +360,11 @@ export default function LandingPage() {
             className="flex flex-col items-center gap-4 sm:flex-row"
           >
             <button className="group inline-flex items-center gap-2 rounded-[var(--radius-md)] bg-pn-green px-8 py-3.5 font-semibold text-pn-black transition-all hover:bg-pn-green-dim hover:shadow-lg hover:shadow-pn-green/20">
-              시작하기
+              Get Started
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </button>
             <button className="inline-flex items-center gap-2 rounded-[var(--radius-md)] border border-pn-border px-8 py-3.5 font-semibold text-pn-text-bright transition-all hover:border-pn-border-light hover:bg-pn-surface">
-              자세히 보기
+              Learn More
             </button>
           </motion.div>
         </motion.div>
@@ -422,11 +422,11 @@ export default function LandingPage() {
               PLATFORM
             </span>
             <h2 className="text-3xl font-bold text-pn-white sm:text-4xl">
-              크리에이터를 위한 모든 것
+              Everything for Creators
             </h2>
             <p className="mx-auto mt-3 max-w-lg text-pn-muted">
-              공략 작성부터 수익 창출까지. PlayNode의 6가지 핵심 모듈이
-              크리에이터 경제를 완성합니다.
+              From writing guides to earning revenue. Six core modules
+              that power the creator economy.
             </p>
           </motion.div>
 
@@ -455,13 +455,13 @@ export default function LandingPage() {
               GET STARTED
             </span>
             <h2 className="mb-4 text-3xl font-bold text-pn-white sm:text-4xl">
-              지금 바로 시작하세요
+              Start Earning Today
             </h2>
             <p className="mb-8 text-pn-muted">
-              Sui 지갑을 연결하고 PlayNode 크리에이터 경제에 참여하세요.
+              Connect your wallet and join the PlayNode creator economy.
             </p>
             <button className="group inline-flex items-center gap-2 rounded-[var(--radius-md)] bg-pn-green px-10 py-4 text-lg font-semibold text-pn-black transition-all hover:bg-pn-green-dim hover:shadow-lg hover:shadow-pn-green/20">
-              지갑 연결하기
+              Connect Wallet
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </button>
           </motion.div>

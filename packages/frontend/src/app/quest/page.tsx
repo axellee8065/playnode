@@ -50,7 +50,7 @@ interface Quest {
 const quests: Quest[] = [
   {
     id: 'q1',
-    title: '몬헌 와일즈 차지블레이드 가이드 작성',
+    title: 'Write MH Wilds Charge Blade Guide',
     gameTag: 'Monster Hunter Wilds',
     category: 'writing',
     reward: 200,
@@ -58,12 +58,12 @@ const quests: Quest[] = [
     minRank: 'Silver',
     status: 'OPEN',
     description:
-      '차지블레이드의 기본 콤보, GP, SAED 타이밍 등을 포함한 초중급 가이드를 작성해주세요. 최소 3,000자 이상, 스크린샷 5장 이상 포함.',
+      'Write a beginner-to-intermediate guide covering Charge Blade basic combos, GP, SAED timing, and more. Minimum 3,000 words with at least 5 screenshots.',
     publisher: 'Capcom KR',
   },
   {
     id: 'q2',
-    title: '엘든 링 DLC 한국어 번역',
+    title: 'Elden Ring DLC Localization',
     gameTag: 'Elden Ring',
     category: 'translation',
     reward: 150,
@@ -71,12 +71,12 @@ const quests: Quest[] = [
     minRank: 'Gold',
     status: 'OPEN',
     description:
-      'Shadow of the Erdtree DLC 아이템 설명문 및 NPC 대화 200건의 영한 번역. 게임 세계관에 맞는 고풍체 번역 필요.',
+      'Translate 200 item descriptions and NPC dialogues from Shadow of the Erdtree DLC. Archaic tone matching the game\'s lore is required.',
     publisher: 'FromSoftware',
   },
   {
     id: 'q3',
-    title: '발더스 게이트 3 멀티 플레이 영상 제작',
+    title: "Baldur's Gate 3 Multiplayer Video Production",
     gameTag: "Baldur's Gate 3",
     category: 'video',
     reward: 350,
@@ -84,12 +84,12 @@ const quests: Quest[] = [
     minRank: 'Silver',
     status: 'OPEN',
     description:
-      '4인 코옵 플레이 하이라이트 영상 (10-15분). 편집, 자막, 썸네일 포함. 유튜브 업로드 기준.',
+      '4-player co-op highlight video (10-15 min). Includes editing, subtitles, and thumbnail. YouTube upload standard.',
     publisher: 'Larian Studios',
   },
   {
     id: 'q4',
-    title: 'Stellar Blade 전투 시스템 리뷰',
+    title: 'Stellar Blade Combat System Review',
     gameTag: 'Stellar Blade',
     category: 'review',
     reward: 120,
@@ -97,12 +97,12 @@ const quests: Quest[] = [
     minRank: 'Bronze',
     status: 'IN_PROGRESS',
     description:
-      '전투 시스템의 장단점, 보스별 난이도 분석, 타 액션게임과의 비교를 포함한 심층 리뷰. 2,000자 이상.',
+      'In-depth review covering combat system pros and cons, boss difficulty analysis, and comparison with other action games. Minimum 2,000 words.',
     publisher: 'SHIFT UP',
   },
   {
     id: 'q5',
-    title: 'GTA VI 사전 정보 종합 가이드',
+    title: 'GTA VI Pre-Release Info Comprehensive Guide',
     gameTag: 'GTA VI',
     category: 'writing',
     reward: 250,
@@ -110,12 +110,12 @@ const quests: Quest[] = [
     minRank: 'Gold',
     status: 'OPEN',
     description:
-      '공개된 트레일러, 인터뷰, 유출 정보를 종합한 사전 가이드. 맵, 캐릭터, 신규 시스템 등을 체계적으로 정리.',
+      'Pre-release guide compiling released trailers, interviews, and leak info. Systematically organize maps, characters, and new systems.',
     publisher: 'Community',
   },
   {
     id: 'q6',
-    title: '로스트아크 시즌3 레이드 공략 영상',
+    title: 'Lost Ark Season 3 Raid Walkthrough Video',
     gameTag: 'Lost Ark',
     category: 'video',
     reward: 180,
@@ -123,7 +123,7 @@ const quests: Quest[] = [
     minRank: 'Silver',
     status: 'IN_PROGRESS',
     description:
-      '에키드나 하드 모드 1-4관문 공략 영상. 각 관문별 기믹 설명, 추천 각인/스펙 포함. 자막 필수.',
+      'Echidna Hard Mode Gates 1-4 walkthrough video. Includes mechanic explanations per gate, recommended engravings/specs. Subtitles required.',
     publisher: 'Smilegate RPG',
   },
 ];
@@ -197,7 +197,7 @@ const QuestPage: FC = () => {
               QUEST BOARD
             </h1>
             <p className="text-pn-muted text-base sm:text-lg max-w-xl mx-auto">
-              게임 퍼블리셔와 유저가 올린 바운티를 수행하고 USDC를 받으세요.
+              Complete bounties posted by game publishers and users to earn USDC.
             </p>
           </div>
         </motion.div>
@@ -333,7 +333,7 @@ const QuestPage: FC = () => {
                           className="!bg-pn-amber/10 !border-pn-amber/30 !text-pn-amber hover:!bg-pn-amber/20 whitespace-nowrap"
                           disabled={quest.status === 'IN_PROGRESS'}
                         >
-                          {quest.status === 'OPEN' ? '수락하기' : '진행 중'}
+                          {quest.status === 'OPEN' ? 'Accept' : 'In Progress'}
                         </Button>
                       </div>
                     </div>
@@ -356,7 +356,7 @@ const QuestPage: FC = () => {
               MY QUESTS
             </span>
             <h2 className="text-pn-white text-xl sm:text-2xl font-bold">
-              수락한 퀘스트
+              Accepted Quests
             </h2>
           </div>
 
@@ -365,10 +365,10 @@ const QuestPage: FC = () => {
               <span className="text-2xl text-pn-muted">?</span>
             </div>
             <p className="text-pn-muted text-sm mb-1">
-              아직 수락한 퀘스트가 없습니다
+              You haven't accepted any quests yet
             </p>
             <p className="text-pn-muted/60 text-xs font-mono">
-              위 퀘스트 목록에서 원하는 퀘스트를 수락하세요.
+              Accept a quest from the list above to get started.
             </p>
           </Card>
         </motion.div>

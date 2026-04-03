@@ -38,7 +38,7 @@ const stagger = {
 // ---------------------------------------------------------------------------
 const CREATOR = {
   displayName: "GameMaster_KR",
-  bio: "몬스터 헌터, 엘든 링 전문 공략 크리에이터. 842시간의 검증된 플레이.",
+  bio: "Monster Hunter & Elden Ring specialist guide creator. 842 hours of verified playtime.",
   rank: "DIAMOND",
   verified: true,
 };
@@ -84,7 +84,7 @@ interface Drop {
 const DROPS: Drop[] = [
   {
     id: 1,
-    title: "몬헌 와일즈: 차지블레이드 마스터 가이드",
+    title: "MH Wilds: Charge Blade Master Guide",
     game: "MH Wilds",
     gameVariant: "drop",
     price: 3.99,
@@ -93,7 +93,7 @@ const DROPS: Drop[] = [
   },
   {
     id: 2,
-    title: "엘든 링 DLC 보스 공략 완벽 정리",
+    title: "Elden Ring DLC Complete Boss Walkthrough",
     game: "Elden Ring",
     gameVariant: "quest",
     price: 5.99,
@@ -102,7 +102,7 @@ const DROPS: Drop[] = [
   },
   {
     id: 3,
-    title: "발로란트 시즌8 아이소 완벽 가이드",
+    title: "VALORANT Season 8 Iso Complete Guide",
     game: "VALORANT",
     gameVariant: "rank",
     price: null,
@@ -111,7 +111,7 @@ const DROPS: Drop[] = [
   },
   {
     id: 4,
-    title: "몬헌 와일즈: 활 빌드 & 콤보 루트 총정리",
+    title: "MH Wilds: Bow Build & Combo Routes Complete Guide",
     game: "MH Wilds",
     gameVariant: "drop",
     price: 3.99,
@@ -403,7 +403,7 @@ export default function NodeProfilePage() {
                 animate={{ opacity: 1 }}
                 className="flex flex-col items-center justify-center py-20 text-pn-muted"
               >
-                <p className="text-sm">12개의 리뷰가 곧 표시됩니다.</p>
+                <p className="text-sm">12 reviews coming soon.</p>
               </motion.div>
             )}
 
@@ -413,7 +413,7 @@ export default function NodeProfilePage() {
                 animate={{ opacity: 1 }}
                 className="flex flex-col items-center justify-center py-20 text-pn-muted"
               >
-                <p className="text-sm">Shop 아이템 준비 중...</p>
+                <p className="text-sm">Shop items coming soon...</p>
               </motion.div>
             )}
 
@@ -423,7 +423,7 @@ export default function NodeProfilePage() {
                 animate={{ opacity: 1 }}
                 className="flex flex-col items-center justify-center py-20 text-pn-muted"
               >
-                <p className="text-sm">Pixel Grid 전체 보기 준비 중...</p>
+                <p className="text-sm">Full Pixel Grid view coming soon...</p>
               </motion.div>
             )}
           </div>
@@ -437,10 +437,10 @@ export default function NodeProfilePage() {
                 size="lg"
                 className="w-full border-pn-red/40 text-pn-red hover:bg-pn-red/10 hover:border-pn-red/60"
               >
-                <span className="mr-1">☕</span> Ping 보내기
+                <span className="mr-1">☕</span> Send Ping
               </Button>
               <p className="text-[11px] text-pn-muted text-center">
-                크리에이터에게 응원의 팁을 보내세요
+                Send a tip to support this creator
               </p>
             </Card>
 
@@ -452,10 +452,10 @@ export default function NodeProfilePage() {
                 className="w-full border-pn-red/40 text-pn-red hover:bg-pn-red/10 hover:border-pn-red/60"
               >
                 <Link2 size={16} className="mr-1" />
-                Link 구독 $4.99/mo
+                Link Subscribe $4.99/mo
               </Button>
               <p className="text-[11px] text-pn-muted text-center">
-                독점 콘텐츠 및 얼리 액세스
+                Exclusive content and early access
               </p>
             </Card>
 
@@ -483,7 +483,7 @@ export default function NodeProfilePage() {
 
             {/* Advertise link */}
             <button className="flex items-center justify-center gap-1.5 py-3 text-xs text-pn-muted hover:text-pn-text transition-colors">
-              <span>이 Node에 광고하기</span>
+              <span>Advertise on this Node</span>
               <ChevronRight size={13} />
             </button>
           </aside>

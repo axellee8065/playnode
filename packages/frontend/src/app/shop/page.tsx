@@ -139,7 +139,7 @@ const creatorPicks: CreatorPick[] = [
   {
     creator: 'SoulsBorne_Pro',
     gameTitle: 'Elden Ring: Nightreign',
-    review: '코옵 소울라이크의 새로운 기준. 3인 세션 기반 로그라이크 요소가 놀라울 정도로 잘 작동합니다.',
+    review: 'A new standard for co-op soulslike. The 3-player session-based roguelike elements work surprisingly well.',
     rating: 4.9,
     platform: 'STEAM',
     price: 39.99,
@@ -148,7 +148,7 @@ const creatorPicks: CreatorPick[] = [
   {
     creator: 'RPG_Queen',
     gameTitle: 'Metaphor: ReFantazio',
-    review: '아틀라스의 새로운 도전. 페르소나 팬이라면 반드시 플레이해야 할 걸작. 70시간 이상의 볼륨.',
+    review: 'Atlus\'s bold new venture. A masterpiece that Persona fans must play. Over 70 hours of content.',
     rating: 4.8,
     platform: 'STEAM',
     price: 59.99,
@@ -157,7 +157,7 @@ const creatorPicks: CreatorPick[] = [
   {
     creator: 'IndieDev_Lee',
     gameTitle: 'Hollow Knight: Silksong',
-    review: '전작을 뛰어넘는 레벨 디자인과 전투 시스템. 인디 게임의 새로운 전설이 될 작품.',
+    review: 'Level design and combat that surpasses the original. A title destined to become a new indie legend.',
     rating: 4.9,
     platform: 'STEAM',
     price: 29.99,
@@ -166,7 +166,7 @@ const creatorPicks: CreatorPick[] = [
   {
     creator: 'FPS_Hawk',
     gameTitle: 'Monster Hunter Wilds',
-    review: '시리즈 최고의 그래픽과 생태계 시스템. 차지블레이드 유저라면 감동의 눈물을 흘릴 것.',
+    review: 'Best graphics and ecosystem system in the series. Charge Blade users will shed tears of joy.',
     rating: 4.8,
     platform: 'STEAM',
     price: 59.99,
@@ -275,7 +275,7 @@ const ShopPage: FC = () => {
               GAME SHOP
             </h1>
             <p className="text-pn-muted text-base sm:text-lg max-w-xl mx-auto">
-              크리에이터가 추천하는 게임을 구매하고, 크리에이터를 지원하세요.
+              Buy games recommended by creators and support them directly.
             </p>
           </div>
         </motion.div>
@@ -345,7 +345,7 @@ const ShopPage: FC = () => {
                     size="lg"
                     className="!bg-pn-amber/10 !border-pn-amber/30 !text-pn-amber hover:!bg-pn-amber/20 w-full"
                   >
-                    번들 구매하기
+                    Buy Bundle
                   </Button>
                 </div>
               </div>
@@ -386,7 +386,7 @@ const ShopPage: FC = () => {
               TRENDING
             </span>
             <h2 className="text-pn-white text-xl sm:text-2xl font-bold">
-              인기 게임
+              Trending Games
             </h2>
           </div>
 
@@ -439,7 +439,7 @@ const ShopPage: FC = () => {
                           size="sm"
                           className="!bg-pn-amber/10 !border-pn-amber/30 !text-pn-amber hover:!bg-pn-amber/20"
                         >
-                          구매하기
+                          Purchase
                         </Button>
                       </div>
                     </div>
@@ -462,10 +462,10 @@ const ShopPage: FC = () => {
               CREATOR PICKS
             </span>
             <h2 className="text-pn-white text-xl sm:text-2xl font-bold">
-              크리에이터 추천
+              Creator Picks
             </h2>
             <p className="text-pn-muted text-sm mt-1">
-              Top 크리에이터들이 직접 추천하는 게임을 확인하세요.
+              Check out games personally recommended by top creators.
             </p>
           </div>
 
@@ -521,7 +521,7 @@ const ShopPage: FC = () => {
                           size="sm"
                           className="!bg-pn-amber/10 !border-pn-amber/30 !text-pn-amber hover:!bg-pn-amber/20"
                         >
-                          구매하기
+                          Purchase
                         </Button>
                       </div>
                     </div>
