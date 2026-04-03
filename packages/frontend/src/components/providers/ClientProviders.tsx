@@ -1,8 +1,10 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import type { ReactNode } from 'react';
 
-// Wallet provider temporarily disabled for debugging
+const SuiProvider = dynamic(() => import('./SuiProvider'), { ssr: false });
+
 export default function ClientProviders({ children }: { children: ReactNode }) {
-  return <>{children}</>;
+  return <SuiProvider>{children}</SuiProvider>;
 }
