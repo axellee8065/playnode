@@ -137,7 +137,7 @@ const ReviewPage: FC = () => {
           playtime: apiReview.verifiedPlaytimeHours,
         },
         helpful: apiReview.helpfulCount,
-        date: apiReview.createdAt.slice(0, 10),
+        date: String(apiReview.createdAt).slice(0, 10),
         categories: apiReview.categoryRatings?.length
           ? apiReview.categoryRatings.map((score: number, i: number) => ({
               label: review.categories[i]?.label || `Category ${i + 1}`,

@@ -149,13 +149,13 @@ const DashboardPage: FC = () => {
   const { data: apiNodes } = useApi(() => api.getNodes({ take: 1 }), []);
 
   // Map API drops into content rows format, or fall back to mock
-  const liveContentRows: ContentRow[] | null = apiDrops
+  const liveContentRows: ContentRow[] | null = Array.isArray(apiDrops) && apiDrops.length > 0
     ? apiDrops.map((d) => ({
         title: d.title,
         type: 'drop' as const,
         views: formatViews(d.totalViews),
         revenue: Number(d.totalEarned) / 1_000_000,
-        date: d.createdAt.slice(0, 10),
+        date: String(d.createdAt).slice(0, 10),
         status: 'published' as const,
       }))
     : null;

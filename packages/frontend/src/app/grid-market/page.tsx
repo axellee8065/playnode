@@ -208,7 +208,7 @@ const GridMarketPage: FC = () => {
   const displayGrids = apiGrids
     ? apiGrids.map((g) => ({
         creator: 'Creator',
-        pageTitle: `Grid ${g.id.slice(0, 8)}`,
+        pageTitle: `Grid ${String(g.id).slice(0, 8)}`,
         pixels: gridListings[0].pixels, // use mock pixel layout as visual fallback
         occupancy: g.totalPixels > 0 ? Math.round((g.soldPixels / g.totalPixels) * 100) : 0,
         priceMin: Number(g.basePrice) / 1_000_000,
@@ -220,7 +220,7 @@ const GridMarketPage: FC = () => {
 
   const displayListings = displayGrids || gridListings;
 
-  const displayStats = apiGrids
+  const displayStats = Array.isArray(apiGrids) && apiGrids.length > 0
     ? [
         { label: 'Total Grids', value: String(apiGrids.length) },
         { label: 'Available Pixels', value: formatViews(String(apiGrids.reduce((sum, g) => sum + (g.totalPixels - g.soldPixels), 0))) },

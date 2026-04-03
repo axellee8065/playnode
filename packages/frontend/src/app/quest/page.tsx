@@ -161,11 +161,11 @@ const QuestPage: FC = () => {
         gameTag: q.gameTag,
         category: 'writing' as QuestCategory,
         reward: Number(q.rewardAmount) / 1_000_000,
-        deadline: q.deadline.slice(0, 10),
+        deadline: String(q.deadline).slice(0, 10),
         minRank: q.minRank >= 3 ? 'Gold' : q.minRank >= 2 ? 'Silver' : 'Bronze',
         status: q.status === 0 ? 'OPEN' as const : 'IN_PROGRESS' as const,
         description: q.description,
-        publisher: q.creator.slice(0, 10) + '...',
+        publisher: String(q.creator).slice(0, 10) + '...',
       }))
     : quests;
 

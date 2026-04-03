@@ -187,18 +187,18 @@ export default function DropDetailPage() {
     ? {
         title: apiDrop.title,
         author: { ...DROP.author, name: apiDrop.node?.displayName || apiDrop.author },
-        date: apiDrop.createdAt.slice(0, 10).replace(/-/g, '.'),
+        date: String(apiDrop.createdAt).slice(0, 10).replace(/-/g, '.'),
         views: formatViews(apiDrop.totalViews),
         purchases: apiDrop.totalPurchases,
         price: Number(apiDrop.price) / 1_000_000,
         gameTag: apiDrop.gameTag,
         totalEarned: Number(apiDrop.totalEarned) / 1_000_000,
         version: `v${apiDrop.version}`,
-        lastUpdate: apiDrop.updatedAt.slice(0, 10).replace(/-/g, '.'),
+        lastUpdate: String(apiDrop.updatedAt).slice(0, 10).replace(/-/g, '.'),
       }
     : DROP;
 
-  const relatedDrops = apiRelated
+  const relatedDrops = Array.isArray(apiRelated) && apiRelated.length > 0
     ? apiRelated.filter((d) => d.id !== dropId).slice(0, 3).map((d) => ({
         title: d.title,
         author: d.node?.displayName || d.author,

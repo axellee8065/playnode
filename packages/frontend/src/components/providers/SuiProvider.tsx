@@ -39,43 +39,50 @@ export default function SuiProvider({ children }: { children: ReactNode }) {
   const connect = useCallback(async () => {
     setConnecting(true);
     try {
-      // Check for Sui wallet via wallet-standard
-      const wallets = (window as any).__suiWallets?.wallets ||
-        (window as any).navigator?.wallets?.getWallets?.() || [];
+      // Try all known Sui wallet detection methods
+      const win = window as any;
 
-      if (wallets.length === 0) {
-        // Fallback: try window.suiWallet (Sui Wallet extension)
-        const suiWallet = (window as any).suiWallet;
-        if (suiWallet) {
-          const permission = await suiWallet.requestPermissions();
-          if (permission) {
-            const accounts = await suiWallet.getAccounts();
-            if (accounts.length > 0) {
-              setAddress(accounts[0]);
-              localStorage.setItem('playnode_wallet', accounts[0]);
-              return;
-            }
-          }
-        }
+      // Method 1: wallet-standard registry (used by Sui Wallet, Suiet, Ethos, etc.)
+      const registry = win.__walletStandard__?.register
+        ? win.__walletStandard__
+        : null;
+      const registeredWallets = registry?.wallets || [];
 
-        // No wallet found - show install prompt
-        window.open('https://chromewebstore.google.com/detail/sui-wallet/opcgpfmipidbgpenhmajoajpbobppdil', '_blank');
-        return;
-      }
+      // Method 2: Direct Sui wallet APIs
+      const suiWallet = win.sui || win.suiWallet || win.slush;
 
-      // Use first available Sui wallet
-      const wallet = wallets[0];
-      const features = wallet.features;
-      const connectFeature = features['standard:connect'];
-      if (connectFeature) {
-        const result = await connectFeature.connect();
-        const accounts = result.accounts;
-        if (accounts.length > 0) {
-          const addr = accounts[0].address;
+      // Combine all found wallets
+      const allWallets = registeredWallets
+        .filter((w: any) => w?.features?.['standard:connect']);
+
+      if (allWallets.length > 0) {
+        // Use first compatible wallet
+        const wallet = allWallets[0];
+        const result = await wallet.features['standard:connect'].connect();
+        if (result.accounts?.length > 0) {
+          const addr = result.accounts[0].address;
           setAddress(addr);
           localStorage.setItem('playnode_wallet', addr);
+          return;
         }
       }
+
+      // Fallback: try direct Sui wallet API
+      if (suiWallet) {
+        const hasPermission = await suiWallet.hasPermissions?.()
+          || await suiWallet.requestPermissions?.();
+        if (hasPermission) {
+          const accounts = await suiWallet.getAccounts();
+          if (accounts?.length > 0) {
+            setAddress(accounts[0]);
+            localStorage.setItem('playnode_wallet', accounts[0]);
+            return;
+          }
+        }
+      }
+
+      // No wallet found — open Sui Wallet install page
+      window.open('https://chromewebstore.google.com/detail/sui-wallet/opcgpfmipidbgpenhmajoajpbobppdil', '_blank');
     } catch (err) {
       console.error('Wallet connection failed:', err);
     } finally {

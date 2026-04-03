@@ -177,7 +177,7 @@ export default function NodeProfilePage() {
         gameVariant: 'drop' as const,
         price: d.isPremium ? Number(d.price) / 1_000_000 : null,
         views: formatViews(d.totalViews),
-        date: d.createdAt.slice(0, 10),
+        date: String(d.createdAt).slice(0, 10),
       }))
     : DROPS;
 
