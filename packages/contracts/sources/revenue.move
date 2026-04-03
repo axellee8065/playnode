@@ -46,7 +46,7 @@ module playnode::revenue {
     // ─── Objects ──────────────────────────────────────────────
 
     /// Shared singleton that stores the platform addresses and split rates.
-    struct RevenueConfig has key {
+    public struct RevenueConfig has key {
         id: UID,
         admin: address,
         /// Platform treasury address.
@@ -77,7 +77,7 @@ module playnode::revenue {
 
     // ─── Events ───────────────────────────────────────────────
 
-    struct RevenueDistributed has copy, drop {
+    public struct RevenueDistributed has copy, drop {
         category: u8,  // 0=drop, 1=grid, 2=shop, 3=quest
         total_amount: u64,
         creator_share: u64,
@@ -85,7 +85,7 @@ module playnode::revenue {
         other_share: u64,
     }
 
-    struct ConfigCreated has copy, drop {
+    public struct ConfigCreated has copy, drop {
         config_id: ID,
         admin: address,
     }
@@ -140,7 +140,7 @@ module playnode::revenue {
     /// Split a coin into three portions by basis points and transfer them.
     /// Returns nothing — all coins are transferred inside.
     fun split_and_send(
-        payment: Coin<SUI>,
+        mut payment: Coin<SUI>,
         addr_a: address,
         bps_a: u64,
         addr_b: address,

@@ -20,7 +20,7 @@ module playnode::shop {
     // ─── Objects ──────────────────────────────────────────────
 
     /// An affiliate link to an external game store or product.
-    struct ShopLink has key, store {
+    public struct ShopLink has key, store {
         id: UID,
         creator: address,
         game_id: String,
@@ -39,7 +39,7 @@ module playnode::shop {
 
     /// A curated collection of ShopLinks bundled together as a recommendation
     /// list (e.g. "Best RPGs of 2026").
-    struct CuratedBundle has key, store {
+    public struct CuratedBundle has key, store {
         id: UID,
         creator: address,
         title: String,
@@ -52,24 +52,24 @@ module playnode::shop {
 
     // ─── Events ───────────────────────────────────────────────
 
-    struct ShopLinkCreated has copy, drop {
+    public struct ShopLinkCreated has copy, drop {
         link_id: ID,
         creator: address,
         game_id: String,
     }
 
-    struct BundleCreated has copy, drop {
+    public struct BundleCreated has copy, drop {
         bundle_id: ID,
         creator: address,
         title: String,
     }
 
-    struct ClickRecorded has copy, drop {
+    public struct ClickRecorded has copy, drop {
         link_id: ID,
         clicker: address,
     }
 
-    struct ConversionRecorded has copy, drop {
+    public struct ConversionRecorded has copy, drop {
         link_id: ID,
         commission: u64,
     }

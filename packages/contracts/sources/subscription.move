@@ -18,7 +18,7 @@ module playnode::subscription {
     // ─── Objects ──────────────────────────────────────────────
 
     /// A subscription pass (NFT) held by the subscriber.
-    struct LinkPass has key, store {
+    public struct LinkPass has key, store {
         id: UID,
         /// The creator's Node ID this pass subscribes to.
         node_id: ID,
@@ -39,7 +39,7 @@ module playnode::subscription {
 
     // ─── Events ───────────────────────────────────────────────
 
-    struct Subscribed has copy, drop {
+    public struct Subscribed has copy, drop {
         pass_id: ID,
         node_id: ID,
         subscriber: address,
@@ -47,13 +47,13 @@ module playnode::subscription {
         amount: u64,
     }
 
-    struct Renewed has copy, drop {
+    public struct Renewed has copy, drop {
         pass_id: ID,
         new_expiry: u64,
         amount: u64,
     }
 
-    struct Cancelled has copy, drop {
+    public struct Cancelled has copy, drop {
         pass_id: ID,
         subscriber: address,
     }

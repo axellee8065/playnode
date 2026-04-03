@@ -28,7 +28,7 @@ module playnode::quest {
     // ─── Objects ──────────────────────────────────────────────
 
     /// A quest/bounty posted by a creator or sponsor.
-    struct Quest has key, store {
+    public struct Quest has key, store {
         id: UID,
         poster: address,
         title: String,
@@ -50,31 +50,31 @@ module playnode::quest {
 
     // ─── Events ───────────────────────────────────────────────
 
-    struct QuestCreated has copy, drop {
+    public struct QuestCreated has copy, drop {
         quest_id: ID,
         poster: address,
         title: String,
         bounty_amount: u64,
     }
 
-    struct QuestAccepted has copy, drop {
+    public struct QuestAccepted has copy, drop {
         quest_id: ID,
         participant: address,
     }
 
-    struct QuestSubmitted has copy, drop {
+    public struct QuestSubmitted has copy, drop {
         quest_id: ID,
         participant: address,
         submission_uri: String,
     }
 
-    struct QuestApproved has copy, drop {
+    public struct QuestApproved has copy, drop {
         quest_id: ID,
         participant: address,
         bounty_amount: u64,
     }
 
-    struct QuestCancelled has copy, drop {
+    public struct QuestCancelled has copy, drop {
         quest_id: ID,
     }
 

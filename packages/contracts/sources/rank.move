@@ -43,7 +43,7 @@ module playnode::rank {
 
     /// Soulbound rank badge. No `store` ability = cannot be transferred
     /// or wrapped after initial transfer.
-    struct Rank has key {
+    public struct Rank has key {
         id: UID,
         owner: address,
         node_id: ID,
@@ -53,19 +53,19 @@ module playnode::rank {
     }
 
     /// Admin capability for setting Master rank.
-    struct RankAdmin has key, store {
+    public struct RankAdmin has key, store {
         id: UID,
     }
 
     // ─── Events ───────────────────────────────────────────────
 
-    struct RankCreated has copy, drop {
+    public struct RankCreated has copy, drop {
         rank_id: ID,
         owner: address,
         tier: u8,
     }
 
-    struct RankUpdated has copy, drop {
+    public struct RankUpdated has copy, drop {
         rank_id: ID,
         old_tier: u8,
         new_tier: u8,

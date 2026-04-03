@@ -24,7 +24,7 @@ module playnode::pixel_grid {
     // ─── Objects ──────────────────────────────────────────────
 
     /// The shared grid object. One per game page or global.
-    struct PixelGrid has key {
+    public struct PixelGrid has key {
         id: UID,
         admin: address,
         /// Grid dimensions.
@@ -41,7 +41,7 @@ module playnode::pixel_grid {
     /// A purchased rectangular block on the grid.
     /// Stored as a dynamic field on PixelGrid keyed by (x, y) tuple encoded
     /// as a u128: (x << 64) | y.
-    struct PixelBlock has store, drop {
+    public struct PixelBlock has store, drop {
         owner: address,
         x: u64,
         y: u64,
@@ -53,7 +53,7 @@ module playnode::pixel_grid {
     }
 
     /// An auction for a specific pixel-block coordinate.
-    struct Auction has key {
+    public struct Auction has key {
         id: UID,
         grid_id: ID,
         x: u64,
@@ -69,14 +69,14 @@ module playnode::pixel_grid {
 
     // ─── Events ───────────────────────────────────────────────
 
-    struct GridCreated has copy, drop {
+    public struct GridCreated has copy, drop {
         grid_id: ID,
         admin: address,
         width: u64,
         height: u64,
     }
 
-    struct PixelsPurchased has copy, drop {
+    public struct PixelsPurchased has copy, drop {
         grid_id: ID,
         buyer: address,
         x: u64,
@@ -86,21 +86,21 @@ module playnode::pixel_grid {
         amount: u64,
     }
 
-    struct PixelsRenewed has copy, drop {
+    public struct PixelsRenewed has copy, drop {
         grid_id: ID,
         owner: address,
         x: u64,
         y: u64,
     }
 
-    struct AuctionStarted has copy, drop {
+    public struct AuctionStarted has copy, drop {
         auction_id: ID,
         grid_id: ID,
         x: u64,
         y: u64,
     }
 
-    struct AuctionClaimed has copy, drop {
+    public struct AuctionClaimed has copy, drop {
         auction_id: ID,
         winner: address,
         amount: u64,
@@ -219,11 +219,14 @@ module playnode::pixel_grid {
         assert!(coin::value(&payment) >= cost, EInsufficientPayment);
 
         block.expires_at = block.expires_at + grid.rental_period;
+        let block_owner = block.owner;
+        // Drop the mutable borrow before borrowing grid.id immutably
         grid.total_revenue = grid.total_revenue + coin::value(&payment);
 
+        let grid_id = object::uid_to_inner(&grid.id);
         event::emit(PixelsRenewed {
-            grid_id: object::uid_to_inner(&grid.id),
-            owner: block.owner,
+            grid_id,
+            owner: block_owner,
             x,
             y,
         });

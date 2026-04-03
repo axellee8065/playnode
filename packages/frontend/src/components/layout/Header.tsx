@@ -4,7 +4,7 @@ import { type FC, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import Logo from '../common/Logo';
-import Button from '../common/Button';
+import ConnectWalletButton from '../common/ConnectWalletButton';
 
 const navLinks = [
   { label: 'Explore', href: '/explore' },
@@ -41,9 +41,7 @@ const Header: FC = () => {
 
         {/* Right: wallet + hamburger */}
         <div className="flex items-center gap-3">
-          <Button variant="primary" size="sm" className="hidden sm:inline-flex">
-            Connect Wallet
-          </Button>
+          <ConnectWalletButton className="hidden sm:inline-flex" />
 
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -76,9 +74,7 @@ const Header: FC = () => {
                 </a>
               ))}
               <div className="pt-2 sm:hidden">
-                <Button variant="primary" size="sm" className="w-full">
-                  Connect Wallet
-                </Button>
+                <ConnectWalletButton className="w-full" />
               </div>
             </div>
           </motion.nav>

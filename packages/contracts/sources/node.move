@@ -17,7 +17,7 @@ module playnode::node {
     // ─── Objects ──────────────────────────────────────────────
 
     /// The primary creator identity object. Owned by the creator's address.
-    struct Node has key {
+    public struct Node has key {
         id: UID,
         owner: address,
         display_name: String,
@@ -37,7 +37,7 @@ module playnode::node {
 
     /// A game-platform identity attached to a Node via dynamic field.
     /// Key for the dynamic field is the platform String.
-    struct GameProfile has store, drop {
+    public struct GameProfile has store, drop {
         platform: String,
         username: String,
         verified: bool,
@@ -47,23 +47,23 @@ module playnode::node {
 
     // ─── Events ───────────────────────────────────────────────
 
-    struct NodeCreated has copy, drop {
+    public struct NodeCreated has copy, drop {
         node_id: ID,
         owner: address,
         display_name: String,
     }
 
-    struct NodeUpdated has copy, drop {
+    public struct NodeUpdated has copy, drop {
         node_id: ID,
         display_name: String,
     }
 
-    struct GameProfileAdded has copy, drop {
+    public struct GameProfileAdded has copy, drop {
         node_id: ID,
         platform: String,
     }
 
-    struct GameProfileVerified has copy, drop {
+    public struct GameProfileVerified has copy, drop {
         node_id: ID,
         platform: String,
     }

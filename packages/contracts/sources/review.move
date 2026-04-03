@@ -16,7 +16,7 @@ module playnode::review {
     // ─── Objects ──────────────────────────────────────────────
 
     /// An on-chain game review authored by a creator.
-    struct Review has key, store {
+    public struct Review has key, store {
         id: UID,
         author: address,
         node_id: ID,
@@ -34,19 +34,19 @@ module playnode::review {
 
     // ─── Events ───────────────────────────────────────────────
 
-    struct ReviewCreated has copy, drop {
+    public struct ReviewCreated has copy, drop {
         review_id: ID,
         author: address,
         game_id: String,
         rating: u8,
     }
 
-    struct ReviewUpdated has copy, drop {
+    public struct ReviewUpdated has copy, drop {
         review_id: ID,
         rating: u8,
     }
 
-    struct ReviewMarkedHelpful has copy, drop {
+    public struct ReviewMarkedHelpful has copy, drop {
         review_id: ID,
         voter: address,
     }

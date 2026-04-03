@@ -25,7 +25,7 @@ module playnode::drop {
     // ─── Objects ──────────────────────────────────────────────
 
     /// A published guide/walkthrough. Owned by the creator.
-    struct Drop has key, store {
+    public struct Drop has key, store {
         id: UID,
         creator: address,
         node_id: ID,
@@ -47,14 +47,14 @@ module playnode::drop {
 
     /// A content patch appended to a Drop via dynamic field.
     /// Key is the patch index (u64).
-    struct Patch has store, drop {
+    public struct Patch has store, drop {
         content_uri: String,
         description: String,
         created_at: u64,
     }
 
     /// Receipt given to purchasers as proof of access.
-    struct PurchaseReceipt has key, store {
+    public struct PurchaseReceipt has key, store {
         id: UID,
         drop_id: ID,
         buyer: address,
@@ -64,25 +64,25 @@ module playnode::drop {
 
     // ─── Events ───────────────────────────────────────────────
 
-    struct DropPublished has copy, drop {
+    public struct DropPublished has copy, drop {
         drop_id: ID,
         creator: address,
         title: String,
         price: u64,
     }
 
-    struct DropPurchased has copy, drop {
+    public struct DropPurchased has copy, drop {
         drop_id: ID,
         buyer: address,
         amount: u64,
     }
 
-    struct DropUpdated has copy, drop {
+    public struct DropUpdated has copy, drop {
         drop_id: ID,
         title: String,
     }
 
-    struct PatchAdded has copy, drop {
+    public struct PatchAdded has copy, drop {
         drop_id: ID,
         patch_index: u64,
     }

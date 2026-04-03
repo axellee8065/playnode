@@ -21,7 +21,7 @@ module playnode::verify {
     // ─── Objects ──────────────────────────────────────────────
 
     /// A verification record attesting to a user's playtime on a game.
-    struct VerificationRecord has key, store {
+    public struct VerificationRecord has key, store {
         id: UID,
         /// The user whose playtime is verified.
         user: address,
@@ -40,28 +40,28 @@ module playnode::verify {
     }
 
     /// Capability object held by trusted verifier oracles.
-    struct VerifierCap has key, store {
+    public struct VerifierCap has key, store {
         id: UID,
         verifier: address,
     }
 
     // ─── Events ───────────────────────────────────────────────
 
-    struct VerificationSubmitted has copy, drop {
+    public struct VerificationSubmitted has copy, drop {
         record_id: ID,
         user: address,
         game_id: String,
         playtime_hours: u64,
     }
 
-    struct VerificationValidated has copy, drop {
+    public struct VerificationValidated has copy, drop {
         record_id: ID,
         user: address,
         game_id: String,
         status: u8,
     }
 
-    struct VerifierCapCreated has copy, drop {
+    public struct VerifierCapCreated has copy, drop {
         cap_id: ID,
         verifier: address,
     }
