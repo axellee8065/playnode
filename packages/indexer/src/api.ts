@@ -3,6 +3,8 @@ import { prisma } from "./db.js";
 
 const router = Router();
 
+const qs = (v: unknown): string | undefined => typeof v === 'string' ? v : undefined;
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -39,9 +41,10 @@ function json(res: Response, data: unknown, status = 200) {
 router.get("/api/nodes", async (req: Request, res: Response) => {
   try {
     const { take, skip } = pagination(req.query as Record<string, string>);
-    const orderBy = req.query.sort === "views"
+    const sort = qs(req.query.sort);
+    const orderBy = sort === "views"
       ? { totalViews: "desc" as const }
-      : req.query.sort === "earned"
+      : sort === "earned"
         ? { totalEarned: "desc" as const }
         : { rank: "asc" as const };
 
@@ -58,8 +61,9 @@ router.get("/api/nodes", async (req: Request, res: Response) => {
 
 router.get("/api/nodes/:id", async (req: Request, res: Response) => {
   try {
+    const id = qs(req.params.id)!;
     const node = await prisma.node.findUnique({
-      where: { id: req.params.id },
+      where: { id },
       include: { gameProfiles: true },
     });
     if (!node) return res.status(404).json({ error: "Node not found" });
@@ -72,15 +76,16 @@ router.get("/api/nodes/:id", async (req: Request, res: Response) => {
 
 router.get("/api/nodes/:id/drops", async (req: Request, res: Response) => {
   try {
+    const nodeId = qs(req.params.id)!;
     const { take, skip } = pagination(req.query as Record<string, string>);
     const [drops, total] = await Promise.all([
       prisma.drop.findMany({
-        where: { nodeId: req.params.id },
+        where: { nodeId },
         take,
         skip,
         orderBy: { createdAt: "desc" },
       }),
-      prisma.drop.count({ where: { nodeId: req.params.id } }),
+      prisma.drop.count({ where: { nodeId } }),
     ]);
     json(res, { data: drops, total, take, skip });
   } catch (err) {
@@ -91,15 +96,16 @@ router.get("/api/nodes/:id/drops", async (req: Request, res: Response) => {
 
 router.get("/api/nodes/:id/reviews", async (req: Request, res: Response) => {
   try {
+    const nodeId = qs(req.params.id)!;
     const { take, skip } = pagination(req.query as Record<string, string>);
     const [reviews, total] = await Promise.all([
       prisma.review.findMany({
-        where: { nodeId: req.params.id },
+        where: { nodeId },
         take,
         skip,
         orderBy: { createdAt: "desc" },
       }),
-      prisma.review.count({ where: { nodeId: req.params.id } }),
+      prisma.review.count({ where: { nodeId } }),
     ]);
     json(res, { data: reviews, total, take, skip });
   } catch (err) {
@@ -110,9 +116,10 @@ router.get("/api/nodes/:id/reviews", async (req: Request, res: Response) => {
 
 router.get("/api/nodes/:id/revenue", async (req: Request, res: Response) => {
   try {
+    const id = qs(req.params.id)!;
     const { take, skip } = pagination(req.query as Record<string, string>);
     const node = await prisma.node.findUnique({
-      where: { id: req.params.id },
+      where: { id },
       select: { owner: true },
     });
     if (!node) return res.status(404).json({ error: "Node not found" });
@@ -141,13 +148,17 @@ router.get("/api/drops", async (req: Request, res: Response) => {
   try {
     const { take, skip } = pagination(req.query as Record<string, string>);
     const where: Record<string, unknown> = {};
-    if (req.query.gameTag) where.gameTag = req.query.gameTag;
-    if (req.query.category) where.category = parseInt(req.query.category as string, 10);
-    if (req.query.author) where.author = req.query.author;
+    const gameTag = qs(req.query.gameTag);
+    const category = qs(req.query.category);
+    const author = qs(req.query.author);
+    if (gameTag) where.gameTag = gameTag;
+    if (category) where.category = parseInt(category, 10);
+    if (author) where.author = author;
 
-    const orderBy = req.query.sort === "views"
+    const sort = qs(req.query.sort);
+    const orderBy = sort === "views"
       ? { totalViews: "desc" as const }
-      : req.query.sort === "earned"
+      : sort === "earned"
         ? { totalEarned: "desc" as const }
         : { createdAt: "desc" as const };
 
@@ -164,8 +175,9 @@ router.get("/api/drops", async (req: Request, res: Response) => {
 
 router.get("/api/drops/:id", async (req: Request, res: Response) => {
   try {
+    const id = qs(req.params.id)!;
     const drop = await prisma.drop.findUnique({
-      where: { id: req.params.id },
+      where: { id },
       include: { node: true, pixelGrid: { include: { blocks: true } } },
     });
     if (!drop) return res.status(404).json({ error: "Drop not found" });
@@ -178,12 +190,13 @@ router.get("/api/drops/:id", async (req: Request, res: Response) => {
 
 router.post("/api/drops/:id/view", async (req: Request, res: Response) => {
   try {
-    const drop = await prisma.drop.findUnique({ where: { id: req.params.id } });
+    const id = qs(req.params.id)!;
+    const drop = await prisma.drop.findUnique({ where: { id } });
     if (!drop) return res.status(404).json({ error: "Drop not found" });
 
     await Promise.all([
       prisma.drop.update({
-        where: { id: req.params.id },
+        where: { id },
         data: { totalViews: { increment: 1 } },
       }),
       prisma.node.update({
@@ -193,7 +206,7 @@ router.post("/api/drops/:id/view", async (req: Request, res: Response) => {
       prisma.pageView.create({
         data: {
           pageType: "drop",
-          pageId: req.params.id,
+          pageId: id,
           viewerAddr: (req.body?.viewerAddr as string) ?? null,
         },
       }),
@@ -213,13 +226,17 @@ router.get("/api/reviews", async (req: Request, res: Response) => {
   try {
     const { take, skip } = pagination(req.query as Record<string, string>);
     const where: Record<string, unknown> = {};
-    if (req.query.gameTag) where.gameTag = req.query.gameTag;
-    if (req.query.author) where.author = req.query.author;
-    if (req.query.minRating) where.rating = { gte: parseInt(req.query.minRating as string, 10) };
+    const gameTag = qs(req.query.gameTag);
+    const author = qs(req.query.author);
+    const minRating = qs(req.query.minRating);
+    if (gameTag) where.gameTag = gameTag;
+    if (author) where.author = author;
+    if (minRating) where.rating = { gte: parseInt(minRating, 10) };
 
-    const orderBy = req.query.sort === "helpful"
+    const sort = qs(req.query.sort);
+    const orderBy = sort === "helpful"
       ? { helpfulCount: "desc" as const }
-      : req.query.sort === "rating"
+      : sort === "rating"
         ? { rating: "desc" as const }
         : { createdAt: "desc" as const };
 
@@ -236,8 +253,9 @@ router.get("/api/reviews", async (req: Request, res: Response) => {
 
 router.get("/api/reviews/:id", async (req: Request, res: Response) => {
   try {
+    const id = qs(req.params.id)!;
     const review = await prisma.review.findUnique({
-      where: { id: req.params.id },
+      where: { id },
       include: { node: true, pixelGrid: { include: { blocks: true } } },
     });
     if (!review) return res.status(404).json({ error: "Review not found" });
@@ -285,7 +303,7 @@ router.get("/api/games", async (req: Request, res: Response) => {
 
 router.get("/api/games/:slug", async (req: Request, res: Response) => {
   try {
-    const gameTag = req.params.slug;
+    const gameTag = qs(req.params.slug)!;
 
     const [dropCount, reviewCount, drops, reviews] = await Promise.all([
       prisma.drop.count({ where: { gameTag } }),
@@ -302,8 +320,8 @@ router.get("/api/games/:slug", async (req: Request, res: Response) => {
       gameTag,
       dropCount,
       reviewCount,
-      totalViews: drops._sum.totalViews?.toString() ?? "0",
-      averageRating: reviews._avg.rating ?? 0,
+      totalViews: drops._sum?.totalViews?.toString() ?? "0",
+      averageRating: reviews._avg?.rating ?? 0,
     });
   } catch (err) {
     console.error("GET /api/games/:slug error:", err);
@@ -314,7 +332,7 @@ router.get("/api/games/:slug", async (req: Request, res: Response) => {
 router.get("/api/games/:slug/drops", async (req: Request, res: Response) => {
   try {
     const { take, skip } = pagination(req.query as Record<string, string>);
-    const gameTag = req.params.slug;
+    const gameTag = qs(req.params.slug)!;
     const [drops, total] = await Promise.all([
       prisma.drop.findMany({
         where: { gameTag },
@@ -335,7 +353,7 @@ router.get("/api/games/:slug/drops", async (req: Request, res: Response) => {
 router.get("/api/games/:slug/reviews", async (req: Request, res: Response) => {
   try {
     const { take, skip } = pagination(req.query as Record<string, string>);
-    const gameTag = req.params.slug;
+    const gameTag = qs(req.params.slug)!;
     const [reviews, total] = await Promise.all([
       prisma.review.findMany({
         where: { gameTag },
@@ -373,8 +391,9 @@ router.get("/api/grids", async (req: Request, res: Response) => {
 
 router.get("/api/grids/:id", async (req: Request, res: Response) => {
   try {
+    const id = qs(req.params.id)!;
     const grid = await prisma.pixelGrid.findUnique({
-      where: { id: req.params.id },
+      where: { id },
       include: { blocks: true },
     });
     if (!grid) return res.status(404).json({ error: "Grid not found" });
@@ -387,8 +406,9 @@ router.get("/api/grids/:id", async (req: Request, res: Response) => {
 
 router.get("/api/grids/:id/price", async (req: Request, res: Response) => {
   try {
+    const id = qs(req.params.id)!;
     const grid = await prisma.pixelGrid.findUnique({
-      where: { id: req.params.id },
+      where: { id },
       select: { basePrice: true, soldPixels: true, totalPixels: true, monthlyViews: true },
     });
     if (!grid) return res.status(404).json({ error: "Grid not found" });
@@ -421,8 +441,10 @@ router.get("/api/quests", async (req: Request, res: Response) => {
   try {
     const { take, skip } = pagination(req.query as Record<string, string>);
     const where: Record<string, unknown> = {};
-    if (req.query.gameTag) where.gameTag = req.query.gameTag;
-    if (req.query.status) where.status = parseInt(req.query.status as string, 10);
+    const gameTag = qs(req.query.gameTag);
+    const status = qs(req.query.status);
+    if (gameTag) where.gameTag = gameTag;
+    if (status) where.status = parseInt(status, 10);
 
     const [quests, total] = await Promise.all([
       prisma.quest.findMany({ where, take, skip, orderBy: { createdAt: "desc" } }),
@@ -437,7 +459,8 @@ router.get("/api/quests", async (req: Request, res: Response) => {
 
 router.get("/api/quests/:id", async (req: Request, res: Response) => {
   try {
-    const quest = await prisma.quest.findUnique({ where: { id: req.params.id } });
+    const id = qs(req.params.id)!;
+    const quest = await prisma.quest.findUnique({ where: { id } });
     if (!quest) return res.status(404).json({ error: "Quest not found" });
     json(res, quest);
   } catch (err) {
@@ -452,14 +475,15 @@ router.get("/api/quests/:id", async (req: Request, res: Response) => {
 
 router.get("/api/shop/links/:nodeId", async (req: Request, res: Response) => {
   try {
+    const nodeId = qs(req.params.nodeId)!;
     const { take, skip } = pagination(req.query as Record<string, string>);
     const [links, total] = await Promise.all([
       prisma.shopLink.findMany({
-        where: { nodeId: req.params.nodeId },
+        where: { nodeId },
         take,
         skip,
       }),
-      prisma.shopLink.count({ where: { nodeId: req.params.nodeId } }),
+      prisma.shopLink.count({ where: { nodeId } }),
     ]);
     json(res, { data: links, total, take, skip });
   } catch (err) {
@@ -471,7 +495,7 @@ router.get("/api/shop/links/:nodeId", async (req: Request, res: Response) => {
 router.get("/api/shop/bundles", async (req: Request, res: Response) => {
   try {
     const { take, skip } = pagination(req.query as Record<string, string>);
-    const gameId = req.query.gameId as string | undefined;
+    const gameId = qs(req.query.gameId);
     const where = gameId ? { gameId } : {};
 
     const [links, total] = await Promise.all([
@@ -512,7 +536,7 @@ router.get("/api/shop/bundles", async (req: Request, res: Response) => {
 router.get("/api/revenue/:address", async (req: Request, res: Response) => {
   try {
     const { take, skip } = pagination(req.query as Record<string, string>);
-    const creatorAddr = req.params.address;
+    const creatorAddr = qs(req.params.address)!;
 
     const [events, total, aggregate] = await Promise.all([
       prisma.revenueEvent.findMany({
@@ -547,7 +571,7 @@ router.get("/api/revenue/:address", async (req: Request, res: Response) => {
 
 router.get("/api/search", async (req: Request, res: Response) => {
   try {
-    const q = (req.query.q as string)?.trim();
+    const q = qs(req.query.q)?.trim();
     if (!q) return res.status(400).json({ error: "Query parameter 'q' is required" });
 
     const { take } = pagination(req.query as Record<string, string>);

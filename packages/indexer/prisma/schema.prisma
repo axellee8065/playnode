@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch"]
+  previewFeatures = ["fullTextSearchPostgres"]
 }
 
 datasource db {
@@ -63,7 +63,7 @@ model Drop {
   @@index([gameTag])
   @@index([author])
   @@index([totalViews])
-  @@fulltext([title])
+  @@index([title])
 }
 
 model Review {
