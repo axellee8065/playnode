@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit, JetBrains_Mono, Noto_Sans_KR } from "next/font/google";
 import "@/styles/globals.css";
-import SuiProvider from "@/components/providers/SuiProvider";
+import ClientProviders from "@/components/providers/ClientProviders";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -63,7 +63,7 @@ export default function RootLayout({
             backgroundRepeat: "repeat",
           }}
         />
-        <SuiProvider>{children}</SuiProvider>
+        <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
   );
