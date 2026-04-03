@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlayNode — Brand Identity System v2.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pn-black: #0A0A0B;
+  --pn-dark: #111113;
+  --pn-surface: #17171C;
+  --pn-surface-2: #1F1F26;
+  --pn-surface-3: #27272F;
+  --pn-border: #2A2A32;
+  --pn-border-light: #35353F;
+  --pn-muted: #6B6B7B;
+  --pn-text: #CDCDD6;
+  --pn-text-bright: #E8E8EE;
+  --pn-white: #F5F5F7;
+  --pn-green: #00FF88;
+  --pn-green-dim: #00CC6A;
+  --pn-green-dark: #00994F;
+  --pn-green-glow: rgba(0,255,136,0.12);
+  --pn-cyan: #00D4FF;
+  --pn-purple: #8B5CF6;
+  --pn-amber: #FFB800;
+  --pn-red: #FF4757;
+  --pn-blue: #3B82F6;
+  --radius: 14px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--pn-black);color:var(--pn-text);font-family:'Outfit','Noto Sans KR',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+.noise{position:fixed;top:0;left:0;width:100%;height:100%;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");pointer-events:none;z-index:999;}
+
+/* ===== HERO ===== */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:900px;height:900px;background:radial-gradient(circle,var(--pn-green-glow) 0%,transparent 65%);animation:glow 5s ease-in-out infinite;}
+@keyframes glow{0%,100%{opacity:.35;transform:translate(-50%,-50%) scale(1);}50%{opacity:.6;transform:translate(-50%,-50%) scale(1.08);}}
+.grid-bg{position:absolute;top:0;left:0;width:100%;height:100%;background-image:linear-gradient(rgba(0,255,136,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,136,.025) 1px,transparent 1px);background-size:64px 64px;}
+.hero-content{position:relative;z-index:2;text-align:center;}
+.logo-icon{width:100px;height:100px;margin:0 auto 28px;}
+.logo-icon svg{width:100%;height:100%;filter:drop-shadow(0 0 40px rgba(0,255,136,.25));}
+.wordmark{font-weight:900;font-size:80px;letter-spacing:-3px;color:var(--pn-white);line-height:1;}
+.wordmark span{color:var(--pn-green);}
+.tagline{font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:7px;text-transform:uppercase;color:var(--pn-muted);margin-top:14px;}
+.hero-sub{margin-top:36px;font-size:18px;color:var(--pn-text);max-width:520px;line-height:1.6;font-weight:300;}
+.hero-badges{display:flex;gap:10px;justify-content:center;margin-top:32px;flex-wrap:wrap;}
+.badge{padding:7px 18px;border:1px solid var(--pn-border-light);border-radius:100px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--pn-muted);}
+.badge.green{border-color:var(--pn-green);color:var(--pn-green);background:var(--pn-green-glow);}
+
+/* ===== SECTIONS ===== */
+.sec{padding:100px 40px;max-width:1240px;margin:0 auto;}
+.sec-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--pn-green);margin-bottom:10px;}
+.sec-title{font-size:38px;font-weight:800;color:var(--pn-white);letter-spacing:-1px;margin-bottom:16px;line-height:1.15;}
+.sec-desc{font-size:16px;color:var(--pn-muted);max-width:640px;line-height:1.6;margin-bottom:48px;}
+.divider{width:100%;height:1px;background:var(--pn-border);}
+
+/* ===== COLORS ===== */
+.color-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;}
+.color-card{border-radius:var(--radius);overflow:hidden;border:1px solid var(--pn-border);background:var(--pn-surface);}
+.color-swatch{height:80px;}
+.color-info{padding:14px;}
+.color-name{font-weight:600;font-size:13px;color:var(--pn-white);margin-bottom:2px;}
+.color-hex{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--pn-muted);}
+.color-role{font-size:10px;color:var(--pn-muted);margin-top:3px;}
+
+/* ===== TYPOGRAPHY ===== */
+.type-row{display:flex;align-items:baseline;gap:28px;padding:22px 0;border-bottom:1px solid var(--pn-border);}
+.type-label{min-width:120px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--pn-muted);letter-spacing:1.5px;text-transform:uppercase;}
+.t-h1{font-size:44px;font-weight:900;color:var(--pn-white);letter-spacing:-1.5px;}
+.t-h2{font-size:30px;font-weight:700;color:var(--pn-white);letter-spacing:-.5px;}
+.t-body{font-size:15px;color:var(--pn-text);line-height:1.6;}
+.t-mono{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:500;color:var(--pn-green);}
+.t-kr{font-family:'Noto Sans KR',sans-serif;font-size:22px;font-weight:700;color:var(--pn-white);}
+
+/* ===== LOGO VARS ===== */
+.logo-vars{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;}
+.logo-var{border:1px solid var(--pn-border);border-radius:var(--radius);padding:44px 28px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;position:relative;}
+.logo-var.dark{background:var(--pn-black);}
+.logo-var.light{background:#F0F0F2;}
+.logo-var.green{background:var(--pn-green);}
+.logo-var.surface{background:var(--pn-surface);}
+.lv-label{position:absolute;top:10px;left:14px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--pn-muted);}
+.logo-var.light .lv-label{color:#999;}
+.logo-var.green .lv-label{color:rgba(0,0,0,.35);}
+.lv-word{font-weight:900;font-size:32px;letter-spacing:-1px;}
+.lv-word.on-dark{color:var(--pn-white);}
+.lv-word.on-dark span{color:var(--pn-green);}
+.lv-word.on-light{color:var(--pn-black);}
+.lv-word.on-light span{color:#009E55;}
+.lv-word.on-green{color:var(--pn-black);}
+.lv-word.mono{color:var(--pn-white);}
+
+/* ===== FEATURES ===== */
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
+.feat{background:var(--pn-surface);border:1px solid var(--pn-border);border-radius:var(--radius);padding:28px;position:relative;overflow:hidden;}
+.feat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.feat.drops::before{background:var(--pn-green);}
+.feat.reviews::before{background:var(--pn-cyan);}
+.feat.shop::before{background:var(--pn-amber);}
+.feat.grid-f::before{background:var(--pn-purple);}
+.feat.community::before{background:var(--pn-red);}
+.feat-icon{font-size:28px;margin-bottom:14px;}
+.feat-name{font-weight:700;font-size:17px;color:var(--pn-white);margin-bottom:6px;}
+.feat-desc{font-size:13px;color:var(--pn-muted);line-height:1.5;}
+.feat-tag{display:inline-block;margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;padding:4px 10px;border-radius:6px;background:var(--pn-surface-2);color:var(--pn-text);}
+
+/* ===== TERMS ===== */
+.term-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2px;background:var(--pn-border);border-radius:var(--radius);overflow:hidden;}
+.term{background:var(--pn-surface);padding:22px;}
+.term-en{font-weight:700;font-size:18px;margin-bottom:2px;}
+.term-en.green{color:var(--pn-green);}
+.term-en.cyan{color:var(--pn-cyan);}
+.term-en.amber{color:var(--pn-amber);}
+.term-en.purple{color:var(--pn-purple);}
+.term-en.red{color:var(--pn-red);}
+.term-en.blue{color:var(--pn-blue);}
+.term-kr{font-family:'Noto Sans KR',sans-serif;font-size:12px;color:var(--pn-muted);margin-bottom:6px;}
+.term-desc{font-size:12px;color:var(--pn-text);line-height:1.45;}
+
+/* ===== TAGLINES ===== */
+.tag-list{display:flex;flex-direction:column;gap:10px;}
+.tag-item{background:var(--pn-surface);border:1px solid var(--pn-border);border-radius:12px;padding:28px;display:flex;align-items:center;gap:20px;}
+.tag-type{min-width:90px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--pn-green);}
+.tag-text{font-size:22px;font-weight:700;color:var(--pn-white);letter-spacing:-.3px;}
+.tag-text.kr{font-family:'Noto Sans KR',sans-serif;font-size:20px;}
+
+/* ===== REVENUE FLOW ===== */
+.flow-container{background:var(--pn-surface);border:1px solid var(--pn-border);border-radius:var(--radius);padding:32px;overflow-x:auto;}
+.flow-row{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.flow-box{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;white-space:nowrap;}
+.flow-box.src{background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.25);color:var(--pn-green);}
+.flow-box.router{background:var(--pn-surface-3);border:1px solid var(--pn-border-light);color:var(--pn-white);}
+.flow-box.dest{border:1px solid var(--pn-border);color:var(--pn-text-bright);}
+.flow-box.creator{background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);color:var(--pn-green);}
+.flow-arrow{color:var(--pn-muted);font-size:16px;}
+.flow-pct{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--pn-muted);}
+
+/* ===== APP PREVIEW ===== */
+.app{background:var(--pn-dark);border:1px solid var(--pn-border);border-radius:18px;overflow:hidden;margin-top:48px;}
+.app-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid var(--pn-border);background:var(--pn-surface);}
+.app-bar-left{display:flex;align-items:center;gap:10px;}
+.app-logo{font-weight:800;font-size:17px;color:var(--pn-white);}
+.app-logo span{color:var(--pn-green);}
+.app-nav{display:flex;gap:4px;}
+.app-nav a{font-size:12px;color:var(--pn-muted);text-decoration:none;font-weight:500;padding:6px 12px;border-radius:8px;transition:.15s;}
+.app-nav a.act{color:var(--pn-white);background:var(--pn-surface-2);}
+.app-right{display:flex;align-items:center;gap:10px;}
+.app-search{background:var(--pn-surface-2);border:1px solid var(--pn-border);border-radius:8px;padding:7px 14px;color:var(--pn-muted);font-size:12px;font-family:'Outfit',sans-serif;width:180px;outline:none;}
+.app-bal{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--pn-green);background:var(--pn-green-glow);padding:6px 12px;border-radius:8px;border:1px solid rgba(0,255,136,.15);}
+.app-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--pn-green),var(--pn-cyan));}
+
+.app-body{display:grid;grid-template-columns:240px 1fr 280px;min-height:520px;}
+
+/* Sidebar */
+.app-side{border-right:1px solid var(--pn-border);padding:20px;}
+.app-profile{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--pn-border);}
+.app-pfp{width:44px;height:44px;border-radius:11px;background:linear-gradient(135deg,var(--pn-purple),var(--pn-green));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:white;flex-shrink:0;}
+.app-pname{font-weight:700;font-size:14px;color:var(--pn-white);}
+.app-pbadge{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--pn-green);letter-spacing:1px;}
+.app-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px;}
+.app-stat{background:var(--pn-surface-2);border-radius:8px;padding:10px;text-align:center;}
+.app-stat-val{font-weight:800;font-size:16px;color:var(--pn-green);font-family:'JetBrains Mono',monospace;}
+.app-stat-lbl{font-size:9px;color:var(--pn-muted);margin-top:1px;letter-spacing:.5px;}
+.app-earn{background:linear-gradient(135deg,rgba(0,255,136,.08),rgba(0,212,255,.04));border:1px solid rgba(0,255,136,.15);border-radius:12px;padding:16px;text-align:center;margin-bottom:16px;}
+.app-earn-lbl{font-size:10px;color:var(--pn-muted);margin-bottom:3px;letter-spacing:1px;text-transform:uppercase;}
+.app-earn-val{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;color:var(--pn-green);}
+.app-earn-sub{font-size:10px;color:var(--pn-green-dim);margin-top:3px;}
+.app-menu{display:flex;flex-direction:column;gap:2px;}
+.app-menu-item{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;font-size:13px;color:var(--pn-muted);font-weight:500;cursor:default;}
+.app-menu-item.act{background:var(--pn-surface-2);color:var(--pn-white);}
+.app-menu-item .mi-icon{width:18px;text-align:center;font-size:14px;}
+.app-menu-item .mi-count{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--pn-muted);}
+
+/* Main */
+.app-main{padding:20px;overflow:hidden;}
+.app-main-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.app-main-title{font-size:18px;font-weight:700;color:var(--pn-white);}
+.app-tabs{display:flex;gap:4px;}
+.app-tab{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:500;color:var(--pn-muted);cursor:default;}
+.app-tab.act{background:var(--pn-surface-2);color:var(--pn-white);}
+.btn{background:var(--pn-green);color:var(--pn-black);border:none;border-radius:8px;padding:8px 18px;font-family:'Outfit',sans-serif;font-weight:700;font-size:12px;cursor:pointer;}
+
+.guide-list{display:flex;flex-direction:column;gap:10px;}
+.guide{background:var(--pn-surface);border:1px solid var(--pn-border);border-radius:12px;padding:16px;display:flex;align-items:center;gap:14px;}
+.guide-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.guide-info{flex:1;min-width:0;}
+.guide-title{font-weight:600;font-size:13px;color:var(--pn-white);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.guide-meta{font-size:11px;color:var(--pn-muted);display:flex;gap:12px;}
+.guide-type{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;padding:3px 7px;border-radius:4px;text-transform:uppercase;}
+.guide-type.drop{background:rgba(0,255,136,.1);color:var(--pn-green);}
+.guide-type.review{background:rgba(0,212,255,.1);color:var(--pn-cyan);}
+.guide-type.shop{background:rgba(255,184,0,.1);color:var(--pn-amber);}
+.guide-price{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;color:var(--pn-green);flex-shrink:0;}
+.guide-free{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--pn-muted);background:var(--pn-surface-2);padding:3px 8px;border-radius:5px;flex-shrink:0;}
+
+/* Right Panel */
+.app-right-panel{border-left:1px solid var(--pn-border);padding:20px;display:flex;flex-direction:column;gap:16px;}
+.panel-section{background:var(--pn-surface);border:1px solid var(--pn-border);border-radius:12px;padding:16px;}
+.panel-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--pn-muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
+
+/* Pixel Grid Visual */
+.pixel-grid-v{display:grid;grid-template-columns:repeat(16,1fr);gap:2px;}
+.px{aspect-ratio:1;border-radius:2px;background:var(--pn-surface-2);transition:.15s;}
+.px.s1{background:#1a4a8a;} .px.s2{background:#8a3a1a;} .px.s3{background:#1a6a3a;} .px.s4{background:#5a1a6a;} .px.s5{background:#6a5a1a;}
+.grid-stats{display:flex;justify-content:space-between;margin-top:10px;}
+.grid-stat-item{text-align:center;}
+.grid-stat-val{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--pn-green);}
+.grid-stat-lbl{font-size:9px;color:var(--pn-muted);}
+
+/* Revenue breakdown */
+.rev-bar{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.rev-bar-label{font-size:11px;color:var(--pn-text);min-width:70px;}
+.rev-bar-track{flex:1;height:6px;background:var(--pn-surface-2);border-radius:3px;overflow:hidden;}
+.rev-bar-fill{height:100%;border-radius:3px;}
+.rev-bar-val{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--pn-green);min-width:50px;text-align:right;}
+
+/* Shop preview */
+.shop-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--pn-border);}
+.shop-item:last-child{border-bottom:none;}
+.shop-thumb{width:36px;height:36px;border-radius:6px;background:var(--pn-surface-3);display:flex;align-items:center;justify-content:center;font-size:16px;}
+.shop-info{flex:1;}
+.shop-name{font-size:12px;font-weight:600;color:var(--pn-white);}
+.shop-comm{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--pn-amber);}
+
+.footer{text-align:center;padding:60px 40px;border-top:1px solid var(--pn-border);}
+.footer-text{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--pn-muted);letter-spacing:3px;}
+
+@media(max-width:1024px){.app-body{grid-template-columns:1fr;}.app-side,.app-right-panel{border:none;border-bottom:1px solid var(--pn-border);}}
+@media(max-width:768px){.sec{padding:60px 20px;}.wordmark{font-size:52px;}.sec-title{font-size:28px;}.type-row{flex-direction:column;gap:6px;}.tag-item{flex-direction:column;gap:6px;}.app-bar{flex-wrap:wrap;gap:8px;}.app-right{display:none;}}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+<div class="grid-bg"></div>
+<div class="hero-content">
+  <div class="logo-icon">
+    <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M60 8L108 32V78L60 112L12 78V32L60 8Z" stroke="#00FF88" stroke-width="2" fill="none" opacity=".25"/>
+      <path d="M60 18L98 38V72L60 102L22 72V38L60 18Z" stroke="#00FF88" stroke-width="2.5" fill="none" opacity=".5"/>
+      <path d="M48 40L48 80L82 60L48 40Z" fill="#00FF88"/>
+      <circle cx="60" cy="8" r="4" fill="#00FF88"/><circle cx="108" cy="32" r="3" fill="#00FF88" opacity=".5"/>
+      <circle cx="108" cy="78" r="3" fill="#00FF88" opacity=".5"/><circle cx="60" cy="112" r="4" fill="#00FF88"/>
+      <circle cx="12" cy="78" r="3" fill="#00FF88" opacity=".5"/><circle cx="12" cy="32" r="3" fill="#00FF88" opacity=".5"/>
+    </svg>
+  </div>
+  <div class="wordmark">Play<span>Node</span></div>
+  <div class="tagline">Game Creator Economy on Sui</div>
+  <div class="hero-sub">게임에 대한 모든 활동이 USDC 수익이 되는 크리에이터 플랫폼. 공략, 리뷰, 추천, 광고 — 전부 당신의 수익.</div>
+  <div class="hero-badges">
+    <div class="badge green">BUILT ON SUI</div>
+    <div class="badge">USDC NATIVE</div>
+    <div class="badge">CREATOR-FIRST</div>
+  </div>
+</div>
+</section>
+
+<!-- ===== PRODUCT PILLARS ===== -->
+<section class="sec">
+<div class="sec-label">01 — Product Pillars</div>
+<div class="sec-title">5 Revenue Engines, 1 Node</div>
+<div class="sec-desc">하나의 크리에이터 Node에서 5가지 수익이 동시에 흐른다. 각각이 서로를 강화하는 플라이휠.</div>
+<div class="feat-grid">
+  <div class="feat drops">
+    <div class="feat-icon">📝</div>
+    <div class="feat-name">Drops</div>
+    <div class="feat-desc">게임 공략/가이드 발행. 무료 or 유료($1~$50 USDC). 파생 공략 시 원작자 로열티 자동 분배.</div>
+    <div class="feat-tag">무료 광고수익 + 프리미엄 판매</div>
+  </div>
+  <div class="feat reviews">
+    <div class="feat-icon">⭐</div>
+    <div class="feat-name">Reviews</div>
+    <div class="feat-desc">플레이타임 검증 게임 리뷰. Steam 842시간 Expert의 9.2점 = 신뢰. 조회·후원으로 수익화.</div>
+    <div class="feat-tag">검증 플레이타임 on-chain</div>
+  </div>
+  <div class="feat shop">
+    <div class="feat-icon">🛒</div>
+    <div class="feat-name">Shop</div>
+    <div class="feat-desc">게임 키/DLC 어필리에이트. "이 공략의 게임을 여기서 구매" → 커미션 5~15% USDC.</div>
+    <div class="feat-tag">리뷰→구매→공략 풀 퍼널</div>
+  </div>
+  <div class="feat grid-f">
+    <div class="feat-icon">🟩</div>
+    <div class="feat-name">Pixel Grid</div>
+    <div class="feat-desc">밀리언달러 홈페이지 진화. 조회수↑→픽셀 단가↑. 1개월 임대, 미연장 시 소멸. 크리에이터 55%.</div>
+    <div class="feat-tag">동적 가격 × 희소성 경매</div>
+  </div>
+  <div class="feat community">
+    <div class="feat-icon">💝</div>
+    <div class="feat-name">Community</div>
+    <div class="feat-desc">Link(구독) $5/월 + Ping(팁) 즉시 후원 + Quest(바운티) 게임사 의뢰. 전부 USDC.</div>
+    <div class="feat-tag">크리에이터 100% 수령</div>
+  </div>
+</div>
+</section>
+<div class="divider"></div>
+
+<!-- ===== COLOR ===== -->
+<section class="sec">
+<div class="sec-label">02 — Color System</div>
+<div class="sec-title">Palette</div>
+<div class="sec-desc">각 색상이 기능별 의미를 가진다. Node Green은 수익, Cyan은 정보, Amber는 커머스.</div>
+<div class="color-grid">
+  <div class="color-card"><div class="color-swatch" style="background:#00FF88"></div><div class="color-info"><div class="color-name">Node Green</div><div class="color-hex">#00FF88</div><div class="color-role">Primary · CTA · 수익 · USDC</div></div></div>
+  <div class="color-card"><div class="color-swatch" style="background:#0A0A0B"></div><div class="color-info"><div class="color-name">Deep Black</div><div class="color-hex">#0A0A0B</div><div class="color-role">Background</div></div></div>
+  <div class="color-card"><div class="color-swatch" style="background:#17171C"></div><div class="color-info"><div class="color-name">Surface</div><div class="color-hex">#17171C</div><div class="color-role">Cards · Panels</div></div></div>
+  <div class="color-card"><div class="color-swatch" style="background:#00D4FF"></div><div class="color-info"><div class="color-name">Cyan</div><div class="color-hex">#00D4FF</div><div class="color-role">Info · Reviews · 조회수</div></div></div>
+  <div class="color-card"><div class="color-swatch" style="background:#FFB800"></div><div class="color-info"><div class="color-name">Amber</div><div class="color-hex">#FFB800</div><div class="color-role">Shop · Quest · 커미션</div></div></div>
+  <div class="color-card"><div class="color-swatch" style="background:#8B5CF6"></div><div class="color-info"><div class="color-name">Purple</div><div class="color-hex">#8B5CF6</div><div class="color-role">Pixel Grid · Premium</div></div></div>
+  <div class="color-card"><div class="color-swatch" style="background:#FF4757"></div><div class="color-info"><div class="color-name">Red</div><div class="color-hex">#FF4757</div><div class="color-role">Community · Ping · Alert</div></div></div>
+  <div class="color-card"><div class="color-swatch" style="background:#3B82F6"></div><div class="color-info"><div class="color-name">Blue</div><div class="color-hex">#3B82F6</div><div class="color-role">Rank · Verification</div></div></div>
+</div>
+</section>
+<div class="divider"></div>
+
+<!-- ===== TYPOGRAPHY ===== -->
+<section class="sec">
+<div class="sec-label">03 — Typography</div>
+<div class="sec-title">Type System</div>
+<div>
+  <div class="type-row"><div class="type-label">Display</div><div class="t-h1">PlayNode</div></div>
+  <div class="type-row"><div class="type-label">Heading</div><div class="t-h2">Game Creator Economy</div></div>
+  <div class="type-row"><div class="type-label">Body</div><div class="t-body">Your guides, reviews, and recommendations become digital assets. Every view generates revenue. Every node earns.</div></div>
+  <div class="type-row"><div class="type-label">Mono / Data</div><div class="t-mono">$4,280.00 USDC earned this month · +23%</div></div>
+  <div class="type-row"><div class="type-label">Korean</div><div class="t-kr">공략이 수익이 되는 곳</div></div>
+</div>
+<div style="display:flex;gap:28px;flex-wrap:wrap;margin-top:28px;">
+  <div><div style="font-size:10px;color:var(--pn-muted);font-family:'JetBrains Mono';letter-spacing:1px;margin-bottom:6px;">PRIMARY</div><div style="font-size:26px;font-weight:800;color:var(--pn-white);">Outfit</div></div>
+  <div><div style="font-size:10px;color:var(--pn-muted);font-family:'JetBrains Mono';letter-spacing:1px;margin-bottom:6px;">MONO</div><div style="font-size:26px;font-weight:600;color:var(--pn-white);font-family:'JetBrains Mono';">JetBrains Mono</div></div>
+  <div><div style="font-size:10px;color:var(--pn-muted);font-family:'JetBrains Mono';letter-spacing:1px;margin-bottom:6px;">KOREAN</div><div style="font-size:26px;font-weight:700;color:var(--pn-white);font-family:'Noto Sans KR';">Noto Sans KR</div></div>
+</div>
+</section>
+<div class="divider"></div>
+
+<!-- ===== LOGO VARIATIONS ===== -->
+<section class="sec">
+<div class="sec-label">04 — Logo System</div>
+<div class="sec-title">Logo Variations</div>
+<div class="logo-vars">
+  <div class="logo-var dark"><span class="lv-label">On Dark</span><svg viewBox="0 0 60 60" width="40" fill="none"><path d="M30 4L54 16V39L30 56L6 39V16L30 4Z" stroke="#00FF88" stroke-width="1.5" fill="none" opacity=".4"/><path d="M24 20L24 40L41 30L24 20Z" fill="#00FF88"/></svg><div class="lv-word on-dark">Play<span>Node</span></div></div>
+  <div class="logo-var light"><span class="lv-label">On Light</span><svg viewBox="0 0 60 60" width="40" fill="none"><path d="M30 4L54 16V39L30 56L6 39V16L30 4Z" stroke="#009E55" stroke-width="1.5" fill="none" opacity=".4"/><path d="M24 20L24 40L41 30L24 20Z" fill="#009E55"/></svg><div class="lv-word on-light">Play<span>Node</span></div></div>
+  <div class="logo-var green"><span class="lv-label">On Brand</span><svg viewBox="0 0 60 60" width="40" fill="none"><path d="M30 4L54 16V39L30 56L6 39V16L30 4Z" stroke="#0A0A0B" stroke-width="1.5" fill="none" opacity=".25"/><path d="M24 20L24 40L41 30L24 20Z" fill="#0A0A0B"/></svg><div class="lv-word on-green">PlayNode</div></div>
+  <div class="logo-var surface"><span class="lv-label">Mono</span><svg viewBox="0 0 60 60" width="40" fill="none"><path d="M30 4L54 16V39L30 56L6 39V16L30 4Z" stroke="#F5F5F7" stroke-width="1.5" fill="none" opacity=".25"/><path d="M24 20L24 40L41 30L24 20Z" fill="#F5F5F7"/></svg><div class="lv-word mono">PlayNode</div></div>
+</div>
+</section>
+<div class="divider"></div>
+
+<!-- ===== TERMINOLOGY ===== -->
+<section class="sec">
+<div class="sec-label">05 — World Language</div>
+<div class="sec-title">Terminology</div>
+<div class="sec-desc">유저 대면 용어에서 "블록체인/토큰/온체인" 단어를 쓰지 않는다. 게이머 언어로만.</div>
+<div class="term-grid">
+  <div class="term"><div class="term-en green">Node</div><div class="term-kr">노드 — 크리에이터 홈</div><div class="term-desc">공략, 리뷰, 숍, 수익이 모이는 내 공간.</div></div>
+  <div class="term"><div class="term-en green">Drop</div><div class="term-kr">드롭 — 공략/가이드 발행</div><div class="term-desc">"새 드롭 떴다!" 공략을 발행하는 행위.</div></div>
+  <div class="term"><div class="term-en cyan">Review</div><div class="term-kr">리뷰 — 검증된 게임 평가</div><div class="term-desc">플레이타임이 on-chain 검증된 신뢰 리뷰.</div></div>
+  <div class="term"><div class="term-en amber">Shop</div><div class="term-kr">숍 — 게임 추천 커머스</div><div class="term-desc">"이 게임 여기서 사세요" → 커미션 수익.</div></div>
+  <div class="term"><div class="term-en purple">Grid</div><div class="term-kr">그리드 — 픽셀 광고판</div><div class="term-desc">뷰어↑ 단가↑. 1개월 임대. 동적 가격 경매.</div></div>
+  <div class="term"><div class="term-en green">Wire</div><div class="term-kr">와이어 — 수익 전송</div><div class="term-desc">USDC가 내 지갑으로 즉시 전송되는 것.</div></div>
+  <div class="term"><div class="term-en red">Ping</div><div class="term-kr">핑 — 팁/후원</div><div class="term-desc">일회성 USDC 후원. "좋은 공략, 핑 보낸다."</div></div>
+  <div class="term"><div class="term-en red">Link</div><div class="term-kr">링크 — 구독</div><div class="term-desc">크리에이터 월간 구독. 100% 크리에이터 수령.</div></div>
+  <div class="term"><div class="term-en amber">Quest</div><div class="term-kr">퀘스트 — 바운티/의뢰</div><div class="term-desc">게임사가 USDC 에스크로로 공략 제작 의뢰.</div></div>
+  <div class="term"><div class="term-en blue">Rank</div><div class="term-kr">랭크 — 크리에이터 등급</div><div class="term-desc">Bronze → Silver → Gold → Diamond → Master.</div></div>
+  <div class="term"><div class="term-en blue">Verify</div><div class="term-kr">검증 — 플레이타임 증명</div><div class="term-desc">Steam/Riot API 연동. 실력이 증명된 리뷰어.</div></div>
+  <div class="term"><div class="term-en green">Stamp</div><div class="term-kr">스탬프 — 원본 증명</div><div class="term-desc">공략 작성 시점 on-chain 타임스탬프. 도용 방지.</div></div>
+</div>
+</section>
+<div class="divider"></div>
+
+<!-- ===== TAGLINES ===== -->
+<section class="sec">
+<div class="sec-label">06 — Brand Voice</div>
+<div class="sec-title">Taglines</div>
+<div class="tag-list">
+  <div class="tag-item"><div class="tag-type">Primary</div><div class="tag-text">Play. Share. Earn.</div></div>
+  <div class="tag-item"><div class="tag-type">Extended</div><div class="tag-text">Your guides. Your reviews. Your revenue.</div></div>
+  <div class="tag-item"><div class="tag-type">Korean</div><div class="tag-text kr">공략이 수익이 되는 곳.</div></div>
+  <div class="tag-item"><div class="tag-type">Creator</div><div class="tag-text">Write once. Earn forever.</div></div>
+  <div class="tag-item"><div class="tag-type">Gamer</div><div class="tag-text">The best players don't just play. They earn.</div></div>
+  <div class="tag-item"><div class="tag-type">Technical</div><div class="tag-text">USDC-native. Sui-powered. Zero tokens required.</div></div>
+</div>
+</section>
+<div class="divider"></div>
+
+<!-- ===== USDC REVENUE FLOW ===== -->
+<section class="sec">
+<div class="sec-label">07 — Revenue Architecture</div>
+<div class="sec-title">USDC Revenue Flow</div>
+<div class="sec-desc">모든 수익은 USDC로, 즉시, on-chain으로 투명하게. 7개 수익원 → Revenue Router → 크리에이터 지갑.</div>
+<div class="flow-container">
+  <div class="flow-row"><div class="flow-box src">Premium Drop $5</div><span class="flow-arrow">→</span><div class="flow-box router">Revenue Router</div><span class="flow-arrow">→</span><div class="flow-box creator">Creator 80%</div><span class="flow-pct">$4.00</span><span class="flow-arrow">·</span><div class="flow-box dest">Protocol 15%</div><span class="flow-arrow">·</span><div class="flow-box dest">Referral 5%</div></div>
+  <div class="flow-row"><div class="flow-box src">Link 구독 $5/mo</div><span class="flow-arrow">→</span><div class="flow-box router">Direct</div><span class="flow-arrow">→</span><div class="flow-box creator">Creator 100%</div><span class="flow-pct">$5.00</span></div>
+  <div class="flow-row"><div class="flow-box src">Ping 후원 $3</div><span class="flow-arrow">→</span><div class="flow-box router">Direct</div><span class="flow-arrow">→</span><div class="flow-box creator">Creator 100%</div><span class="flow-pct">$3.00</span></div>
+  <div class="flow-row"><div class="flow-box src">Pixel Grid $120</div><span class="flow-arrow">→</span><div class="flow-box router">Revenue Router</div><span class="flow-arrow">→</span><div class="flow-box creator">Creator 55%</div><span class="flow-pct">$66</span><span class="flow-arrow">·</span><div class="flow-box dest">Protocol 25%</div><span class="flow-arrow">·</span><div class="flow-box dest">Ref+Curator 20%</div></div>
+  <div class="flow-row"><div class="flow-box src">Shop 커미션 $6</div><span class="flow-arrow">→</span><div class="flow-box router">Revenue Router</div><span class="flow-arrow">→</span><div class="flow-box creator">Creator 70%</div><span class="flow-pct">$4.20</span><span class="flow-arrow">·</span><div class="flow-box dest">Protocol 20%</div><span class="flow-arrow">·</span><div class="flow-box dest">Referral 10%</div></div>
+  <div class="flow-row"><div class="flow-box src">Quest $500</div><span class="flow-arrow">→</span><div class="flow-box router">Escrow</div><span class="flow-arrow">→</span><div class="flow-box creator">Creator 90%</div><span class="flow-pct">$450</span><span class="flow-arrow">·</span><div class="flow-box dest">Protocol 10%</div></div>
+  <div class="flow-row"><div class="flow-box src">Programmatic Ad</div><span class="flow-arrow">→</span><div class="flow-box router">Monthly Convert</div><span class="flow-arrow">→</span><div class="flow-box creator">Creator 50%</div><span class="flow-arrow">·</span><div class="flow-box dest">Protocol 50%</div></div>
+</div>
+</section>
+<div class="divider"></div>
+
+<!-- ===== APP UI PREVIEW ===== -->
+<section class="sec">
+<div class="sec-label">08 — Application Preview</div>
+<div class="sec-title">Creator Node Interface</div>
+<div class="sec-desc">크리에이터 "김프로"의 Node 대시보드. Drops, Reviews, Shop, Grid, 수익 — 한눈에.</div>
+
+<div class="app">
+  <div class="app-bar">
+    <div class="app-bar-left">
+      <svg viewBox="0 0 60 60" width="24" height="24" fill="none"><path d="M30 4L54 16V39L30 56L6 39V16L30 4Z" stroke="#00FF88" stroke-width="1.5" fill="none" opacity=".4"/><path d="M24 20L24 40L41 30L24 20Z" fill="#00FF88"/></svg>
+      <div class="app-logo">Play<span>Node</span></div>
+      <div class="app-nav">
+        <a href="#" class="act">My Node</a>
+        <a href="#">Explore</a>
+        <a href="#">Quests</a>
+        <a href="#">Grid Market</a>
+        <a href="#">Shop</a>
+      </div>
+    </div>
+    <div class="app-right">
+      <input class="app-search" placeholder="Search games, guides..." readonly>
+      <div class="app-bal">$4,280 USDC</div>
+      <div class="app-avatar"></div>
+    </div>
+  </div>
+
+  <div class="app-body">
+    <!-- LEFT: Profile -->
+    <div class="app-side">
+      <div class="app-profile">
+        <div class="app-pfp">K</div>
+        <div><div class="app-pname">김프로</div><div class="app-pbadge">◆ DIAMOND RANK</div></div>
+      </div>
+      <div class="app-stats">
+        <div class="app-stat"><div class="app-stat-val">147</div><div class="app-stat-lbl">Drops</div></div>
+        <div class="app-stat"><div class="app-stat-val">38</div><div class="app-stat-lbl">Reviews</div></div>
+        <div class="app-stat"><div class="app-stat-val">2.4M</div><div class="app-stat-lbl">Views</div></div>
+        <div class="app-stat"><div class="app-stat-val">12.4K</div><div class="app-stat-lbl">Links</div></div>
+      </div>
+      <div class="app-earn">
+        <div class="app-earn-lbl">This Month</div>
+        <div class="app-earn-val">$4,280</div>
+        <div class="app-earn-sub">USDC · +23% vs last month</div>
+      </div>
+      <div class="app-menu">
+        <div class="app-menu-item act"><span class="mi-icon">📝</span>Drops<span class="mi-count">147</span></div>
+        <div class="app-menu-item"><span class="mi-icon">⭐</span>Reviews<span class="mi-count">38</span></div>
+        <div class="app-menu-item"><span class="mi-icon">🛒</span>Shop Links<span class="mi-count">24</span></div>
+        <div class="app-menu-item"><span class="mi-icon">🟩</span>Pixel Grid</div>
+        <div class="app-menu-item"><span class="mi-icon">💝</span>Subscribers<span class="mi-count">248</span></div>
+        <div class="app-menu-item"><span class="mi-icon">📊</span>Analytics</div>
+        <div class="app-menu-item"><span class="mi-icon">⚙️</span>Settings</div>
+      </div>
+    </div>
+
+    <!-- CENTER: Content -->
+    <div class="app-main">
+      <div class="app-main-head">
+        <div class="app-tabs">
+          <div class="app-tab act">All</div>
+          <div class="app-tab">Drops</div>
+          <div class="app-tab">Reviews</div>
+          <div class="app-tab">Shop</div>
+        </div>
+        <button class="btn">+ New</button>
+      </div>
+      <div class="guide-list">
+        <div class="guide">
+          <div class="guide-icon" style="background:rgba(139,92,246,.12)">🐉</div>
+          <div class="guide-info">
+            <div class="guide-title">몬헌 와일즈 — 타마미츠네 3분컷 풀가이드</div>
+            <div class="guide-meta"><span>👁 24.5K</span><span>💰 340 sold</span><span>2d ago</span></div>
+          </div>
+          <div class="guide-type drop">DROP</div>
+          <div class="guide-price">$5.00</div>
+        </div>
+        <div class="guide">
+          <div class="guide-icon" style="background:rgba(0,212,255,.12)">⭐</div>
+          <div class="guide-info">
+            <div class="guide-title">몬헌 와일즈 리뷰 — 842시간 후 솔직 평가</div>
+            <div class="guide-meta"><span>👁 89.2K</span><span>🎮 842h Verified</span><span>1w ago</span></div>
+          </div>
+          <div class="guide-type review">REVIEW</div>
+          <div class="guide-free">FREE</div>
+        </div>
+        <div class="guide">
+          <div class="guide-icon" style="background:rgba(255,184,0,.12)">🛒</div>
+          <div class="guide-info">
+            <div class="guide-title">2026 소울라이크 입문 번들 — 3게임 추천</div>
+            <div class="guide-meta"><span>👁 12.1K</span><span>🛍 186 purchased</span><span>3d ago</span></div>
+          </div>
+          <div class="guide-type shop">SHOP</div>
+          <div style="font-family:'JetBrains Mono';font-size:12px;color:var(--pn-amber);flex-shrink:0;">$420 earned</div>
+        </div>
+        <div class="guide">
+          <div class="guide-icon" style="background:rgba(0,255,136,.12)">⚔️</div>
+          <div class="guide-info">
+            <div class="guide-title">엘든링 DLC — 메시머 노피격 풀루트</div>
+            <div class="guide-meta"><span>👁 156K</span><span>💰 1.2K sold</span><span>2w ago</span></div>
+          </div>
+          <div class="guide-type drop">DROP</div>
+          <div class="guide-price">$10.00</div>
+        </div>
+        <div class="guide">
+          <div class="guide-icon" style="background:rgba(0,212,255,.12)">⭐</div>
+          <div class="guide-info">
+            <div class="guide-title">발로란트 리뷰 — 어센던트 찍고 쓰는 솔직후기</div>
+            <div class="guide-meta"><span>👁 45.8K</span><span>🎮 1,240h Verified</span><span>1m ago</span></div>
+          </div>
+          <div class="guide-type review">REVIEW</div>
+          <div class="guide-free">FREE</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Revenue & Grid -->
+    <div class="app-right-panel">
+      <div class="panel-section">
+        <div class="panel-label">Revenue Breakdown</div>
+        <div class="rev-bar"><div class="rev-bar-label">Drops</div><div class="rev-bar-track"><div class="rev-bar-fill" style="width:32%;background:var(--pn-green)"></div></div><div class="rev-bar-val">$1,360</div></div>
+        <div class="rev-bar"><div class="rev-bar-label">Link 구독</div><div class="rev-bar-track"><div class="rev-bar-fill" style="width:29%;background:var(--pn-red)"></div></div><div class="rev-bar-val">$1,250</div></div>
+        <div class="rev-bar"><div class="rev-bar-label">Grid</div><div class="rev-bar-track"><div class="rev-bar-fill" style="width:21%;background:var(--pn-purple)"></div></div><div class="rev-bar-val">$890</div></div>
+        <div class="rev-bar"><div class="rev-bar-label">Shop</div><div class="rev-bar-track"><div class="rev-bar-fill" style="width:10%;background:var(--pn-amber)"></div></div><div class="rev-bar-val">$420</div></div>
+        <div class="rev-bar"><div class="rev-bar-label">Reviews</div><div class="rev-bar-track"><div class="rev-bar-fill" style="width:4%;background:var(--pn-cyan)"></div></div><div class="rev-bar-val">$180</div></div>
+        <div class="rev-bar"><div class="rev-bar-label">Ping</div><div class="rev-bar-track"><div class="rev-bar-fill" style="width:4%;background:var(--pn-red)"></div></div><div class="rev-bar-val">$180</div></div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-label">Pixel Grid</div>
+        <div class="pixel-grid-v" id="pixelGrid"></div>
+        <div class="grid-stats">
+          <div class="grid-stat-item"><div class="grid-stat-val">78%</div><div class="grid-stat-lbl">Sold</div></div>
+          <div class="grid-stat-item"><div class="grid-stat-val">$12</div><div class="grid-stat-lbl">Avg/px/mo</div></div>
+          <div class="grid-stat-item"><div class="grid-stat-val">$890</div><div class="grid-stat-lbl">Revenue</div></div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-label">Shop Performance</div>
+        <div class="shop-item"><div class="shop-thumb">🐉</div><div class="shop-info"><div class="shop-name">Monster Hunter Wilds</div><div class="shop-comm">$312 earned · 52 sales</div></div></div>
+        <div class="shop-item"><div class="shop-thumb">⚔️</div><div class="shop-info"><div class="shop-name">Elden Ring + DLC</div><div class="shop-comm">$86 earned · 12 sales</div></div></div>
+        <div class="shop-item"><div class="shop-thumb">🎯</div><div class="shop-info"><div class="shop-name">Valorant Points</div><div class="shop-comm">$22 earned · 8 sales</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<div class="footer"><div class="footer-text">PLAYNODE — BRAND IDENTITY SYSTEM v2.0 — FULL VISION — 2026</div></div>
+
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  const grid=document.getElementById('pixelGrid');
+  const classes=['','s1','s2','s3','s4','s5'];
+  for(let i=0;i<96;i++){
+    const px=document.createElement('div');
+    px.className='px';
+    const r=Math.random();
+    if(r<.18)px.classList.add('s1');
+    else if(r<.32)px.classList.add('s2');
+    else if(r<.48)px.classList.add('s3');
+    else if(r<.62)px.classList.add('s4');
+    else if(r<.78)px.classList.add('s5');
+    grid.appendChild(px);
+  }
+});
+</script>
+</body>
+</html>

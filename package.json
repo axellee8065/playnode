@@ -1,0 +1,24 @@
+{
+  "name": "playnode",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Game Creator Economy Platform on Sui",
+  "workspaces": [
+    "packages/frontend",
+    "packages/indexer"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=packages/frontend",
+    "dev:indexer": "npm run dev --workspace=packages/indexer",
+    "dev:all": "concurrently \"npm run dev\" \"npm run dev:indexer\"",
+    "build": "npm run build --workspace=packages/frontend",
+    "build:indexer": "npm run build --workspace=packages/indexer",
+    "build:all": "npm run build && npm run build:indexer",
+    "lint": "npm run lint --workspace=packages/frontend",
+    "deploy:staging": "bash scripts/deploy-staging.sh",
+    "deploy:production": "bash scripts/deploy-production.sh"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

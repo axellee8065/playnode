@@ -1,0 +1,248 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Node {
+  id            String   @id
+  owner         String
+  displayName   String
+  bio           String?
+  avatarUrl     String?
+  bannerUrl     String?
+  rank          Int      @default(1)
+  reputation    Int      @default(0)
+  totalDrops    Int      @default(0)
+  totalReviews  Int      @default(0)
+  totalViews    BigInt   @default(0)
+  totalEarned   BigInt   @default(0)
+  createdAt     DateTime
+  updatedAt     DateTime @updatedAt
+
+  drops         Drop[]
+  reviews       Review[]
+  shopLinks     ShopLink[]
+  subscribers   Subscription[]
+  pixelGrid     PixelGrid?
+  gameProfiles  GameProfile[]
+
+  @@index([owner])
+  @@index([rank])
+  @@index([totalViews])
+}
+
+model Drop {
+  id              String   @id
+  nodeId          String
+  node            Node     @relation(fields: [nodeId], references: [id])
+  author          String
+  title           String
+  contentHash     String
+  walrusBlobId    String
+  category        Int
+  gameTag         String
+  price           BigInt   @default(0)
+  isPremium       Boolean  @default(false)
+  totalViews      BigInt   @default(0)
+  totalPurchases  Int      @default(0)
+  totalEarned     BigInt   @default(0)
+  version         Int      @default(1)
+  parentDropId    String?
+  createdAt       DateTime
+  updatedAt       DateTime @updatedAt
+
+  pixelGrid       PixelGrid?
+  shopLinks       ShopLink[]
+  purchases       Purchase[]
+
+  @@index([gameTag])
+  @@index([author])
+  @@index([totalViews])
+  @@fulltext([title])
+}
+
+model Review {
+  id                    String   @id
+  nodeId                String
+  node                  Node     @relation(fields: [nodeId], references: [id])
+  author                String
+  gameTag               String
+  rating                Int
+  categoryRatings       Json
+  contentHash           String
+  walrusBlobId          String
+  verifiedPlaytimeHours Int      @default(0)
+  verificationLevel     Int      @default(0)
+  verificationHash      String?
+  helpfulCount          Int      @default(0)
+  totalViews            BigInt   @default(0)
+  totalEarned           BigInt   @default(0)
+  createdAt             DateTime
+
+  pixelGrid             PixelGrid?
+
+  @@index([gameTag])
+  @@index([verificationLevel])
+  @@index([rating])
+}
+
+model ShopLink {
+  id                String   @id
+  nodeId            String
+  node              Node     @relation(fields: [nodeId], references: [id])
+  dropId            String?
+  drop              Drop?    @relation(fields: [dropId], references: [id])
+  creator           String
+  gameId            String
+  gameTitle         String
+  store             Int
+  affiliateUrl      String
+  commissionRateBps Int
+  totalClicks       Int      @default(0)
+  totalConversions  Int      @default(0)
+  totalEarned       BigInt   @default(0)
+
+  @@index([gameId])
+  @@index([creator])
+}
+
+model PixelGrid {
+  id             String   @id
+  parentType     Int
+  parentId       String
+  nodeId         String?  @unique
+  node           Node?    @relation(fields: [nodeId], references: [id])
+  dropId         String?  @unique
+  drop           Drop?    @relation(fields: [dropId], references: [id])
+  reviewId       String?  @unique
+  review         Review?  @relation(fields: [reviewId], references: [id])
+  width          Int      @default(20)
+  height         Int      @default(10)
+  totalPixels    Int      @default(200)
+  soldPixels     Int      @default(0)
+  basePrice      BigInt
+  monthlyViews   BigInt   @default(0)
+  totalRevenue   BigInt   @default(0)
+
+  blocks         PixelBlock[]
+}
+
+model PixelBlock {
+  id           String    @id
+  gridId       String
+  grid         PixelGrid @relation(fields: [gridId], references: [id])
+  owner        String
+  x            Int
+  y            Int
+  width        Int
+  height       Int
+  pixelCount   Int
+  imageUrl     String
+  linkUrl      String
+  pricePaid    BigInt
+  expiresAt    DateTime
+  autoRenew    Boolean   @default(false)
+  deposit      BigInt    @default(0)
+  status       Int       @default(0)
+  createdAt    DateTime
+
+  @@index([gridId])
+  @@index([owner])
+  @@index([expiresAt])
+  @@index([status])
+}
+
+model Subscription {
+  id             String   @id
+  subscriber     String
+  nodeId         String
+  node           Node     @relation(fields: [nodeId], references: [id])
+  pricePerMonth  BigInt
+  startedAt      DateTime
+  expiresAt      DateTime
+  autoRenew      Boolean  @default(true)
+
+  @@index([subscriber])
+  @@index([nodeId])
+  @@index([expiresAt])
+}
+
+model Quest {
+  id             String   @id
+  creator        String
+  title          String
+  description    String
+  gameTag        String
+  rewardAmount   BigInt
+  escrowBalance  BigInt
+  minRank        Int
+  deadline       DateTime
+  status         Int      @default(0)
+  assignedTo     String?
+  resultDropId   String?
+  createdAt      DateTime
+
+  @@index([gameTag])
+  @@index([status])
+}
+
+model Purchase {
+  id          String   @id @default(cuid())
+  dropId      String
+  drop        Drop     @relation(fields: [dropId], references: [id])
+  buyer       String
+  pricePaid   BigInt
+  txDigest    String
+  createdAt   DateTime @default(now())
+
+  @@index([dropId])
+  @@index([buyer])
+}
+
+model RevenueEvent {
+  id           String   @id @default(cuid())
+  source       String
+  sourceId     String
+  amount       BigInt
+  creatorAddr  String
+  creatorAmt   BigInt
+  protocolAmt  BigInt
+  referralAddr String?
+  referralAmt  BigInt?
+  txDigest     String
+  createdAt    DateTime @default(now())
+
+  @@index([creatorAddr])
+  @@index([source])
+  @@index([createdAt])
+}
+
+model PageView {
+  id          String   @id @default(cuid())
+  pageType    String
+  pageId      String
+  viewerAddr  String?
+  createdAt   DateTime @default(now())
+
+  @@index([pageType, pageId])
+  @@index([createdAt])
+}
+
+model GameProfile {
+  id               String    @id @default(cuid())
+  nodeId           String
+  node             Node      @relation(fields: [nodeId], references: [id])
+  platform         String
+  username         String
+  verified         Boolean   @default(false)
+  verificationHash String?
+  verifiedAt       DateTime?
+
+  @@index([nodeId])
+  @@index([platform, username])
+}
