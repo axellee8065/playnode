@@ -11,7 +11,6 @@ RUN npm ci
 # Build frontend
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/node_modules ./node_modules
 COPY package.json package-lock.json ./
 COPY packages/frontend/ ./packages/frontend/
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -28,8 +27,8 @@ RUN addgroup --system --gid 1001 nodejs && \
 
 COPY --from=builder /app/packages/frontend/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/packages/frontend/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/packages/frontend/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/packages/frontend/.next/static ./packages/frontend/.next/static
 
 USER nextjs
 EXPOSE 3000
-CMD ["node", "server.js"]
+CMD ["node", "packages/frontend/server.js"]
