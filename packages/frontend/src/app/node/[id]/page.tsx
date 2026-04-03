@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   CheckCircle,
@@ -12,6 +13,8 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { Badge, Button, Card, UsdcAmount } from "@/components/common";
+import { api, formatUsdc, formatViews } from "@/lib/api";
+import { useApi } from "@/hooks/useApi";
 
 // ---------------------------------------------------------------------------
 // Animation helpers
@@ -137,7 +140,46 @@ const pixelColorMap: Record<number, string> = {
 // Page component
 // ---------------------------------------------------------------------------
 export default function NodeProfilePage() {
+  const params = useParams();
+  const nodeId = params.id as string;
   const [activeTab, setActiveTab] = useState<Tab>("Drops");
+
+  // Fetch live data from API
+  const { data: apiNode } = useApi(() => api.getNode(nodeId), [nodeId]);
+  const { data: apiDrops } = useApi(() => api.getNodeDrops(nodeId), [nodeId]);
+  const { data: apiReviews } = useApi(() => api.getNodeReviews(nodeId), [nodeId]);
+
+  // Map API node to display values, fall back to mock
+  const creator = apiNode
+    ? {
+        displayName: apiNode.displayName,
+        bio: apiNode.bio || CREATOR.bio,
+        rank: apiNode.rank >= 4 ? 'DIAMOND' : apiNode.rank >= 3 ? 'GOLD' : apiNode.rank >= 2 ? 'SILVER' : 'BRONZE',
+        verified: true,
+      }
+    : CREATOR;
+
+  const nodeStats = apiNode
+    ? [
+        { label: "Total Drops", value: String(apiNode.totalDrops) },
+        { label: "Total Reviews", value: String(apiNode.totalReviews) },
+        { label: "Total Views", value: formatViews(apiNode.totalViews) },
+        { label: "Links", value: STATS[3].value },
+        { label: "Total Earned", value: `$${formatUsdc(apiNode.totalEarned)}`, usdc: true },
+      ]
+    : STATS;
+
+  const displayDrops = apiDrops
+    ? apiDrops.map((d, i) => ({
+        id: i + 1,
+        title: d.title,
+        game: d.gameTag,
+        gameVariant: 'drop' as const,
+        price: d.isPremium ? Number(d.price) / 1_000_000 : null,
+        views: formatViews(d.totalViews),
+        date: d.createdAt.slice(0, 10),
+      }))
+    : DROPS;
 
   return (
     <div className="min-h-screen bg-pn-black text-pn-white">
@@ -181,20 +223,20 @@ export default function NodeProfilePage() {
                   className="font-primary font-extrabold text-pn-white leading-tight"
                   style={{ fontSize: "32px" }}
                 >
-                  {CREATOR.displayName}
+                  {creator.displayName}
                 </h1>
-                {CREATOR.verified && (
+                {creator.verified && (
                   <span className="flex items-center gap-1 rounded-full bg-pn-blue/15 px-2.5 py-0.5 text-pn-blue">
                     <CheckCircle size={14} />
                     <span className="text-xs font-medium">Verified</span>
                   </span>
                 )}
                 <span className="flex items-center gap-1 rounded-full bg-pn-blue/10 px-2.5 py-0.5 text-pn-blue font-mono text-[10px] uppercase tracking-widest font-bold">
-                  {CREATOR.rank} RANK
+                  {creator.rank} RANK
                 </span>
               </div>
               <p className="text-pn-text text-sm max-w-xl leading-relaxed">
-                {CREATOR.bio}
+                {creator.bio}
               </p>
             </motion.div>
           </div>
@@ -212,7 +254,7 @@ export default function NodeProfilePage() {
           animate="visible"
           className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-10"
         >
-          {STATS.map((stat, i) => (
+          {nodeStats.map((stat, i) => (
             <motion.div
               key={stat.label}
               variants={fadeUp}
@@ -223,7 +265,7 @@ export default function NodeProfilePage() {
                 {stat.label}
               </p>
               {stat.usdc ? (
-                <UsdcAmount amount={4280} size="sm" showLabel />
+                <UsdcAmount amount={apiNode ? Number(apiNode.totalEarned) / 1_000_000 : 4280} size="sm" showLabel />
               ) : (
                 <span className="text-pn-white font-bold text-xl leading-none">
                   {stat.value}
@@ -312,7 +354,7 @@ export default function NodeProfilePage() {
                 animate="visible"
                 className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-16"
               >
-                {DROPS.map((drop, i) => (
+                {displayDrops.map((drop, i) => (
                   <motion.div key={drop.id} variants={fadeUp} custom={i}>
                     <Card className="flex flex-col gap-3 hover:border-pn-green/30">
                       {/* Thumbnail placeholder */}

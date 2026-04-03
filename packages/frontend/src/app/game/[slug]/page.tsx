@@ -1,6 +1,7 @@
 'use client';
 
 import { type FC, useState } from 'react';
+import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
   Star,
@@ -14,6 +15,8 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { Badge, Button, Card, UsdcAmount } from '@/components/common';
+import { api, formatViews, formatUsdc } from '@/lib/api';
+import { useApi } from '@/hooks/useApi';
 
 /* ------------------------------------------------------------------ */
 /*  Animation helpers                                                  */
@@ -146,7 +149,49 @@ const soldPixels = new Set([
 /* ------------------------------------------------------------------ */
 
 const GameHubPage: FC = () => {
+  const params = useParams();
+  const slug = params.slug as string;
   const [tab, setTab] = useState<TabKey>('drops');
+
+  // Fetch live data from API
+  const { data: apiGame } = useApi(() => api.getGame(slug), [slug]);
+  const { data: apiGameDrops } = useApi(() => api.getGameDrops(slug), [slug]);
+  const { data: apiGameReviews } = useApi(() => api.getGameReviews(slug), [slug]);
+
+  // Map API data to display values, fall back to mock
+  const displayGame = apiGame
+    ? {
+        title: apiGame.title || game.title,
+        subtitle: apiGame.subtitle || game.subtitle,
+        developer: apiGame.developer || game.developer,
+        releaseDate: apiGame.releaseDate || game.releaseDate,
+        stats: {
+          drops: apiGameDrops?.length ?? game.stats.drops,
+          reviews: apiGameReviews?.length ?? game.stats.reviews,
+          avgRating: game.stats.avgRating,
+          creators: game.stats.creators,
+        },
+      }
+    : game;
+
+  const displayDrops = apiGameDrops
+    ? apiGameDrops.map((d) => ({
+        title: d.title,
+        author: d.node?.displayName || d.author,
+        price: Number(d.price) / 1_000_000,
+        views: formatViews(d.totalViews),
+        category: 'GUIDE',
+      }))
+    : drops;
+
+  const displayReviews = apiGameReviews
+    ? apiGameReviews.map((r) => ({
+        title: `${r.gameTag} Review`,
+        author: r.node?.displayName || r.author,
+        score: r.rating / 10,
+        helpful: r.helpfulCount,
+      }))
+    : reviewItems;
 
   const tabs: { key: TabKey; label: string; icon: React.ElementType }[] = [
     { key: 'drops', label: 'Drops', icon: FileText },
@@ -183,11 +228,11 @@ const GameHubPage: FC = () => {
           >
             <motion.div variants={fadeUp} className="flex items-center gap-2 mb-2">
               <span className="font-mono text-[10px] text-pn-muted uppercase tracking-wider">
-                {game.developer}
+                {displayGame.developer}
               </span>
               <span className="text-pn-muted">·</span>
               <span className="font-mono text-[10px] text-pn-muted uppercase tracking-wider">
-                {game.releaseDate}
+                {displayGame.releaseDate}
               </span>
             </motion.div>
 
@@ -195,14 +240,14 @@ const GameHubPage: FC = () => {
               variants={fadeUp}
               className="text-pn-white text-4xl sm:text-5xl font-bold leading-tight mb-2"
             >
-              {game.title}
+              {displayGame.title}
             </motion.h1>
 
             <motion.p
               variants={fadeUp}
               className="text-pn-text text-lg mb-8"
             >
-              {game.subtitle}
+              {displayGame.subtitle}
             </motion.p>
 
             {/* Stats Row */}
@@ -211,10 +256,10 @@ const GameHubPage: FC = () => {
               className="grid grid-cols-2 sm:grid-cols-4 gap-4"
             >
               {[
-                { label: 'Total Drops', value: game.stats.drops.toString(), icon: FileText, color: 'text-pn-green' },
-                { label: 'Total Reviews', value: game.stats.reviews.toString(), icon: Star, color: 'text-pn-cyan' },
-                { label: 'Avg Rating', value: game.stats.avgRating.toFixed(1), icon: TrendingUp, color: 'text-pn-amber' },
-                { label: 'Total Creators', value: game.stats.creators.toString(), icon: Users, color: 'text-pn-purple' },
+                { label: 'Total Drops', value: displayGame.stats.drops.toString(), icon: FileText, color: 'text-pn-green' },
+                { label: 'Total Reviews', value: displayGame.stats.reviews.toString(), icon: Star, color: 'text-pn-cyan' },
+                { label: 'Avg Rating', value: displayGame.stats.avgRating.toFixed(1), icon: TrendingUp, color: 'text-pn-amber' },
+                { label: 'Total Creators', value: displayGame.stats.creators.toString(), icon: Users, color: 'text-pn-purple' },
               ].map((stat) => (
                 <div
                   key={stat.label}
@@ -275,7 +320,7 @@ const GameHubPage: FC = () => {
           >
             {/* Drop Cards Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {drops.map((drop, i) => (
+              {displayDrops.map((drop, i) => (
                 <motion.div key={i} variants={fadeUp}>
                   <Card className="h-full hover:border-pn-border-light transition-colors cursor-pointer group">
                     <div className="flex items-center justify-between mb-3">
@@ -359,7 +404,7 @@ const GameHubPage: FC = () => {
             animate="show"
             className="space-y-4"
           >
-            {reviewItems.map((r, i) => (
+            {displayReviews.map((r, i) => (
               <motion.div key={i} variants={fadeUp}>
                 <Card className="cursor-pointer group">
                   <div className="flex items-start justify-between gap-4">

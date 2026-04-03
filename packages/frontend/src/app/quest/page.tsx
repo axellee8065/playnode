@@ -4,6 +4,8 @@ import { type FC, useState } from 'react';
 import { motion } from 'framer-motion';
 import Header from '@/components/layout/Header';
 import { Badge, Button, Card, UsdcAmount, StatCard } from '@/components/common';
+import { api, formatUsdc } from '@/lib/api';
+import { useApi } from '@/hooks/useApi';
 
 /* ------------------------------------------------------------------ */
 /*  Animation helpers                                                  */
@@ -148,10 +150,29 @@ const rankColors: Record<string, string> = {
 const QuestPage: FC = () => {
   const [category, setCategory] = useState<QuestCategory>('all');
 
+  // Fetch live data from API
+  const { data: apiQuests } = useApi(() => api.getQuests(), []);
+
+  // Map API quests to display format, fall back to mock
+  const displayQuests: Quest[] = apiQuests
+    ? apiQuests.map((q) => ({
+        id: q.id,
+        title: q.title,
+        gameTag: q.gameTag,
+        category: 'writing' as QuestCategory,
+        reward: Number(q.rewardAmount) / 1_000_000,
+        deadline: q.deadline.slice(0, 10),
+        minRank: q.minRank >= 3 ? 'Gold' : q.minRank >= 2 ? 'Silver' : 'Bronze',
+        status: q.status === 0 ? 'OPEN' as const : 'IN_PROGRESS' as const,
+        description: q.description,
+        publisher: q.creator.slice(0, 10) + '...',
+      }))
+    : quests;
+
   const filteredQuests =
     category === 'all'
-      ? quests
-      : quests.filter((q) => q.category === category);
+      ? displayQuests
+      : displayQuests.filter((q) => q.category === category);
 
   return (
     <div className="min-h-screen bg-pn-black">

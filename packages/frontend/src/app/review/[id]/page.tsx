@@ -1,6 +1,7 @@
 'use client';
 
 import { type FC, useState } from 'react';
+import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
   ThumbsUp,
@@ -13,6 +14,8 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { Badge, Button, Card } from '@/components/common';
+import { api, formatViews } from '@/lib/api';
+import { useApi } from '@/hooks/useApi';
 
 /* ------------------------------------------------------------------ */
 /*  Animation helpers                                                  */
@@ -116,8 +119,37 @@ const RatingBar: FC<{
 /* ------------------------------------------------------------------ */
 
 const ReviewPage: FC = () => {
+  const params = useParams();
+  const reviewId = params.id as string;
+
+  // Fetch live data from API
+  const { data: apiReview } = useApi(() => api.getReview(reviewId), [reviewId]);
+
+  // Map API review to display values, fall back to mock
+  const displayReview = apiReview
+    ? {
+        ...review,
+        title: apiReview.gameTag ? `${apiReview.gameTag} Review` : review.title,
+        game: apiReview.gameTag || review.game,
+        overall: apiReview.rating / 10,
+        verification: {
+          ...review.verification,
+          playtime: apiReview.verifiedPlaytimeHours,
+        },
+        helpful: apiReview.helpfulCount,
+        date: apiReview.createdAt.slice(0, 10),
+        categories: apiReview.categoryRatings?.length
+          ? apiReview.categoryRatings.map((score: number, i: number) => ({
+              label: review.categories[i]?.label || `Category ${i + 1}`,
+              score: score / 10,
+              color: score / 10 >= 8 ? 'bg-pn-cyan' : 'bg-pn-amber',
+            }))
+          : review.categories,
+      }
+    : review;
+
   const [helpful, setHelpful] = useState<'up' | 'down' | null>(null);
-  const [helpfulCount, setHelpfulCount] = useState(review.helpful);
+  const [helpfulCount, setHelpfulCount] = useState(displayReview.helpful);
 
   const handleHelpful = (vote: 'up' | 'down') => {
     if (helpful === vote) {
@@ -148,11 +180,11 @@ const ReviewPage: FC = () => {
               <div className="flex items-center gap-3 mb-4">
                 <Badge variant="review">REVIEW</Badge>
                 <span className="font-mono text-[10px] text-pn-muted uppercase tracking-wider">
-                  {review.date}
+                  {displayReview.date}
                 </span>
               </div>
               <h1 className="text-pn-white text-2xl sm:text-3xl font-bold leading-tight mb-4">
-                {review.title}
+                {displayReview.title}
               </h1>
               <div className="flex items-center gap-3">
                 {/* Author avatar placeholder */}
@@ -184,7 +216,7 @@ const ReviewPage: FC = () => {
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-pn-cyan" />
                     <span className="font-mono text-lg font-bold text-pn-cyan">
-                      {review.verification.playtime}시간
+                      {displayReview.verification.playtime}시간
                     </span>
                     <span className="text-sm text-pn-text">Verified</span>
                   </div>
@@ -192,13 +224,13 @@ const ReviewPage: FC = () => {
                     <span className="inline-flex items-center rounded-md px-2 py-0.5 font-mono uppercase tracking-wider text-pn-cyan bg-pn-cyan/15 border border-pn-cyan/30"
                       style={{ fontSize: '9px', lineHeight: '16px' }}
                     >
-                      {review.verification.badge}
+                      {displayReview.verification.badge}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Monitor className="w-4 h-4 text-pn-muted" />
                     <span className="text-sm text-pn-text">
-                      {review.verification.platform}
+                      {displayReview.verification.platform}
                     </span>
                   </div>
                   <span className="font-mono text-[10px] text-pn-muted uppercase tracking-wider">
@@ -237,7 +269,7 @@ const ReviewPage: FC = () => {
                         strokeDashoffset={2 * Math.PI * 52}
                         animate={{
                           strokeDashoffset:
-                            2 * Math.PI * 52 * (1 - review.overall / 10),
+                            2 * Math.PI * 52 * (1 - displayReview.overall / 10),
                         }}
                         transition={{ duration: 1.2, ease: 'easeOut' }}
                         style={{
@@ -248,7 +280,7 @@ const ReviewPage: FC = () => {
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
                       <span className="font-mono text-5xl font-bold text-pn-cyan leading-none">
-                        {review.overall.toFixed(1)}
+                        {displayReview.overall.toFixed(1)}
                       </span>
                       <span className="font-mono text-xs text-pn-muted mt-1">
                         / 10
@@ -258,7 +290,7 @@ const ReviewPage: FC = () => {
 
                   {/* Category bars */}
                   <div className="flex-1 w-full space-y-3">
-                    {review.categories.map((cat, i) => (
+                    {displayReview.categories.map((cat, i) => (
                       <RatingBar
                         key={cat.label}
                         label={cat.label}
@@ -393,7 +425,7 @@ const ReviewPage: FC = () => {
                 </p>
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-sm font-semibold text-pn-white">
-                    {review.game}
+                    {displayReview.game}
                   </span>
                 </div>
                 <Button variant="primary" size="sm" className="w-full">

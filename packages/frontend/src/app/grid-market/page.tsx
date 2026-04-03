@@ -4,6 +4,8 @@ import { type FC, useState } from 'react';
 import { motion } from 'framer-motion';
 import Header from '@/components/layout/Header';
 import { Badge, Button, Card, UsdcAmount, StatCard } from '@/components/common';
+import { api, formatViews, formatUsdc } from '@/lib/api';
+import { useApi } from '@/hooks/useApi';
 
 /* ------------------------------------------------------------------ */
 /*  Animation helpers                                                  */
@@ -199,6 +201,34 @@ const PixelGrid: FC<{ pixels: boolean[][]; colors: string[] }> = ({ pixels, colo
 const GridMarketPage: FC = () => {
   const [sort, setSort] = useState<SortOption>('popular');
 
+  // Fetch live data from API
+  const { data: apiGrids } = useApi(() => api.getGrids(), []);
+
+  // Map API grids to display format, fall back to mock
+  const displayGrids = apiGrids
+    ? apiGrids.map((g) => ({
+        creator: 'Creator',
+        pageTitle: `Grid ${g.id.slice(0, 8)}`,
+        pixels: gridListings[0].pixels, // use mock pixel layout as visual fallback
+        occupancy: g.totalPixels > 0 ? Math.round((g.soldPixels / g.totalPixels) * 100) : 0,
+        priceMin: Number(g.basePrice) / 1_000_000,
+        priceMax: (Number(g.basePrice) / 1_000_000) * 3,
+        monthlyViews: formatViews(g.monthlyViews),
+        colors: gridListings[0].colors,
+      }))
+    : null;
+
+  const displayListings = displayGrids || gridListings;
+
+  const displayStats = apiGrids
+    ? [
+        { label: 'Total Grids', value: String(apiGrids.length) },
+        { label: 'Available Pixels', value: formatViews(String(apiGrids.reduce((sum, g) => sum + (g.totalPixels - g.soldPixels), 0))) },
+        { label: 'Avg Price/Pixel', value: stats[2].value },
+        { label: 'Monthly Revenue', value: `$${formatUsdc(String(apiGrids.reduce((sum, g) => sum + Number(g.totalRevenue), 0)))}`, change: stats[3].change },
+      ]
+    : stats;
+
   const sortLabels: Record<SortOption, string> = {
     popular: '인기순',
     price: '가격순',
@@ -240,7 +270,7 @@ const GridMarketPage: FC = () => {
           initial="hidden"
           animate="show"
         >
-          {stats.map((s) => (
+          {displayStats.map((s) => (
             <motion.div key={s.label} variants={fadeUp}>
               <StatCard label={s.label} value={s.value} change={s.change} />
             </motion.div>
@@ -292,7 +322,7 @@ const GridMarketPage: FC = () => {
           initial="hidden"
           animate="show"
         >
-          {gridListings.map((grid, i) => (
+          {displayListings.map((grid, i) => (
             <motion.div key={grid.pageTitle} variants={fadeUp} custom={i}>
               <Card className="h-full">
                 <div className="flex flex-col gap-4">

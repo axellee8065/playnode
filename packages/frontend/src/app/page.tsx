@@ -12,6 +12,8 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { FEATURES, STATS } from "@/lib/constants";
+import { api, formatViews, formatUsdc } from "@/lib/api";
+import { useApi } from "@/hooks/useApi";
 
 // ---------------------------------------------------------------------------
 // Animation variants
@@ -237,7 +239,7 @@ function StatCard({
   stat,
   index,
 }: {
-  stat: (typeof STATS)[number];
+  stat: { label: string; value: string };
   index: number;
 }) {
   return (
@@ -258,6 +260,18 @@ function StatCard({
 // Page
 // ===========================================================================
 export default function LandingPage() {
+  const { data: apiNodes } = useApi(() => api.getNodes({ take: 3 }), []);
+  const { data: apiDrops } = useApi(() => api.getDrops({ take: 6 }), []);
+
+  // Build live stats from API data, fall back to STATS constants
+  const liveStats = apiNodes
+    ? [
+        { label: "Creator Revenue", value: `$${formatUsdc(apiNodes.reduce((sum, n) => sum + Number(n.totalEarned), 0).toString())}` },
+        { label: "Active Creators", value: `${apiNodes.length}+` },
+        { label: "Drops Published", value: apiDrops ? formatViews(apiDrops.length.toString()) + "+" : STATS[2].value },
+      ]
+    : [...STATS];
+
   return (
     <div className="relative min-h-screen">
       {/* ----------------------------------------------------------------- */}
@@ -382,7 +396,7 @@ export default function LandingPage() {
           variants={stagger}
           className="mx-auto grid max-w-4xl grid-cols-1 gap-8 px-4 py-16 sm:grid-cols-3"
         >
-          {STATS.map((stat, i) => (
+          {liveStats.map((stat, i) => (
             <StatCard key={stat.label} stat={stat} index={i} />
           ))}
         </motion.div>

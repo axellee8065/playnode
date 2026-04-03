@@ -4,6 +4,8 @@ import { type FC, useState } from 'react';
 import { motion } from 'framer-motion';
 import Header from '@/components/layout/Header';
 import { Badge, Button, Card, UsdcAmount } from '@/components/common';
+import { api } from '@/lib/api';
+import { useApi } from '@/hooks/useApi';
 
 /* ------------------------------------------------------------------ */
 /*  Animation helpers                                                  */
@@ -229,6 +231,22 @@ const PlatformBadge: FC<{ platform: string }> = ({ platform }) => (
 const ShopPage: FC = () => {
   const [category, setCategory] = useState<GameCategory>('all');
 
+  // Fetch live data from API
+  const { data: apiBundles } = useApi(() => api.getBundles(), []);
+
+  // Map API bundles to display format, fall back to mock
+  const displayBundle = apiBundles && apiBundles.length > 0
+    ? {
+        title: apiBundles[0].title || featuredBundle.title,
+        curator: apiBundles[0].curator || featuredBundle.curator,
+        games: apiBundles[0].games || featuredBundle.games,
+        discount: apiBundles[0].discount || featuredBundle.discount,
+      }
+    : featuredBundle;
+
+  const displayBundleTotalValue = displayBundle.games.reduce((sum: number, g: BundleItem) => sum + g.price, 0);
+  const displayBundlePrice = displayBundleTotalValue * (1 - displayBundle.discount / 100);
+
   const filteredGames =
     category === 'all'
       ? trendingGames
@@ -281,20 +299,20 @@ const ShopPage: FC = () => {
                       Featured Bundle
                     </span>
                     <span className="inline-flex items-center rounded-md bg-pn-amber/20 border border-pn-amber/30 px-2 py-0.5 font-mono text-pn-amber font-bold" style={{ fontSize: '10px' }}>
-                      -{featuredBundle.discount}%
+                      -{displayBundle.discount}%
                     </span>
                   </div>
 
                   <h2 className="text-pn-white text-2xl font-bold mb-1">
-                    {featuredBundle.title}
+                    {displayBundle.title}
                   </h2>
                   <p className="text-pn-muted text-sm mb-4">
-                    Curated by <span className="text-pn-amber font-medium">{featuredBundle.curator}</span> &middot; {featuredBundle.games.length} games
+                    Curated by <span className="text-pn-amber font-medium">{displayBundle.curator}</span> &middot; {displayBundle.games.length} games
                   </p>
 
                   {/* Game list */}
                   <div className="space-y-2 mb-4">
-                    {featuredBundle.games.map((game) => (
+                    {displayBundle.games.map((game: BundleItem) => (
                       <div
                         key={game.title}
                         className="flex items-center justify-between py-1.5 border-b border-pn-border/30 last:border-0"
@@ -315,12 +333,12 @@ const ShopPage: FC = () => {
                   </p>
                   <div className="mb-1">
                     <span className="font-mono text-3xl font-bold text-pn-amber">
-                      ${bundlePrice.toFixed(2)}
+                      ${displayBundlePrice.toFixed(2)}
                     </span>
                     <span className="ml-1 font-mono text-[10px] text-pn-muted">USDC</span>
                   </div>
                   <p className="text-pn-muted text-xs mb-4">
-                    Total value: <span className="line-through">${bundleTotalValue.toFixed(2)}</span>
+                    Total value: <span className="line-through">${displayBundleTotalValue.toFixed(2)}</span>
                   </p>
                   <Button
                     variant="secondary"

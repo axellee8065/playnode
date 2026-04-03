@@ -4,6 +4,8 @@ import { type FC, useState } from 'react';
 import { motion } from 'framer-motion';
 import Header from '@/components/layout/Header';
 import { Badge, Button, Card, UsdcAmount } from '@/components/common';
+import { api, formatUsdc, formatViews } from '@/lib/api';
+import { useApi } from '@/hooks/useApi';
 
 /* ------------------------------------------------------------------ */
 /*  Animation helpers                                                  */
@@ -142,10 +144,28 @@ const AnimatedBar: FC<{ pct: number; colorClass: string; delay: number }> = ({
 const DashboardPage: FC = () => {
   const [tab, setTab] = useState<ContentTab>('all');
 
+  // Fetch live data from API (falls back to mock data below if unavailable)
+  const { data: apiDrops } = useApi(() => api.getDrops({ take: 10 }), []);
+  const { data: apiNodes } = useApi(() => api.getNodes({ take: 1 }), []);
+
+  // Map API drops into content rows format, or fall back to mock
+  const liveContentRows: ContentRow[] | null = apiDrops
+    ? apiDrops.map((d) => ({
+        title: d.title,
+        type: 'drop' as const,
+        views: formatViews(d.totalViews),
+        revenue: Number(d.totalEarned) / 1_000_000,
+        date: d.createdAt.slice(0, 10),
+        status: 'published' as const,
+      }))
+    : null;
+
+  const displayRows = liveContentRows || contentRows;
+
   const filteredRows =
     tab === 'all'
-      ? contentRows
-      : contentRows.filter((r) => {
+      ? displayRows
+      : displayRows.filter((r) => {
           if (tab === 'drops') return r.type === 'drop';
           if (tab === 'reviews') return r.type === 'review';
           return r.type === 'shop';

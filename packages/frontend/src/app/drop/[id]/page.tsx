@@ -1,5 +1,6 @@
 "use client";
 
+import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   Eye,
@@ -15,6 +16,8 @@ import {
   Gamepad2,
 } from "lucide-react";
 import { Badge, Button, Card, UsdcAmount } from "@/components/common";
+import { api, formatUsdc, formatViews } from "@/lib/api";
+import { useApi } from "@/hooks/useApi";
 
 // ---------------------------------------------------------------------------
 // Animation variants
@@ -169,6 +172,42 @@ function StatRow({
 // Page
 // ===========================================================================
 export default function DropDetailPage() {
+  const params = useParams();
+  const dropId = params.id as string;
+
+  // Fetch live data from API
+  const { data: apiDrop } = useApi(() => api.getDrop(dropId), [dropId]);
+  const { data: apiRelated } = useApi(
+    () => api.getDrops({ gameTag: apiDrop?.gameTag || DROP.gameTag, take: 3 }),
+    [apiDrop?.gameTag]
+  );
+
+  // Map API drop to display values, fall back to mock
+  const drop = apiDrop
+    ? {
+        title: apiDrop.title,
+        author: { ...DROP.author, name: apiDrop.node?.displayName || apiDrop.author },
+        date: apiDrop.createdAt.slice(0, 10).replace(/-/g, '.'),
+        views: formatViews(apiDrop.totalViews),
+        purchases: apiDrop.totalPurchases,
+        price: Number(apiDrop.price) / 1_000_000,
+        gameTag: apiDrop.gameTag,
+        totalEarned: Number(apiDrop.totalEarned) / 1_000_000,
+        version: `v${apiDrop.version}`,
+        lastUpdate: apiDrop.updatedAt.slice(0, 10).replace(/-/g, '.'),
+      }
+    : DROP;
+
+  const relatedDrops = apiRelated
+    ? apiRelated.filter((d) => d.id !== dropId).slice(0, 3).map((d) => ({
+        title: d.title,
+        author: d.node?.displayName || d.author,
+        price: Number(d.price) / 1_000_000,
+        views: formatViews(d.totalViews),
+        tag: d.gameTag,
+      }))
+    : RELATED_DROPS;
+
   return (
     <div className="relative min-h-screen">
       {/* Background effects */}
@@ -201,17 +240,17 @@ export default function DropDetailPage() {
               </Badge>
 
               <h1 className="font-primary text-3xl font-extrabold text-pn-white leading-tight sm:text-4xl">
-                {DROP.title}
+                {drop.title}
               </h1>
 
               {/* Author row */}
               <div className="mt-4 flex items-center gap-3">
                 <AvatarCircle initials="GM" />
                 <span className="font-semibold text-pn-text-bright">
-                  {DROP.author.name}
+                  {drop.author.name}
                 </span>
-                <RankBadge rank={DROP.author.rank} />
-                {DROP.author.verified && (
+                <RankBadge rank={drop.author.rank} />
+                {drop.author.verified && (
                   <CheckCircle className="h-4 w-4 text-pn-green" />
                 )}
               </div>
@@ -220,19 +259,19 @@ export default function DropDetailPage() {
               <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-pn-muted">
                 <span className="inline-flex items-center gap-1.5">
                   <Calendar className="h-3.5 w-3.5" />
-                  {DROP.date}
+                  {drop.date}
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <Eye className="h-3.5 w-3.5" />
-                  {DROP.views} views
+                  {drop.views} views
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <ShoppingCart className="h-3.5 w-3.5" />
-                  {DROP.purchases} purchases
+                  {drop.purchases} purchases
                 </span>
                 <span className="inline-flex items-center gap-1 rounded-md bg-pn-amber/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-pn-amber">
                   <Gamepad2 className="h-3 w-3" />
-                  {DROP.gameTag}
+                  {drop.gameTag}
                 </span>
               </div>
             </motion.div>
@@ -248,7 +287,7 @@ export default function DropDetailPage() {
               >
                 <div className="rounded-[11px] bg-gradient-to-r from-[rgba(0,255,136,0.08)] to-[rgba(0,212,255,0.04)] px-6 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
-                    <UsdcAmount amount={DROP.price} size="lg" showLabel />
+                    <UsdcAmount amount={drop.price} size="lg" showLabel />
                     <p className="mt-1.5 text-xs text-pn-muted">
                       이 가이드를 구매하면 크리에이터에게 80%가 직접 전달됩니다.
                     </p>
@@ -368,7 +407,7 @@ export default function DropDetailPage() {
                 Related Drops
               </h3>
               <div className="flex gap-4 overflow-x-auto pb-2 -mx-1 px-1">
-                {RELATED_DROPS.map((rd, i) => (
+                {relatedDrops.map((rd, i) => (
                   <Card
                     key={i}
                     className="!p-4 shrink-0 w-[260px] cursor-pointer"
@@ -407,15 +446,15 @@ export default function DropDetailPage() {
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-semibold text-pn-text-bright">
-                        {DROP.author.name}
+                        {drop.author.name}
                       </span>
                       <CheckCircle className="h-3.5 w-3.5 text-pn-green" />
                     </div>
-                    <RankBadge rank={DROP.author.rank} />
+                    <RankBadge rank={drop.author.rank} />
                   </div>
                 </div>
                 <p className="text-xs leading-relaxed text-pn-muted mb-4">
-                  {DROP.author.bio}
+                  {drop.author.bio}
                 </p>
                 <div className="space-y-2">
                   <Button variant="primary" size="sm" className="w-full">
@@ -520,7 +559,7 @@ export default function DropDetailPage() {
                   Drop Stats
                 </h4>
                 <div>
-                  <StatRow label="Total Views" value={DROP.views} />
+                  <StatRow label="Total Views" value={drop.views} />
                   <StatRow
                     label="Total Purchases"
                     value={DROP.purchases.toLocaleString()}
@@ -529,7 +568,7 @@ export default function DropDetailPage() {
                     label="Total Earned"
                     value={
                       <UsdcAmount
-                        amount={DROP.totalEarned}
+                        amount={drop.totalEarned}
                         size="sm"
                         showLabel
                       />
@@ -539,9 +578,9 @@ export default function DropDetailPage() {
                     label="Version"
                     value={
                       <span>
-                        {DROP.version}{" "}
+                        {drop.version}{" "}
                         <span className="text-pn-muted text-[11px]">
-                          (최종 업데이트: {DROP.lastUpdate})
+                          (최종 업데이트: {drop.lastUpdate})
                         </span>
                       </span>
                     }
