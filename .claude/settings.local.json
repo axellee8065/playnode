@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s \"https://frontend-production-ffda.up.railway.app/_next/static/chunks/0efup~uzfrrcw.js\")"
+    ]
+  }
+}

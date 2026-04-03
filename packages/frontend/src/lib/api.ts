@@ -9,7 +9,12 @@ async function fetchAPI<T>(path: string, options?: RequestInit): Promise<T> {
     },
   });
   if (!res.ok) throw new Error(`API Error: ${res.status}`);
-  return res.json();
+  const json = await res.json();
+  // API wraps arrays in { data: [...] } — unwrap automatically
+  if (json && typeof json === 'object' && 'data' in json && Array.isArray(json.data)) {
+    return json.data as T;
+  }
+  return json as T;
 }
 
 // Type definitions matching the Prisma schema
