@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { FEATURES, STATS } from "@/lib/constants";
 import { api, formatViews, formatUsdc } from "@/lib/api";
+import { useWallet } from "@/components/providers/SuiProvider";
 import { useApi } from "@/hooks/useApi";
 
 // ---------------------------------------------------------------------------
@@ -260,6 +261,7 @@ function StatCard({
 // Page
 // ===========================================================================
 export default function LandingPage() {
+  const { connect } = useWallet();
   const { data: apiNodes } = useApi(() => api.getNodes({ take: 3 }), []);
   const { data: apiDrops } = useApi(() => api.getDrops({ take: 6 }), []);
 
@@ -359,13 +361,13 @@ export default function LandingPage() {
             variants={fadeUp}
             className="flex flex-col items-center gap-4 sm:flex-row"
           >
-            <button className="group inline-flex items-center gap-2 rounded-[var(--radius-md)] bg-pn-green px-8 py-3.5 font-semibold text-pn-black transition-all hover:bg-pn-green-dim hover:shadow-lg hover:shadow-pn-green/20">
+            <a href="/dashboard" className="group inline-flex items-center gap-2 rounded-[var(--radius-md)] bg-pn-green px-8 py-3.5 font-semibold text-pn-black transition-all hover:bg-pn-green-dim hover:shadow-lg hover:shadow-pn-green/20">
               Get Started
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </button>
-            <button className="inline-flex items-center gap-2 rounded-[var(--radius-md)] border border-pn-border px-8 py-3.5 font-semibold text-pn-text-bright transition-all hover:border-pn-border-light hover:bg-pn-surface">
+            </a>
+            <a href="#features" className="inline-flex items-center gap-2 rounded-[var(--radius-md)] border border-pn-border px-8 py-3.5 font-semibold text-pn-text-bright transition-all hover:border-pn-border-light hover:bg-pn-surface">
               Learn More
-            </button>
+            </a>
           </motion.div>
         </motion.div>
 
@@ -405,7 +407,7 @@ export default function LandingPage() {
       {/* ================================================================= */}
       {/* FEATURES GRID                                                     */}
       {/* ================================================================= */}
-      <section className="relative z-10 px-4 py-24 sm:py-32">
+      <section id="features" className="relative z-10 px-4 py-24 sm:py-32">
         {/* Section glow */}
         <div className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[500px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-pn-green/3 blur-[150px]" />
 
@@ -460,7 +462,7 @@ export default function LandingPage() {
             <p className="mb-8 text-pn-muted">
               Connect your wallet and join the PlayNode creator economy.
             </p>
-            <button className="group inline-flex items-center gap-2 rounded-[var(--radius-md)] bg-pn-green px-10 py-4 text-lg font-semibold text-pn-black transition-all hover:bg-pn-green-dim hover:shadow-lg hover:shadow-pn-green/20">
+            <button onClick={connect} className="group inline-flex items-center gap-2 rounded-[var(--radius-md)] bg-pn-green px-10 py-4 text-lg font-semibold text-pn-black transition-all hover:bg-pn-green-dim hover:shadow-lg hover:shadow-pn-green/20">
               Connect Wallet
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </button>
