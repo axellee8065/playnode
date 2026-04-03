@@ -1,11 +1,7 @@
 'use client';
 
 import { type FC, useState, useRef, useEffect, useCallback } from 'react';
-import {
-  ConnectButton,
-  useCurrentAccount,
-  useDisconnectWallet,
-} from '@mysten/dapp-kit';
+import { useWallet } from '@/components/providers/SuiProvider';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function truncateAddress(address: string) {
@@ -13,13 +9,11 @@ function truncateAddress(address: string) {
 }
 
 const ConnectWalletButton: FC<{ className?: string }> = ({ className }) => {
-  const account = useCurrentAccount();
-  const { mutate: disconnect } = useDisconnectWallet();
+  const { connected, address, connecting, connect, disconnect } = useWallet();
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -31,34 +25,32 @@ const ConnectWalletButton: FC<{ className?: string }> = ({ className }) => {
   }, []);
 
   const copyAddress = useCallback(() => {
-    if (!account?.address) return;
-    navigator.clipboard.writeText(account.address);
+    if (!address) return;
+    navigator.clipboard.writeText(address);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
-  }, [account?.address]);
+  }, [address]);
 
-  // Disconnected state: show the dapp-kit ConnectButton styled as PlayNode primary
-  if (!account) {
+  if (!connected) {
     return (
-      <ConnectButton
-        className={className}
-        connectText="Connect Wallet"
-      />
+      <button
+        onClick={connect}
+        disabled={connecting}
+        className={`px-4 py-2 text-sm font-bold rounded-lg bg-pn-green text-pn-black hover:brightness-110 transition-all disabled:opacity-50 ${className ?? ''}`}
+      >
+        {connecting ? 'Connecting...' : 'Connect Wallet'}
+      </button>
     );
   }
 
-  // Connected state: custom dropdown
   return (
     <div ref={dropdownRef} className={`relative ${className ?? ''}`}>
       <button
         onClick={() => setOpen((prev) => !prev)}
         className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg bg-pn-surface border border-pn-border text-pn-white hover:border-pn-green/40 transition-colors"
       >
-        {/* Green dot indicator */}
         <span className="w-2 h-2 rounded-full bg-pn-green" />
-        <span className="font-mono text-xs">
-          {truncateAddress(account.address)}
-        </span>
+        <span className="font-mono text-xs">{truncateAddress(address!)}</span>
       </button>
 
       <AnimatePresence>
@@ -70,43 +62,26 @@ const ConnectWalletButton: FC<{ className?: string }> = ({ className }) => {
             transition={{ duration: 0.15, ease: 'easeOut' }}
             className="absolute right-0 top-full mt-2 w-64 rounded-xl bg-pn-surface border border-pn-border shadow-2xl overflow-hidden z-50"
           >
-            {/* Address row */}
             <div className="px-4 pt-4 pb-2">
               <p className="text-xs text-pn-muted mb-1">Connected address</p>
               <button
                 onClick={copyAddress}
                 className="flex items-center gap-2 text-xs font-mono text-pn-white hover:text-pn-green transition-colors"
               >
-                <span>{truncateAddress(account.address)}</span>
+                <span>{truncateAddress(address!)}</span>
                 <span className="text-[10px] text-pn-muted">
                   {copied ? 'Copied!' : 'Copy'}
                 </span>
               </button>
             </div>
-
-            {/* Links */}
             <div className="px-2 py-2 flex flex-col gap-0.5">
-              <a
-                href="/my-node"
-                className="px-3 py-2 text-sm text-pn-muted hover:text-pn-white hover:bg-pn-black/40 rounded-lg transition-colors"
-              >
-                My Node
-              </a>
-              <a
-                href="/dashboard"
-                className="px-3 py-2 text-sm text-pn-muted hover:text-pn-white hover:bg-pn-black/40 rounded-lg transition-colors"
-              >
+              <a href="/dashboard" className="px-3 py-2 text-sm text-pn-muted hover:text-pn-white hover:bg-pn-black/40 rounded-lg transition-colors">
                 Dashboard
               </a>
             </div>
-
-            {/* Divider + disconnect */}
             <div className="border-t border-pn-border px-2 py-2">
               <button
-                onClick={() => {
-                  disconnect();
-                  setOpen(false);
-                }}
+                onClick={() => { disconnect(); setOpen(false); }}
                 className="w-full px-3 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors text-left"
               >
                 Disconnect

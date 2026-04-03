@@ -1,22 +1,7 @@
 import { getFullnodeUrl, SuiClient } from '@mysten/sui/client';
-import { createNetworkConfig } from '@mysten/dapp-kit';
 
-const { networkConfig, useNetworkVariable } = createNetworkConfig({
-  testnet: {
-    url: getFullnodeUrl('testnet'),
-    variables: {
-      playnodePackageId: process.env.NEXT_PUBLIC_PLAYNODE_PACKAGE_ID || '',
-      revenueConfigId: process.env.NEXT_PUBLIC_REVENUE_CONFIG_ID || '',
-    },
-  },
-  mainnet: {
-    url: getFullnodeUrl('mainnet'),
-    variables: {
-      playnodePackageId: '',
-      revenueConfigId: '',
-    },
-  },
-});
+export const SUI_NETWORK = (process.env.NEXT_PUBLIC_SUI_NETWORK as 'testnet' | 'mainnet') || 'testnet';
+export const PACKAGE_ID = process.env.NEXT_PUBLIC_PLAYNODE_PACKAGE_ID || '';
+export const REVENUE_CONFIG_ID = process.env.NEXT_PUBLIC_REVENUE_CONFIG_ID || '';
 
-export { networkConfig, useNetworkVariable };
-export const suiClient = new SuiClient({ url: getFullnodeUrl('testnet') });
+export const suiClient = new SuiClient({ url: getFullnodeUrl(SUI_NETWORK) });

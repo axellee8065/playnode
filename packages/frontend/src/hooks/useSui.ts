@@ -1,17 +1,12 @@
 'use client';
 
-import { useCurrentAccount, useSignAndExecuteTransaction, useSuiClient } from '@mysten/dapp-kit';
+import { useWallet } from '@/components/providers/SuiProvider';
 import { Transaction } from '@mysten/sui/transactions';
+import { PACKAGE_ID } from '@/lib/sui';
 
 export function usePlayNode() {
-  const account = useCurrentAccount();
-  const client = useSuiClient();
-  const { mutateAsync: signAndExecute } = useSignAndExecuteTransaction();
+  const { connected: isConnected, address, client } = useWallet();
 
-  const isConnected = !!account;
-  const address = account?.address;
-
-  // Helper to execute a move call
   async function executeMove(params: {
     target: string;
     arguments: any[];
@@ -23,15 +18,15 @@ export function usePlayNode() {
       arguments: params.arguments,
       typeArguments: params.typeArguments,
     });
-    return signAndExecute({ transaction: tx as any });
+    // Transaction signing will be handled by wallet when available
+    return tx;
   }
 
   return {
     isConnected,
     address,
-    account,
     client,
-    signAndExecute,
+    packageId: PACKAGE_ID,
     executeMove,
   };
 }
