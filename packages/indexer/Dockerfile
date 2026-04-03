@@ -1,14 +1,14 @@
 FROM node:22-alpine AS builder
 WORKDIR /app
 
-COPY package.json package-lock.json* ./
+COPY package.json package-lock.json ./
+COPY packages/frontend/package.json ./packages/frontend/
+COPY packages/indexer/package.json ./packages/indexer/
 RUN npm ci
 
-COPY prisma ./prisma
-RUN npx prisma generate
-
-COPY . .
-RUN npm run build
+COPY packages/indexer/ ./packages/indexer/
+RUN npx --workspace=packages/indexer prisma generate
+RUN npm run build:indexer
 
 # Production stage
 FROM node:22-alpine AS runner
@@ -19,9 +19,9 @@ ENV PORT=4000
 
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/packages/indexer/dist ./packages/indexer/dist
+COPY --from=builder /app/packages/indexer/prisma ./packages/indexer/prisma
 
 EXPOSE 4000
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "packages/indexer/dist/index.js"]
