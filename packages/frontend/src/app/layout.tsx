@@ -53,6 +53,14 @@ export default function RootLayout({
       lang="ko"
       className={`dark ${outfit.variable} ${jetbrainsMono.variable} ${notoSansKR.variable}`}
     >
+      <head>
+        {/* Protect native Array/Object methods from SES lockdown injected by Sui Wallet browser extension */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var A=Array.prototype,O=Object;var r=A.reduce,f=A.filter,m=A.map,fe=A.forEach,s=A.slice,sp=A.splice,c=A.concat,fi=A.find,fI=A.findIndex,i=A.includes,e=A.every,so=A.some,fl=A.flat,fm=A.flatMap,j=A.join,k=O.keys,v=O.values,en=O.entries,a=O.assign,fr=O.freeze,dp=O.defineProperty;function g(o,n,fn){if(!fn)return;try{O.defineProperty(o,n,{value:fn,writable:true,configurable:true,enumerable:false})}catch(e){}}g(A,'reduce',r);g(A,'filter',f);g(A,'map',m);g(A,'forEach',fe);g(A,'slice',s);g(A,'splice',sp);g(A,'concat',c);g(A,'find',fi);g(A,'findIndex',fI);g(A,'includes',i);g(A,'every',e);g(A,'some',so);g(A,'flat',fl);g(A,'flatMap',fm);g(A,'join',j);if(k)O.keys=k;if(v)O.values=v;if(en)O.entries=en;if(a)O.assign=a;var _DP=O.defineProperty;O.defineProperty=function(obj,prop,desc){try{return _DP(obj,prop,desc)}catch(e){return obj}};var _F=O.freeze;O.freeze=function(obj){try{return _F(obj)}catch(e){return obj}};})();`,
+          }}
+        />
+      </head>
       <body className="relative min-h-screen overflow-x-hidden">
         {/* Noise overlay */}
         <div
