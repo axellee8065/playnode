@@ -18,6 +18,7 @@ interface ContentCardProps {
   verifiedHours?: number;
   createdAt: string;
   category?: number;
+  variant?: 'card' | 'list';
 }
 
 function hashCode(str: string): number {
@@ -69,15 +70,86 @@ const ContentCard: FC<ContentCardProps> = ({
   verifiedHours,
   createdAt,
   category,
+  variant = 'card',
 }) => {
   const href = type === 'drop' ? `/drop/${id}` : `/review/${id}`;
   const gameLabel = getGameLabel(gameTag);
   const typeBadge = type === 'drop' ? 'GUIDE' : 'REVIEW';
   const categoryLabel = category !== undefined ? getCategoryLabel(category) : null;
-  const isFree = !isPremium && (!price || price === '0');
+  const isFree = !isPremium && (!price || price === '0' || price === '0.00');
+  // Convert raw USDC amount (6 decimals) to display: 5990000 → "5.99"
+  const priceNum = Number(price || 0);
+  const displayPrice = priceNum > 10000 ? (priceNum / 1_000_000).toFixed(2) : price;
   const { toggleDrop, toggleReview, isDropFavorite, isReviewFavorite } = useFavorites();
   const isFavorited = type === 'drop' ? isDropFavorite(id) : isReviewFavorite(id);
 
+  /* ── List variant ─────────────────────────────────────────────── */
+  if (variant === 'list') {
+    return (
+      <div className="group border-b border-pn-border transition-colors hover:bg-pn-surface">
+        <a href={href} className="flex items-center gap-4 px-3 py-2">
+          {/* Thumbnail */}
+          <div
+            className="relative flex-shrink-0 w-40 aspect-video rounded-lg overflow-hidden"
+            style={{ background: tagToGradient(gameTag) }}
+          >
+            <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-pn-black/70 text-[9px] font-semibold text-pn-white backdrop-blur-sm truncate max-w-[80%]">
+              {gameLabel}
+            </span>
+            <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-pn-black/70 text-[9px] font-semibold text-pn-white backdrop-blur-sm">
+              {typeBadge}
+            </span>
+          </div>
+
+          {/* Title + meta */}
+          <div className="flex-1 min-w-0">
+            <h3 className="text-sm font-semibold text-pn-white line-clamp-2 leading-snug">
+              {title}
+            </h3>
+            <p className="text-xs text-pn-muted mt-0.5 truncate">
+              {author}
+              <span className="mx-1">&middot;</span>
+              {views} views
+              <span className="mx-1">&middot;</span>
+              {timeAgo(createdAt)}
+            </p>
+            {type === 'review' && rating !== undefined && (
+              <span className="inline-block mt-1 px-2 py-0.5 rounded-md bg-pn-cyan/10 text-pn-cyan text-[11px] font-semibold">
+                {rating.toFixed(1)}/10
+              </span>
+            )}
+          </div>
+
+          {/* Price */}
+          <span
+            className={`flex-shrink-0 text-xs font-bold ${
+              isFree ? 'text-pn-green' : 'text-pn-white'
+            }`}
+          >
+            {isFree ? 'FREE' : `${displayPrice} USDC`}
+          </span>
+
+          {/* Bookmark */}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              type === 'drop' ? toggleDrop(id) : toggleReview(id);
+            }}
+            className="flex-shrink-0"
+            title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+          >
+            <Bookmark
+              size={16}
+              className={isFavorited ? 'fill-pn-amber text-pn-amber' : 'text-pn-muted hover:text-pn-white'}
+            />
+          </button>
+        </a>
+      </div>
+    );
+  }
+
+  /* ── Card variant (default) ───────────────────────────────────── */
   return (
     <div className="group relative block rounded-xl transition-all duration-200 hover:scale-[1.02] hover:border-pn-border-light">
       <a href={href} className="block">
@@ -99,7 +171,7 @@ const ContentCard: FC<ContentCardProps> = ({
               : 'bg-pn-surface/80 text-pn-white'
           }`}
         >
-          {isFree ? 'FREE' : `${price} USDC`}
+          {isFree ? 'FREE' : `${displayPrice} USDC`}
         </span>
 
         {/* Type badge — bottom-right */}

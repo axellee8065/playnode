@@ -31,7 +31,7 @@ async function main() {
       id: suiId(1),
       owner: suiId(1001),
       displayName: "GameMaster_KR",
-      bio: "몬스터 헌터 & 소울라이크 전문 크리에이터. 차지블레이드 장인.",
+      bio: "Monster Hunter & Souls-like specialist creator. Charge Blade artisan.",
       avatarUrl: "https://api.dicebear.com/7.x/pixel-art/svg?seed=GameMasterKR",
       bannerUrl: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1200",
       rank: 4, // Diamond
@@ -51,7 +51,7 @@ async function main() {
       id: suiId(2),
       owner: suiId(1002),
       displayName: "StellarGuide",
-      bio: "스텔라 블레이드 & 파이널 판타지 시리즈 공략 전문.",
+      bio: "Stellar Blade & Final Fantasy series walkthrough specialist.",
       avatarUrl: "https://api.dicebear.com/7.x/pixel-art/svg?seed=StellarGuide",
       bannerUrl: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=1200",
       rank: 3, // Gold
@@ -71,7 +71,7 @@ async function main() {
       id: suiId(3),
       owner: suiId(1003),
       displayName: "IndieHunter_99",
-      bio: "인디 게임 발굴 & 리뷰 전문. 숨겨진 명작을 찾아드립니다.",
+      bio: "Indie game discovery & review specialist. Finding hidden gems for you.",
       avatarUrl: "https://api.dicebear.com/7.x/pixel-art/svg?seed=IndieHunter99",
       bannerUrl: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1200",
       rank: 2, // Silver
@@ -96,7 +96,7 @@ async function main() {
         id: suiId(101),
         nodeId: node1.id,
         author: node1.owner,
-        title: "몬스터 헌터 와일즈: 차지블레이드 마스터 가이드",
+        title: "Monster Hunter Wilds: Charge Blade Master Guide",
         contentHash: "QmFakeHash101",
         walrusBlobId: "walrus_blob_101",
         category: 0, // boss
@@ -117,7 +117,7 @@ async function main() {
         id: suiId(102),
         nodeId: node1.id,
         author: node1.owner,
-        title: "엘든 링 DLC: Shadow of the Erdtree 보스 공략",
+        title: "Elden Ring DLC: Shadow of the Erdtree Boss Guide",
         contentHash: "QmFakeHash102",
         walrusBlobId: "walrus_blob_102",
         category: 0,
@@ -138,7 +138,7 @@ async function main() {
         id: suiId(103),
         nodeId: node1.id,
         author: node1.owner,
-        title: "몬헌 와일즈: 활 빌드 가이드 시즌2",
+        title: "Monster Hunter Wilds: Bow Build Guide Season 2",
         contentHash: "QmFakeHash103",
         walrusBlobId: "walrus_blob_103",
         category: 1, // build
@@ -159,7 +159,7 @@ async function main() {
         id: suiId(104),
         nodeId: node2.id,
         author: node2.owner,
-        title: "스텔라 블레이드: 전 보스 노히트 가이드",
+        title: "Stellar Blade: All Bosses No-Hit Guide",
         contentHash: "QmFakeHash104",
         walrusBlobId: "walrus_blob_104",
         category: 0,
@@ -180,7 +180,7 @@ async function main() {
         id: suiId(105),
         nodeId: node2.id,
         author: node2.owner,
-        title: "파이널 판타지 7 리버스: 하드모드 완벽 공략",
+        title: "FF7 Rebirth: Hard Mode Complete Walkthrough",
         contentHash: "QmFakeHash105",
         walrusBlobId: "walrus_blob_105",
         category: 5, // general
@@ -201,7 +201,7 @@ async function main() {
         id: suiId(106),
         nodeId: node3.id,
         author: node3.owner,
-        title: "팰월드: 최강 팰 티어 리스트 v3",
+        title: "Palworld: Best Pal Tier List v3",
         contentHash: "QmFakeHash106",
         walrusBlobId: "walrus_blob_106",
         category: 3, // tier_list
@@ -222,7 +222,7 @@ async function main() {
         id: suiId(107),
         nodeId: node3.id,
         author: node3.owner,
-        title: "홀로우 나이트: 실크송 숨겨진 보스 가이드",
+        title: "Hollow Knight: Silksong Hidden Boss Guide",
         contentHash: "QmFakeHash107",
         walrusBlobId: "walrus_blob_107",
         category: 0,
@@ -243,7 +243,7 @@ async function main() {
         id: suiId(108),
         nodeId: node1.id,
         author: node1.owner,
-        title: "GTA VI: 미션 100% 완벽 가이드",
+        title: "GTA VI: 100% Mission Complete Guide",
         contentHash: "QmFakeHash108",
         walrusBlobId: "walrus_blob_108",
         category: 2, // quest
@@ -476,9 +476,9 @@ async function main() {
       create: {
         id: suiId(401),
         creator: suiId(2001),
-        title: "몬헌 와일즈 차지블레이드 가이드 작성",
+        title: "Write a MH Wilds Charge Blade Guide",
         description:
-          "몬스터 헌터 와일즈의 차지블레이드 무기 마스터 가이드를 작성해주세요. 초보자부터 고급 테크닉까지 포함. 영상 포함 필수.",
+          "Write a Charge Blade weapon master guide for Monster Hunter Wilds. Cover beginner to advanced techniques. Video content required.",
         gameTag: "monster-hunter-wilds",
         rewardAmount: usdc(200),
         escrowBalance: usdc(200),
@@ -494,9 +494,9 @@ async function main() {
       create: {
         id: suiId(402),
         creator: suiId(2002),
-        title: "엘든 링 DLC 한국어 번역",
+        title: "Elden Ring DLC Boss Guide Translation",
         description:
-          "Shadow of the Erdtree DLC의 보스 공략 가이드를 한국어로 번역해주세요. 원문 영어, 최소 5000자.",
+          "Translate the Shadow of the Erdtree DLC boss walkthrough guide. Original in English, minimum 5000 words.",
         gameTag: "elden-ring",
         rewardAmount: usdc(150),
         escrowBalance: usdc(150),
@@ -512,9 +512,9 @@ async function main() {
       create: {
         id: suiId(403),
         creator: suiId(2003),
-        title: "인디 게임 큐레이션 번들 제작",
+        title: "Create an Indie Game Curation Bundle",
         description:
-          "2026년 상반기 인디 게임 TOP 10 큐레이션 번들을 제작해주세요. 각 게임별 미니 리뷰 포함.",
+          "Create a curated bundle of the TOP 10 indie games for H1 2026. Include a mini review for each game.",
         gameTag: "indie-games",
         rewardAmount: usdc(100),
         escrowBalance: usdc(100),

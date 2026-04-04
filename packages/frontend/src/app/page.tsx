@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { LayoutGrid, List } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Sidebar from '@/components/layout/Sidebar';
 import CategoryBar from '@/components/layout/CategoryBar';
@@ -116,6 +117,7 @@ function reviewsToFeedItems(reviews: Review[]): FeedItem[] {
 
 export default function HomePage() {
   const [activeGame, setActiveGame] = useState('all');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   // Fetch live data
   const { data: apiDrops } = useApi(() => api.getDrops({ take: 20 }), []);
@@ -193,11 +195,31 @@ export default function HomePage() {
 
             {/* Main feed */}
             <section>
-              <h2 className="text-pn-white font-bold text-lg mb-4 font-mono">
-                {activeGame === 'all' ? 'Latest Content' : getGameLabel(activeGame)}
-              </h2>
+              <div className="flex items-center gap-3 mb-4">
+                <h2 className="text-pn-white font-bold text-lg font-mono">
+                  {activeGame === 'all' ? 'Latest Content' : getGameLabel(activeGame)}
+                </h2>
+                <div className="flex items-center gap-1 ml-auto">
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={`p-1.5 rounded-md transition-colors ${viewMode === 'grid' ? 'text-pn-white' : 'text-pn-muted hover:text-pn-white'}`}
+                    title="Grid view"
+                  >
+                    <LayoutGrid size={16} />
+                  </button>
+                  <button
+                    onClick={() => setViewMode('list')}
+                    className={`p-1.5 rounded-md transition-colors ${viewMode === 'list' ? 'text-pn-white' : 'text-pn-muted hover:text-pn-white'}`}
+                    title="List view"
+                  >
+                    <List size={16} />
+                  </button>
+                </div>
+              </div>
               <motion.div
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+                className={viewMode === 'grid'
+                  ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'
+                  : 'flex flex-col'}
                 variants={stagger}
                 initial="hidden"
                 animate="show"
@@ -218,6 +240,7 @@ export default function HomePage() {
                         verifiedHours={item.verifiedHours}
                         createdAt={item.createdAt}
                         category={item.category}
+                        variant={viewMode === 'list' ? 'list' : 'card'}
                       />
                     </motion.div>
                   ),

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, LayoutGrid, List } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Sidebar from '@/components/layout/Sidebar';
 import ContentCard from '@/components/feed/ContentCard';
@@ -49,6 +49,7 @@ const MOCK_REVIEWS: Review[] = Array.from({ length: 20 }, (_, i) => ({
 export default function ReviewsPage() {
   const [gameFilter, setGameFilter] = useState('all');
   const [ratingFilter, setRatingFilter] = useState(0);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   const gameTagParam = gameFilter !== 'all' ? gameFilter : undefined;
   const { data: apiReviews, loading } = useApi(
@@ -74,9 +75,27 @@ export default function ReviewsPage() {
           <div className="px-4 lg:px-6 py-6">
             {/* Page title + filters */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-              <h1 className="font-mono text-sm font-semibold uppercase tracking-wider text-pn-muted">
-                Reviews
-              </h1>
+              <div className="flex items-center gap-3">
+                <h1 className="font-mono text-sm font-semibold uppercase tracking-wider text-pn-muted">
+                  Reviews
+                </h1>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={`p-1.5 rounded-md transition-colors ${viewMode === 'grid' ? 'text-pn-white' : 'text-pn-muted hover:text-pn-white'}`}
+                    title="Grid view"
+                  >
+                    <LayoutGrid size={16} />
+                  </button>
+                  <button
+                    onClick={() => setViewMode('list')}
+                    className={`p-1.5 rounded-md transition-colors ${viewMode === 'list' ? 'text-pn-white' : 'text-pn-muted hover:text-pn-white'}`}
+                    title="List view"
+                  >
+                    <List size={16} />
+                  </button>
+                </div>
+              </div>
 
               <div className="flex flex-wrap items-center gap-3">
                 {/* Game filter */}
@@ -119,7 +138,9 @@ export default function ReviewsPage() {
 
             {/* Grid */}
             {!loading && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              <div className={viewMode === 'grid'
+                ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'
+                : 'flex flex-col'}>
                 {filtered.map((review) => (
                   <ContentCard
                     key={review.id}
@@ -132,6 +153,7 @@ export default function ReviewsPage() {
                     rating={review.rating / 10}
                     verifiedHours={review.verifiedPlaytimeHours}
                     createdAt={review.createdAt}
+                    variant={viewMode === 'list' ? 'list' : 'card'}
                   />
                 ))}
               </div>
