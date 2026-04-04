@@ -1,7 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
-import { getWallets } from '@wallet-standard/core';
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
 import { suiClient, SUI_NETWORK } from '@/lib/sui';
 import type { SuiClient } from '@mysten/sui/client';
 
@@ -27,14 +26,24 @@ const WalletContext = createContext<WalletState>({
 
 export const useWallet = () => useContext(WalletContext);
 
+function findSuiWallets(): any[] {
+  if (typeof window === 'undefined') return [];
+  const win = window as any;
+  // wallet-standard registry
+  const registry = win.__walletStandard__?.wallets || [];
+  return registry.filter((w: any) =>
+    w?.features?.['standard:connect'] &&
+    (w.chains?.some?.((c: string) => c.startsWith('sui:')) ||
+     w.name?.toLowerCase().includes('sui') ||
+     w.name?.toLowerCase().includes('slush'))
+  );
+}
+
 export default function SuiProvider({ children }: { children: ReactNode }) {
   const [address, setAddress] = useState<string | null>(null);
   const [connecting, setConnecting] = useState(false);
-  const walletsRef = useRef<ReturnType<typeof getWallets> | null>(null);
 
-  // Initialize wallet-standard registry + restore session
   useEffect(() => {
-    walletsRef.current = getWallets();
     const saved = localStorage.getItem('playnode_wallet');
     if (saved) setAddress(saved);
   }, []);
@@ -42,21 +51,11 @@ export default function SuiProvider({ children }: { children: ReactNode }) {
   const connect = useCallback(async () => {
     setConnecting(true);
     try {
-      // Wait a tick for wallets to register (extensions inject async)
-      await new Promise((r) => setTimeout(r, 100));
+      await new Promise((r) => setTimeout(r, 200));
 
-      const api = walletsRef.current || getWallets();
-      const wallets = api.get();
-
-      // Find a Sui-compatible wallet with standard:connect
-      const suiWallet = wallets.find((w) =>
-        w.features['standard:connect'] &&
-        (w.chains?.some((c: string) => c.startsWith('sui:')) || w.name?.toLowerCase().includes('sui') || w.name?.toLowerCase().includes('slush'))
-      );
-
-      if (suiWallet) {
-        const connectFeature = suiWallet.features['standard:connect'] as any;
-        const result = await connectFeature.connect();
+      const wallets = findSuiWallets();
+      if (wallets.length > 0) {
+        const result = await wallets[0].features['standard:connect'].connect();
         if (result.accounts?.length > 0) {
           const addr = result.accounts[0].address;
           setAddress(addr);
@@ -65,7 +64,7 @@ export default function SuiProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      // Fallback: check legacy window APIs
+      // Legacy fallback
       const win = window as any;
       const legacy = win.sui || win.suiWallet || win.slush;
       if (legacy) {
@@ -77,10 +76,9 @@ export default function SuiProvider({ children }: { children: ReactNode }) {
             localStorage.setItem('playnode_wallet', accounts[0]);
             return;
           }
-        } catch { /* legacy API failed */ }
+        } catch { /* ignored */ }
       }
 
-      // No wallet detected — open install page
       window.open('https://chromewebstore.google.com/detail/slush-%E2%80%94-a-sui-wallet/opcgpfmipidbgpenhmajoajpbobppdil', '_blank');
     } catch (err) {
       console.error('Wallet connection failed:', err);
@@ -96,15 +94,7 @@ export default function SuiProvider({ children }: { children: ReactNode }) {
 
   return (
     <WalletContext.Provider
-      value={{
-        connected: !!address,
-        address,
-        connecting,
-        client: suiClient,
-        network: SUI_NETWORK,
-        connect,
-        disconnect,
-      }}
+      value={{ connected: !!address, address, connecting, client: suiClient, network: SUI_NETWORK, connect, disconnect }}
     >
       {children}
     </WalletContext.Provider>
