@@ -14,6 +14,8 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { Badge, Button, Card } from '@/components/common';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 import { api, formatViews } from '@/lib/api';
 import { useApi } from '@/hooks/useApi';
 
@@ -160,10 +162,13 @@ const ReviewPage: FC = () => {
       if (vote === 'up') setHelpfulCount(review.helpful + 1);
       else setHelpfulCount(review.helpful);
     }
+    // Fire-and-forget API call to persist the vote
+    fetch(`/api/reviews/${reviewId}/helpful`, { method: 'POST' }).catch(() => {});
   };
 
   return (
     <div className="min-h-screen bg-pn-black">
+      <Header />
       <main className="max-w-[1200px] mx-auto px-4 lg:px-6 py-10">
         <motion.div
           variants={stagger}
@@ -410,7 +415,12 @@ const ReviewPage: FC = () => {
                       </div>
                     </div>
                   </div>
-                  <Button variant="secondary" size="sm" className="w-full">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="w-full"
+                    onClick={() => window.location.href = `/node/${reviewId}`}
+                  >
                     View Profile
                   </Button>
                 </div>
@@ -428,7 +438,12 @@ const ReviewPage: FC = () => {
                     {displayReview.game}
                   </span>
                 </div>
-                <Button variant="primary" size="sm" className="w-full">
+                <Button
+                  variant="primary"
+                  size="sm"
+                  className="w-full"
+                  onClick={() => window.location.href = '/shop'}
+                >
                   <ExternalLink className="w-3.5 h-3.5" />
                   View in Shop
                 </Button>
@@ -477,6 +492,7 @@ const ReviewPage: FC = () => {
           </div>
         </motion.div>
       </main>
+      <Footer />
     </div>
   );
 };

@@ -3,9 +3,11 @@
 import { type FC, useState } from 'react';
 import { motion } from 'framer-motion';
 import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 import { Badge, Button, Card, UsdcAmount, StatCard } from '@/components/common';
 import { api, formatUsdc } from '@/lib/api';
 import { useApi } from '@/hooks/useApi';
+import { useWallet } from '@/components/providers/SuiProvider';
 
 /* ------------------------------------------------------------------ */
 /*  Animation helpers                                                  */
@@ -149,6 +151,7 @@ const rankColors: Record<string, string> = {
 
 const QuestPage: FC = () => {
   const [category, setCategory] = useState<QuestCategory>('all');
+  const { connected, connect } = useWallet();
 
   // Fetch live data from API
   const { data: apiQuests } = useApi(() => api.getQuests(), []);
@@ -332,6 +335,11 @@ const QuestPage: FC = () => {
                           size="md"
                           className="!bg-pn-amber/10 !border-pn-amber/30 !text-pn-amber hover:!bg-pn-amber/20 whitespace-nowrap"
                           disabled={quest.status === 'IN_PROGRESS'}
+                          onClick={() => {
+                            if (quest.status === 'IN_PROGRESS') return;
+                            if (!connected) { connect(); return; }
+                            alert(`Quest "${quest.title}" accepted! Quest tracking will be available soon.`);
+                          }}
                         >
                           {quest.status === 'OPEN' ? 'Accept' : 'In Progress'}
                         </Button>
@@ -373,6 +381,7 @@ const QuestPage: FC = () => {
           </Card>
         </motion.div>
       </main>
+      <Footer />
     </div>
   );
 };

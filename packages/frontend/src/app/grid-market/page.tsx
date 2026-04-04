@@ -3,9 +3,11 @@
 import { type FC, useState } from 'react';
 import { motion } from 'framer-motion';
 import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 import { Badge, Button, Card, UsdcAmount, StatCard } from '@/components/common';
 import { api, formatViews, formatUsdc } from '@/lib/api';
 import { useApi } from '@/hooks/useApi';
+import { useWallet } from '@/components/providers/SuiProvider';
 
 /* ------------------------------------------------------------------ */
 /*  Animation helpers                                                  */
@@ -200,6 +202,7 @@ const PixelGrid: FC<{ pixels: boolean[][]; colors: string[] }> = ({ pixels, colo
 
 const GridMarketPage: FC = () => {
   const [sort, setSort] = useState<SortOption>('popular');
+  const { connected, connect } = useWallet();
 
   // Fetch live data from API
   const { data: apiGrids } = useApi(() => api.getGrids(), []);
@@ -388,6 +391,10 @@ const GridMarketPage: FC = () => {
                     variant="secondary"
                     size="md"
                     className="!bg-pn-purple/10 !border-pn-purple/30 !text-pn-purple hover:!bg-pn-purple/20 w-full"
+                    onClick={() => {
+                      if (!connected) { connect(); return; }
+                      alert('Pixel purchase flow coming soon. Select pixels and pay with USDC.');
+                    }}
                   >
                     Advertise
                   </Button>
@@ -493,6 +500,7 @@ const GridMarketPage: FC = () => {
           </Card>
         </motion.div>
       </main>
+      <Footer />
     </div>
   );
 };

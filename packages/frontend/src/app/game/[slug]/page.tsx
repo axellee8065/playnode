@@ -15,6 +15,8 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { Badge, Button, Card, UsdcAmount } from '@/components/common';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 import { api, formatViews, formatUsdc } from '@/lib/api';
 import { useApi } from '@/hooks/useApi';
 
@@ -113,9 +115,9 @@ const topCreators = [
 ];
 
 const shopLinks = [
-  { store: 'Steam', price: 59.99, url: '#', badge: 'PC' },
-  { store: 'Epic Games', price: 59.99, url: '#', badge: 'PC' },
-  { store: 'Humble Bundle', price: 53.99, url: '#', badge: 'PC / -10%' },
+  { store: 'Steam', price: 59.99, url: 'https://store.steampowered.com', badge: 'PC' },
+  { store: 'Epic Games', price: 59.99, url: 'https://www.epicgames.com', badge: 'PC' },
+  { store: 'Humble Bundle', price: 53.99, url: 'https://www.humblebundle.com', badge: 'PC / -10%' },
 ];
 
 const reviewItems = [
@@ -202,6 +204,7 @@ const GameHubPage: FC = () => {
 
   return (
     <div className="min-h-screen bg-pn-black">
+      <Header />
       {/* ============================================================= */}
       {/* Game Banner                                                    */}
       {/* ============================================================= */}
@@ -475,7 +478,7 @@ const GameHubPage: FC = () => {
                     </div>
                     <div className="flex items-center gap-4">
                       <UsdcAmount amount={link.price} size="md" />
-                      <Button variant="primary" size="sm">
+                      <Button variant="primary" size="sm" onClick={() => window.open(link.url, '_blank')}>
                         <ExternalLink className="w-3.5 h-3.5" />
                         Buy
                       </Button>
@@ -595,7 +598,7 @@ const GameHubPage: FC = () => {
                   </div>
                   <div className="flex items-center justify-between">
                     <UsdcAmount amount={link.price} size="sm" />
-                    <Button variant="primary" size="sm">
+                    <Button variant="primary" size="sm" onClick={() => window.open(link.url, '_blank')}>
                       <ExternalLink className="w-3 h-3" />
                       Buy
                     </Button>
@@ -606,6 +609,7 @@ const GameHubPage: FC = () => {
           </motion.div>
         )}
       </main>
+      <Footer />
     </div>
   );
 };

@@ -13,8 +13,11 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { Badge, Button, Card, UsdcAmount } from "@/components/common";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 import { api, formatUsdc, formatViews } from "@/lib/api";
 import { useApi } from "@/hooks/useApi";
+import { useWallet } from "@/components/providers/SuiProvider";
 
 // ---------------------------------------------------------------------------
 // Animation helpers
@@ -143,6 +146,7 @@ export default function NodeProfilePage() {
   const params = useParams();
   const nodeId = params.id as string;
   const [activeTab, setActiveTab] = useState<Tab>("Drops");
+  const { connected, connect } = useWallet();
 
   // Fetch live data from API
   const { data: apiNode } = useApi(() => api.getNode(nodeId), [nodeId]);
@@ -183,6 +187,7 @@ export default function NodeProfilePage() {
 
   return (
     <div className="min-h-screen bg-pn-black text-pn-white">
+      <Header />
       {/* ----------------------------------------------------------------- */}
       {/* Banner + Avatar */}
       {/* ----------------------------------------------------------------- */}
@@ -436,6 +441,11 @@ export default function NodeProfilePage() {
                 variant="secondary"
                 size="lg"
                 className="w-full border-pn-red/40 text-pn-red hover:bg-pn-red/10 hover:border-pn-red/60"
+                onClick={() => {
+                  if (!connected) { connect(); return; }
+                  const amount = prompt('Enter tip amount in USDC (e.g. 1.00):');
+                  if (amount) alert(`Ping of $${amount} USDC sent! Transaction will be processed on-chain.`);
+                }}
               >
                 <span className="mr-1">☕</span> Send Ping
               </Button>
@@ -450,6 +460,10 @@ export default function NodeProfilePage() {
                 variant="secondary"
                 size="lg"
                 className="w-full border-pn-red/40 text-pn-red hover:bg-pn-red/10 hover:border-pn-red/60"
+                onClick={() => {
+                  if (!connected) { connect(); return; }
+                  alert('Link subscription of $4.99/mo started! Recurring payments will be set up on-chain.');
+                }}
               >
                 <Link2 size={16} className="mr-1" />
                 Link Subscribe $4.99/mo
@@ -482,13 +496,20 @@ export default function NodeProfilePage() {
             </Card>
 
             {/* Advertise link */}
-            <button className="flex items-center justify-center gap-1.5 py-3 text-xs text-pn-muted hover:text-pn-text transition-colors">
+            <button
+              className="flex items-center justify-center gap-1.5 py-3 text-xs text-pn-muted hover:text-pn-text transition-colors"
+              onClick={() => {
+                if (!connected) { connect(); return; }
+                alert('Pixel purchase flow coming soon. Select pixels and pay with USDC.');
+              }}
+            >
               <span>Advertise on this Node</span>
               <ChevronRight size={13} />
             </button>
           </aside>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

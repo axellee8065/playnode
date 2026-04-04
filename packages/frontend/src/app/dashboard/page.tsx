@@ -3,9 +3,11 @@
 import { type FC, useState } from 'react';
 import { motion } from 'framer-motion';
 import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 import { Badge, Button, Card, UsdcAmount } from '@/components/common';
 import { api, formatUsdc, formatViews } from '@/lib/api';
 import { useApi } from '@/hooks/useApi';
+import { useWallet } from '@/components/providers/SuiProvider';
 
 /* ------------------------------------------------------------------ */
 /*  Animation helpers                                                  */
@@ -143,6 +145,7 @@ const AnimatedBar: FC<{ pct: number; colorClass: string; delay: number }> = ({
 
 const DashboardPage: FC = () => {
   const [tab, setTab] = useState<ContentTab>('all');
+  const { connected, connect } = useWallet();
 
   // Fetch live data from API (falls back to mock data below if unavailable)
   const { data: apiDrops } = useApi(() => api.getDrops({ take: 10 }), []);
@@ -410,20 +413,29 @@ const DashboardPage: FC = () => {
           animate="show"
           transition={{ delay: 0.55 }}
         >
-          <Button variant="primary" size="lg">
+          <Button variant="primary" size="lg" onClick={() => window.location.href = '/drops/create'}>
             Create New Drop
           </Button>
-          <Button variant="secondary" size="lg">
+          <Button variant="secondary" size="lg" onClick={() => window.location.href = '/reviews/create'}>
             Write Review
           </Button>
-          <Button variant="secondary" size="lg">
+          <Button variant="secondary" size="lg" onClick={() => alert('Shop link creation coming soon.')}>
             Add Shop Link
           </Button>
-          <Button variant="ghost" size="lg" className="!text-pn-green">
+          <Button
+            variant="ghost"
+            size="lg"
+            className="!text-pn-green"
+            onClick={() => {
+              if (!connected) { connect(); return; }
+              alert('Wire withdrawal initiated. On-chain transfer coming soon.');
+            }}
+          >
             Wire Withdrawal
           </Button>
         </motion.div>
       </main>
+      <Footer />
     </div>
   );
 };

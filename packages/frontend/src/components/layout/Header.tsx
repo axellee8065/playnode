@@ -1,22 +1,31 @@
 'use client';
 
-import { type FC, useState } from 'react';
+import { type FC, useState, type FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Search } from 'lucide-react';
 import Logo from '../common/Logo';
 import ConnectWalletButton from '../common/ConnectWalletButton';
 
 const navLinks = [
-  { label: 'Explore', href: '/explore' },
+  { label: 'Explore', href: '/' },
   { label: 'Drops', href: '/drops' },
   { label: 'Reviews', href: '/reviews' },
   { label: 'Shop', href: '/shop' },
-  { label: 'Grid Market', href: '/grid' },
-  { label: 'Quests', href: '/quests' },
+  { label: 'Grid Market', href: '/grid-market' },
+  { label: 'Quests', href: '/quest' },
 ];
 
 const Header: FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = (e: FormEvent) => {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    if (q) {
+      window.location.href = `/search?q=${encodeURIComponent(q)}`;
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-pn-black/80 backdrop-blur-xl border-b border-pn-border">
@@ -38,6 +47,20 @@ const Header: FC = () => {
             </a>
           ))}
         </nav>
+
+        {/* Search bar (desktop) */}
+        <form onSubmit={handleSearch} className="hidden md:flex items-center max-w-[240px]">
+          <div className="relative w-full">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-pn-muted pointer-events-none" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search guides, reviews, games..."
+              className="w-full bg-pn-surface border border-pn-border rounded-lg pl-8 pr-3 py-1.5 text-sm text-pn-text placeholder:text-pn-muted/50 focus:outline-none focus:border-pn-green/50 transition-colors"
+            />
+          </div>
+        </form>
 
         {/* Right: wallet + hamburger */}
         <div className="flex items-center gap-3">

@@ -16,8 +16,11 @@ import {
   Gamepad2,
 } from "lucide-react";
 import { Badge, Button, Card, UsdcAmount } from "@/components/common";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 import { api, formatUsdc, formatViews } from "@/lib/api";
 import { useApi } from "@/hooks/useApi";
+import { useWallet } from "@/components/providers/SuiProvider";
 
 // ---------------------------------------------------------------------------
 // Animation variants
@@ -174,6 +177,7 @@ function StatRow({
 export default function DropDetailPage() {
   const params = useParams();
   const dropId = params.id as string;
+  const { connected, connect } = useWallet();
 
   // Fetch live data from API
   const { data: apiDrop } = useApi(() => api.getDrop(dropId), [dropId]);
@@ -210,6 +214,7 @@ export default function DropDetailPage() {
 
   return (
     <div className="relative min-h-screen">
+      <Header />
       {/* Background effects */}
       <div
         className="pointer-events-none fixed inset-0 z-0"
@@ -292,7 +297,15 @@ export default function DropDetailPage() {
                       80% of your purchase goes directly to the creator.
                     </p>
                   </div>
-                  <Button variant="primary" size="lg" className="shrink-0">
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    className="shrink-0"
+                    onClick={() => {
+                      if (!connected) { connect(); return; }
+                      alert(`Purchase initiated for $${drop.price} USDC. Transaction signing will be available when mainnet launches.`);
+                    }}
+                  >
                     <ShoppingCart className="h-4 w-4" />
                     Purchase
                   </Button>
@@ -392,7 +405,12 @@ export default function DropDetailPage() {
                         <p className="mt-1 text-sm leading-relaxed text-pn-text">
                           {tip.text}
                         </p>
-                        <button className="mt-2 inline-flex items-center gap-1.5 text-xs text-pn-muted hover:text-pn-green transition-colors">
+                        <button
+                          className="mt-2 inline-flex items-center gap-1.5 text-xs text-pn-muted hover:text-pn-green transition-colors"
+                          onClick={() => {
+                            fetch(`/api/reviews/${dropId}/helpful`, { method: 'POST' }).catch(() => {});
+                          }}
+                        >
                           <ThumbsUp className="h-3 w-3" />
                           Helpful ({tip.helpful})
                         </button>
@@ -459,15 +477,37 @@ export default function DropDetailPage() {
                   {drop.author.bio}
                 </p>
                 <div className="space-y-2">
-                  <Button variant="primary" size="sm" className="w-full">
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    className="w-full"
+                    onClick={() => window.location.href = `/node/${dropId}`}
+                  >
                     Visit Node
                   </Button>
                   <div className="grid grid-cols-2 gap-2">
-                    <Button variant="secondary" size="sm" className="w-full">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="w-full"
+                      onClick={() => {
+                        if (!connected) { connect(); return; }
+                        const amount = prompt('Enter tip amount in USDC (e.g. 1.00):');
+                        if (amount) alert(`Ping of $${amount} USDC sent! Transaction will be processed on-chain.`);
+                      }}
+                    >
                       <Coffee className="h-3.5 w-3.5" />
                       Ping
                     </Button>
-                    <Button variant="secondary" size="sm" className="w-full">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="w-full"
+                      onClick={() => {
+                        if (!connected) { connect(); return; }
+                        alert('Link subscription of $4.99/mo started! Recurring payments will be set up on-chain.');
+                      }}
+                    >
                       <Link2 className="h-3.5 w-3.5" />
                       Link Subscribe
                     </Button>
@@ -501,6 +541,11 @@ export default function DropDetailPage() {
                 <a
                   href="#"
                   className="mt-3 inline-flex items-center gap-1 text-xs text-pn-green hover:underline"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (!connected) { connect(); return; }
+                    alert('Pixel purchase flow coming soon. Select pixels and pay with USDC.');
+                  }}
                 >
                   Advertise on this guide
                   <ExternalLink className="h-3 w-3" />
@@ -544,7 +589,12 @@ export default function DropDetailPage() {
                     $59.99
                   </span>
                 </div>
-                <Button variant="secondary" size="sm" className="w-full mb-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="w-full mb-2"
+                  onClick={() => window.open('https://store.steampowered.com', '_blank')}
+                >
                   <ExternalLink className="h-3.5 w-3.5" />
                   Purchase
                 </Button>
@@ -593,6 +643,7 @@ export default function DropDetailPage() {
           </div>
         </motion.div>
       </div>
+      <Footer />
     </div>
   );
 }

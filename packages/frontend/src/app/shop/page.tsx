@@ -3,6 +3,7 @@
 import { type FC, useState } from 'react';
 import { motion } from 'framer-motion';
 import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 import { Badge, Button, Card, UsdcAmount } from '@/components/common';
 import { api } from '@/lib/api';
 import { useApi } from '@/hooks/useApi';
@@ -344,6 +345,7 @@ const ShopPage: FC = () => {
                     variant="secondary"
                     size="lg"
                     className="!bg-pn-amber/10 !border-pn-amber/30 !text-pn-amber hover:!bg-pn-amber/20 w-full"
+                    onClick={() => window.open('https://store.steampowered.com', '_blank')}
                   >
                     Buy Bundle
                   </Button>
@@ -438,6 +440,13 @@ const ShopPage: FC = () => {
                           variant="secondary"
                           size="sm"
                           className="!bg-pn-amber/10 !border-pn-amber/30 !text-pn-amber hover:!bg-pn-amber/20"
+                          onClick={() => window.open(
+                            game.platform === 'STEAM' ? 'https://store.steampowered.com' :
+                            game.platform === 'EPIC' ? 'https://www.epicgames.com' :
+                            game.platform === 'PSN' ? 'https://store.playstation.com' :
+                            'https://www.xbox.com/games/store',
+                            '_blank'
+                          )}
                         >
                           Purchase
                         </Button>
@@ -520,6 +529,13 @@ const ShopPage: FC = () => {
                           variant="secondary"
                           size="sm"
                           className="!bg-pn-amber/10 !border-pn-amber/30 !text-pn-amber hover:!bg-pn-amber/20"
+                          onClick={() => window.open(
+                            pick.platform === 'STEAM' ? 'https://store.steampowered.com' :
+                            pick.platform === 'EPIC' ? 'https://www.epicgames.com' :
+                            pick.platform === 'PSN' ? 'https://store.playstation.com' :
+                            'https://www.xbox.com/games/store',
+                            '_blank'
+                          )}
                         >
                           Purchase
                         </Button>
@@ -532,6 +548,7 @@ const ShopPage: FC = () => {
           </motion.div>
         </motion.div>
       </main>
+      <Footer />
     </div>
   );
 };
