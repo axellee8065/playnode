@@ -144,7 +144,7 @@ export default function DropDetailPage() {
   // Fetch live data from API
   const { data: apiDrop, loading } = useApi(() => api.getDrop(dropId), [dropId]);
   const { data: apiRelated, loading: loadingRelated } = useApi(
-    () => api.getDrops({ gameTag: apiDrop?.gameTag || DROP.gameTag, take: 4 }),
+    () => apiDrop ? api.getDrops({ gameTag: apiDrop.gameTag, take: 5 }) : Promise.resolve([]),
     [apiDrop?.gameTag]
   );
 
@@ -419,6 +419,19 @@ export default function DropDetailPage() {
               <h3 className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-pn-muted">
                 Related Guides
               </h3>
+              {relatedDrops.length === 0 && loadingRelated && (
+                <div className="space-y-4 animate-pulse">
+                  {[1,2,3].map(i => (
+                    <div key={i} className="flex gap-3">
+                      <div className="w-40 aspect-video rounded-lg bg-pn-surface-2 shrink-0" />
+                      <div className="flex-1 space-y-2 py-1">
+                        <div className="h-3 w-3/4 rounded bg-pn-surface-2" />
+                        <div className="h-3 w-1/2 rounded bg-pn-surface" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
               {relatedDrops.map((rd) => (
                 <ContentCard
                   key={rd.id}
@@ -431,6 +444,7 @@ export default function DropDetailPage() {
                   price={String(Number(rd.price) / 1_000_000)}
                   isPremium={Number(rd.price) > 0}
                   createdAt={rd.createdAt}
+                  variant="list"
                 />
               ))}
             </div>
