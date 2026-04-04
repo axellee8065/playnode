@@ -12,9 +12,9 @@ const Header: FC<{ onToggleSidebar?: () => void }> = ({ onToggleSidebar }) => {
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
     const q = searchQuery.trim();
-    if (q) {
-      window.location.href = `/search?q=${encodeURIComponent(q)}`;
-    }
+    window.location.href = q
+      ? `/search?q=${encodeURIComponent(q)}`
+      : '/search';
   };
 
   return (
