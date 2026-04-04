@@ -171,12 +171,12 @@ export default function HomePage() {
                   Trending Now
                 </h2>
                 <motion.div
-                  className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
                   variants={stagger}
                   initial="hidden"
                   animate="show"
                 >
-                  {filtered.slice(0, 4).map((item) => (
+                  {filtered.slice(0, 3).map((item) => (
                     <motion.div key={`t-${item.id}`} variants={fadeUp}>
                       <ContentCard
                         type={item.type}
