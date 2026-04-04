@@ -14,7 +14,7 @@ const CategoryBar: FC<CategoryBarProps> = ({ items, active, onChange }) => {
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(false);
 
-  const allItems = [{ label: 'All', value: 'all' }, ...items];
+  const allItems = items;
 
   const checkScroll = () => {
     const el = scrollRef.current;
