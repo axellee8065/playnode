@@ -7,6 +7,7 @@ import Header from '@/components/layout/Header';
 import Sidebar from '@/components/layout/Sidebar';
 import CategoryBar from '@/components/layout/CategoryBar';
 import ContentCard from '@/components/feed/ContentCard';
+import { FeedSkeleton } from '@/components/common/Skeleton';
 import { api, formatViews, type Drop, type Review } from '@/lib/api';
 import { GAME_CATEGORIES, getGameLabel, getCategoryLabel } from '@/lib/games';
 import { useApi } from '@/hooks/useApi';
@@ -120,8 +121,9 @@ export default function HomePage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   // Fetch live data
-  const { data: apiDrops } = useApi(() => api.getDrops({ take: 20 }), []);
-  const { data: apiReviews } = useApi(() => api.getReviews({ take: 8 }), []);
+  const { data: apiDrops, loading: loadingDrops } = useApi(() => api.getDrops({ take: 20 }), []);
+  const { data: apiReviews, loading: loadingReviews } = useApi(() => api.getReviews({ take: 8 }), []);
+  const loading = loadingDrops || loadingReviews;
 
   // Build feed: merge API data or fall back to mocks
   const feed = useMemo(() => {
@@ -159,6 +161,9 @@ export default function HomePage() {
             onChange={setActiveGame}
           />
           <div className="px-4 md:px-6 py-6">
+            {/* Loading skeleton */}
+            {loading && !apiDrops && !apiReviews && <FeedSkeleton />}
+
             {/* Trending section — top 4 items */}
             {activeGame === 'all' && (
               <section className="mb-8">

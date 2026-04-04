@@ -20,6 +20,7 @@ import { api, formatViews } from '@/lib/api';
 import { getGameLabel } from '@/lib/games';
 import { useApi } from '@/hooks/useApi';
 import { useWallet } from '@/components/providers/SuiProvider';
+import { DetailSkeleton } from '@/components/common/Skeleton';
 
 /* ------------------------------------------------------------------ */
 /*  Mock data                                                          */
@@ -133,7 +134,22 @@ const ReviewPage: FC = () => {
   const { connected, connect } = useWallet();
 
   // Fetch live data from API
-  const { data: apiReview } = useApi(() => api.getReview(reviewId), [reviewId]);
+  const { data: apiReview, loading } = useApi(() => api.getReview(reviewId), [reviewId]);
+
+  // Show loading skeleton instead of mock data that causes flicker
+  if (loading && !apiReview) {
+    return (
+      <div className="min-h-screen bg-pn-black">
+        <Header />
+        <div className="flex">
+          <Sidebar />
+          <main className="flex-1 ml-0 lg:ml-56 pt-16">
+            <DetailSkeleton />
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   const displayReview = apiReview
     ? {
@@ -146,7 +162,7 @@ const ReviewPage: FC = () => {
           playtime: apiReview.verifiedPlaytimeHours,
         },
         helpful: apiReview.helpfulCount,
-        date: String(apiReview.createdAt ?? '').slice(0, 10),
+        date: apiReview.createdAt ? new Date(String(apiReview.createdAt)).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '',
         categories: (() => {
           const raw = apiReview.categoryRatings;
           if (!raw || typeof raw !== 'object') return review.categories;

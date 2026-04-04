@@ -3,13 +3,15 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { CheckCircle, Coffee, Link2 } from "lucide-react";
+import { CheckCircle, Coffee } from "lucide-react";
 import { Button, Card } from "@/components/common";
 import Header from "@/components/layout/Header";
 import Sidebar from "@/components/layout/Sidebar";
 import ContentCard from "@/components/feed/ContentCard";
-import { api, formatUsdc, formatViews } from "@/lib/api";
+import { api, formatViews } from "@/lib/api";
+import { getGameLabel } from "@/lib/games";
 import { useApi } from "@/hooks/useApi";
+import { DetailSkeleton } from "@/components/common/Skeleton";
 import { useWallet } from "@/components/providers/SuiProvider";
 import { useSubscriptions } from "@/hooks/useSubscriptions";
 
@@ -49,9 +51,24 @@ export default function NodeProfilePage() {
   const nodeSubscribed = isSubscribed(nodeId);
 
   // Fetch live data from API
-  const { data: apiNode } = useApi(() => api.getNode(nodeId), [nodeId]);
+  const { data: apiNode, loading: nodeLoading } = useApi(() => api.getNode(nodeId), [nodeId]);
   const { data: apiDrops } = useApi(() => api.getNodeDrops(nodeId), [nodeId]);
   const { data: apiReviews } = useApi(() => api.getNodeReviews(nodeId), [nodeId]);
+
+  // Show loading skeleton instead of mock data that causes flicker
+  if (nodeLoading && !apiNode) {
+    return (
+      <div className="min-h-screen bg-pn-black">
+        <Header />
+        <div className="flex">
+          <Sidebar />
+          <main className="flex-1 ml-0 lg:ml-56 pt-16">
+            <DetailSkeleton />
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   const creator = apiNode
     ? {
@@ -79,7 +96,7 @@ export default function NodeProfilePage() {
   const displayReviews = apiReviews
     ? apiReviews.map((r, i) => ({
         id: r.id || `nr-${i}`,
-        title: `${r.gameTag?.replace(/_/g, ' ')} Review`,
+        title: `${getGameLabel(r.gameTag)} Review`,
         gameTag: r.gameTag,
         author: r.node?.displayName || r.author,
         rating: r.rating / 10,

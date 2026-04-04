@@ -10,15 +10,15 @@ import {
   CheckCircle,
   Diamond,
   Coffee,
-  Link2,
   Gamepad2,
 } from "lucide-react";
 import { Badge, Button, Card, UsdcAmount } from "@/components/common";
 import Header from "@/components/layout/Header";
 import Sidebar from "@/components/layout/Sidebar";
 import ContentCard from "@/components/feed/ContentCard";
-import { api, formatUsdc, formatViews } from "@/lib/api";
+import { api, formatViews } from "@/lib/api";
 import { getGameLabel } from "@/lib/games";
+import { DetailSkeleton } from "@/components/common/Skeleton";
 import { useApi } from "@/hooks/useApi";
 import { useWallet } from "@/components/providers/SuiProvider";
 import { useSubscriptions } from "@/hooks/useSubscriptions";
@@ -142,25 +142,40 @@ export default function DropDetailPage() {
   const { toggle: toggleSubscription, isSubscribed } = useSubscriptions();
 
   // Fetch live data from API
-  const { data: apiDrop } = useApi(() => api.getDrop(dropId), [dropId]);
+  const { data: apiDrop, loading } = useApi(() => api.getDrop(dropId), [dropId]);
   const { data: apiRelated } = useApi(
     () => api.getDrops({ gameTag: apiDrop?.gameTag || DROP.gameTag, take: 4 }),
     [apiDrop?.gameTag]
   );
+
+  // Show loading skeleton instead of mock data that causes flicker
+  if (loading && !apiDrop) {
+    return (
+      <div className="min-h-screen bg-pn-black">
+        <Header />
+        <div className="flex">
+          <Sidebar />
+          <main className="flex-1 ml-0 lg:ml-56 pt-16">
+            <DetailSkeleton />
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   // Map API drop to display values, fall back to mock
   const drop = apiDrop
     ? {
         title: apiDrop.title,
         author: { ...DROP.author, name: apiDrop.node?.displayName || apiDrop.author },
-        date: String(apiDrop.createdAt).slice(0, 10).replace(/-/g, '.'),
+        date: apiDrop.createdAt ? new Date(String(apiDrop.createdAt)).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '',
         views: formatViews(apiDrop.totalViews),
         purchases: apiDrop.totalPurchases,
         price: Number(apiDrop.price) / 1_000_000,
         gameTag: apiDrop.gameTag,
         totalEarned: Number(apiDrop.totalEarned) / 1_000_000,
         version: `v${apiDrop.version}`,
-        lastUpdate: String(apiDrop.updatedAt).slice(0, 10).replace(/-/g, '.'),
+        lastUpdate: apiDrop.updatedAt ? new Date(String(apiDrop.updatedAt)).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '',
         isPremium: apiDrop.isPremium,
         category: apiDrop.category,
       }

@@ -162,6 +162,19 @@ export function formatUsdc(amount: string | number): string {
   return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+/** Convert raw USDC (6 decimals) to display string: 5990000 → "5.99" */
+export function normalizeUsdc(raw: string | number): string {
+  const num = Number(raw);
+  if (num === 0) return '0';
+  return (num / 1_000_000).toFixed(2);
+}
+
+/** Normalize rating from 0-100 scale to 0-10 display: 88 → 8.8 */
+export function normalizeRating(raw: number): number {
+  if (raw > 10) return raw / 10;
+  return raw;
+}
+
 export function formatViews(views: string | number): string {
   const num = Number(views);
   if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;

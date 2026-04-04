@@ -8,6 +8,7 @@ import Sidebar from '@/components/layout/Sidebar';
 import ContentCard from '@/components/feed/ContentCard';
 import { Card } from '@/components/common';
 import { api, formatViews } from '@/lib/api';
+import { getGameLabel } from '@/lib/games';
 import { useApi } from '@/hooks/useApi';
 
 /* ------------------------------------------------------------------ */
@@ -179,7 +180,7 @@ function SearchContent() {
                     key={review.id}
                     type="review"
                     id={review.id}
-                    title={review.title || review.gameTag?.replace(/_/g, ' ')}
+                    title={review.title || `${getGameLabel(review.gameTag)} Review`}
                     gameTag={review.gameTag || ''}
                     author={review.node?.displayName || review.author}
                     views={formatViews(review.views || review.totalViews)}

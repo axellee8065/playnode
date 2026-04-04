@@ -5,7 +5,7 @@ import Header from '@/components/layout/Header';
 import Sidebar from '@/components/layout/Sidebar';
 import ContentCard from '@/components/feed/ContentCard';
 import { useFavorites } from '@/hooks/useFavorites';
-import { GAME_CATEGORIES } from '@/lib/games';
+import { GAME_CATEGORIES, getGameLabel } from '@/lib/games';
 import { api, formatViews } from '@/lib/api';
 import { useApi } from '@/hooks/useApi';
 
@@ -159,7 +159,7 @@ function ReviewsTab({ reviewIds }: { reviewIds: string[] }) {
           key={r.id}
           type="review"
           id={r.id}
-          title={`${r.gameTag?.replace(/_/g, ' ')} Review`}
+          title={`${getGameLabel(r.gameTag)} Review`}
           gameTag={r.gameTag}
           author={r.node?.displayName || r.author}
           views={formatViews(r.totalViews)}

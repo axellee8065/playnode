@@ -5,7 +5,7 @@ import { Loader2, LayoutGrid, List } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Sidebar from '@/components/layout/Sidebar';
 import ContentCard from '@/components/feed/ContentCard';
-import { GAME_CATEGORIES } from '@/lib/games';
+import { GAME_CATEGORIES, getGameLabel } from '@/lib/games';
 import { api, formatViews, type Review } from '@/lib/api';
 import { useApi } from '@/hooks/useApi';
 
@@ -146,7 +146,7 @@ export default function ReviewsPage() {
                     key={review.id}
                     type="review"
                     id={review.id}
-                    title={`${review.gameTag.replace(/_/g, ' ')} Review`}
+                    title={`${getGameLabel(review.gameTag)} Review`}
                     gameTag={review.gameTag}
                     author={review.node?.displayName || review.author}
                     views={formatViews(review.totalViews)}

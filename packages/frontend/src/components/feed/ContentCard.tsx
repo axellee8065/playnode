@@ -3,6 +3,7 @@
 import { type FC } from 'react';
 import { Bookmark } from 'lucide-react';
 import { getGameLabel, getCategoryLabel } from '@/lib/games';
+import { normalizeUsdc, normalizeRating } from '@/lib/api';
 import { useFavorites } from '@/hooks/useFavorites';
 
 interface ContentCardProps {
@@ -76,10 +77,8 @@ const ContentCard: FC<ContentCardProps> = ({
   const gameLabel = getGameLabel(gameTag);
   const typeBadge = type === 'drop' ? 'GUIDE' : 'REVIEW';
   const categoryLabel = category !== undefined ? getCategoryLabel(category) : null;
-  const isFree = !isPremium && (!price || price === '0' || price === '0.00');
-  // Convert raw USDC amount (6 decimals) to display: 5990000 → "5.99"
-  const priceNum = Number(price || 0);
-  const displayPrice = priceNum > 10000 ? (priceNum / 1_000_000).toFixed(2) : price;
+  const displayPrice = normalizeUsdc(price || '0');
+  const isFree = !isPremium && (displayPrice === '0' || displayPrice === '0.00');
   const { toggleDrop, toggleReview, isDropFavorite, isReviewFavorite } = useFavorites();
   const isFavorited = type === 'drop' ? isDropFavorite(id) : isReviewFavorite(id);
 
@@ -115,7 +114,7 @@ const ContentCard: FC<ContentCardProps> = ({
             </p>
             {type === 'review' && rating !== undefined && (
               <span className="inline-block mt-1 px-2 py-0.5 rounded-md bg-pn-cyan/10 text-pn-cyan text-[11px] font-semibold">
-                {(rating > 10 ? rating / 10 : rating).toFixed(1)}/10
+                {normalizeRating(rating).toFixed(1)}/10
               </span>
             )}
           </div>
@@ -208,7 +207,7 @@ const ContentCard: FC<ContentCardProps> = ({
           </p>
           {type === 'review' && rating !== undefined && (
             <span className="inline-block mt-1.5 px-2 py-0.5 rounded-md bg-pn-cyan/10 text-pn-cyan text-[11px] font-semibold">
-              {(rating > 10 ? rating / 10 : rating).toFixed(1)}/10
+              {normalizeRating(rating).toFixed(1)}/10
             </span>
           )}
           {type === 'review' && verifiedHours !== undefined && verifiedHours > 0 && (

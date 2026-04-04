@@ -8,7 +8,7 @@ import Header from '@/components/layout/Header';
 import Sidebar from '@/components/layout/Sidebar';
 import ContentCard from '@/components/feed/ContentCard';
 import CategoryBar from '@/components/layout/CategoryBar';
-import { CONTENT_CATEGORIES } from '@/lib/games';
+import { CONTENT_CATEGORIES, getGameLabel } from '@/lib/games';
 import { api, formatViews } from '@/lib/api';
 import { useApi } from '@/hooks/useApi';
 
@@ -81,7 +81,7 @@ const GameHubPage: FC = () => {
   const displayReviews = apiGameReviews
     ? apiGameReviews.map((r) => ({
         id: r.id || `review-${Math.random()}`,
-        title: `${r.gameTag?.replace(/_/g, ' ')} Review`,
+        title: `${getGameLabel(r.gameTag)} Review`,
         author: r.node?.displayName || r.author,
         rating: r.rating / 10,
         views: formatViews(r.totalViews),
