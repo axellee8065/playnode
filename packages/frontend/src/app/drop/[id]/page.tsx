@@ -143,7 +143,7 @@ export default function DropDetailPage() {
 
   // Fetch live data from API
   const { data: apiDrop, loading } = useApi(() => api.getDrop(dropId), [dropId]);
-  const { data: apiRelated } = useApi(
+  const { data: apiRelated, loading: loadingRelated } = useApi(
     () => api.getDrops({ gameTag: apiDrop?.gameTag || DROP.gameTag, take: 4 }),
     [apiDrop?.gameTag]
   );
@@ -184,6 +184,7 @@ export default function DropDetailPage() {
   const curatorNodeId = apiDrop?.nodeId || 'mock-node';
   const curatorSubscribed = isSubscribed(curatorNodeId);
 
+  // Don't show mock related drops — only show when API data is ready
   const relatedDrops =
     Array.isArray(apiRelated) && apiRelated.length > 0
       ? apiRelated
@@ -198,7 +199,7 @@ export default function DropDetailPage() {
             gameTag: d.gameTag,
             createdAt: d.createdAt,
           }))
-      : RELATED_DROPS;
+      : loadingRelated ? [] : RELATED_DROPS;
 
   return (
     <div className="min-h-screen bg-pn-black">
