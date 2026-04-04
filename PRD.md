@@ -1,16 +1,18 @@
 # PlayNode — PRD.md
 ## Game Creator Economy Platform on Sui
-### Version 2.0 | April 2026
+### Version 3.0 | April 2026
 
 ---
 
 ## Project Overview
 
-PlayNode는 게임에 대한 모든 활동(공략, 리뷰, 게임 추천, 광고)이 USDC 수익이 되는 Sui 블록체인 기반 크리에이터 경제 플랫폼이다.
+PlayNode is a consumer-first game content platform where guides, reviews, and recommendations generate USDC revenue for creators — built on the Sui blockchain.
 
-**One-liner:** 게임 공략 크리에이터가 USDC로 수익을 만드는 Sui 기반 플랫폼.
+**One-liner:** Find the best game guides and reviews. Creators earn USDC.
 
-**Core Thesis:** 게임 콘텐츠 생태계의 가치를 만드는 크리에이터에게 투명하고 즉각적인 수익을 제공한다. 토큰 발행 없이 USDC 매출 우선.
+**Core Thesis:** Build a YouTube-style discovery experience for game content, where the audience comes first and creators are empowered with transparent, instant revenue. No custom token — USDC only.
+
+**UX Philosophy:** Consumer-first. Content is king. Creator tools are hidden behind a separate Studio interface, just like YouTube separates YouTube from YouTube Studio.
 
 ---
 
@@ -18,13 +20,14 @@ PlayNode는 게임에 대한 모든 활동(공략, 리뷰, 게임 추천, 광고
 
 ```
 Frontend:
-  - Next.js 15 (App Router)
+  - Next.js 16 (App Router, Turbopack)
   - React 19
   - TypeScript
-  - TailwindCSS
+  - TailwindCSS v4 (@theme CSS variables)
   - Framer Motion (animations)
-  - @mysten/sui.js (Sui SDK)
-  - @mysten/dapp-kit (wallet, zkLogin)
+  - @mysten/sui (Sui SDK)
+  - @wallet-standard/core (wallet detection)
+  - Custom SuiProvider (no @mysten/dapp-kit — removed due to SES lockdown conflicts)
   - PWA enabled
 
 Smart Contracts:
@@ -73,46 +76,46 @@ playnode/
 ├── packages/
 │   ├── frontend/                # Next.js app
 │   │   ├── railway.toml         # Frontend Railway service config
+│   │   ├── Dockerfile           # Multi-stage Docker build for Railway
 │   │   ├── src/
-│   │   │   ├── app/             # App Router pages
-│   │   │   │   ├── page.tsx                    # Landing / Explore
-│   │   │   │   ├── node/[id]/page.tsx          # Creator Node page
-│   │   │   │   ├── drop/[id]/page.tsx          # Individual Drop page
-│   │   │   │   ├── review/[id]/page.tsx        # Individual Review page
-│   │   │   │   ├── game/[slug]/page.tsx        # Game hub page
+│   │   │   ├── app/             # App Router pages (18 routes)
+│   │   │   │   ├── page.tsx                    # Home — content feed (YouTube-style)
+│   │   │   │   ├── drops/page.tsx              # Guides listing with category filters
+│   │   │   │   ├── drops/create/page.tsx       # Create Drop form
+│   │   │   │   ├── reviews/page.tsx            # Reviews listing with rating filters
+│   │   │   │   ├── reviews/create/page.tsx     # Create Review form
+│   │   │   │   ├── drop/[id]/page.tsx          # Drop detail (video-page style)
+│   │   │   │   ├── review/[id]/page.tsx        # Review detail
+│   │   │   │   ├── node/[id]/page.tsx          # Creator channel (YouTube channel-style)
+│   │   │   │   ├── game/[slug]/page.tsx        # Game hub with tabs
 │   │   │   │   ├── grid-market/page.tsx        # Pixel Grid marketplace
 │   │   │   │   ├── quest/page.tsx              # Quest/bounty board
-│   │   │   │   ├── shop/page.tsx               # Game shop
-│   │   │   │   └── dashboard/page.tsx          # Creator dashboard
+│   │   │   │   ├── shop/page.tsx               # Game shop with affiliate links
+│   │   │   │   ├── search/page.tsx             # Search results (guides/reviews/creators)
+│   │   │   │   ├── settings/page.tsx           # User settings
+│   │   │   │   ├── studio/page.tsx             # Creator Studio — revenue overview
+│   │   │   │   ├── studio/content/page.tsx     # Creator Studio — content management
+│   │   │   │   └── dashboard/page.tsx          # Redirect → /studio
 │   │   │   ├── components/
-│   │   │   │   ├── layout/      # Header, Sidebar, Footer
-│   │   │   │   ├── node/        # Node profile, stats, menu
-│   │   │   │   ├── drop/        # Drop card, editor, viewer
-│   │   │   │   ├── review/      # Review card, editor, rating
-│   │   │   │   ├── shop/        # Shop links, bundles, purchase
-│   │   │   │   ├── grid/        # PixelGrid renderer, purchase UI
-│   │   │   │   ├── community/   # Link, Ping, Quest UI
-│   │   │   │   ├── revenue/     # Earnings dashboard, charts
-│   │   │   │   └── common/      # Buttons, modals, badges
+│   │   │   │   ├── layout/      # Header (YouTube-style), Sidebar (consumer), CategoryBar, UserMenu
+│   │   │   │   ├── feed/        # ContentCard (universal thumbnail card), ContentFeed
+│   │   │   │   ├── providers/   # SuiProvider (wallet context), ClientProviders
+│   │   │   │   └── common/      # Badge, Button, Card, Logo, UsdcAmount, StatCard
 │   │   │   ├── hooks/           # Custom React hooks
-│   │   │   │   ├── useSui.ts
-│   │   │   │   ├── useNode.ts
-│   │   │   │   ├── useDrop.ts
-│   │   │   │   ├── useReview.ts
-│   │   │   │   ├── usePixelGrid.ts
-│   │   │   │   ├── useShop.ts
-│   │   │   │   └── useRevenue.ts
+│   │   │   │   ├── useSui.ts    # Sui transaction helper (usePlayNode)
+│   │   │   │   ├── useNode.ts   # Node on-chain operations
+│   │   │   │   ├── useDrop.ts   # Drop on-chain operations
+│   │   │   │   └── useApi.ts    # Generic data fetching hook
 │   │   │   ├── lib/             # Utilities
-│   │   │   │   ├── sui.ts       # Sui client config
-│   │   │   │   ├── usdc.ts      # USDC helpers
-│   │   │   │   ├── walrus.ts    # Walrus upload/fetch
-│   │   │   │   ├── pricing.ts   # Pixel Grid dynamic pricing
-│   │   │   │   └── constants.ts # Contract addresses, configs
+│   │   │   │   ├── sui.ts       # Sui client config (testnet/mainnet)
+│   │   │   │   ├── api.ts       # Indexer API client with typed interfaces
+│   │   │   │   ├── games.ts     # Game categories + content type definitions
+│   │   │   │   └── constants.ts # Brand constants, feature definitions
 │   │   │   └── styles/
-│   │   │       └── globals.css  # TailwindCSS + CSS variables
+│   │   │       └── globals.css  # TailwindCSS v4 @theme variables
 │   │   ├── public/
 │   │   ├── next.config.ts
-│   │   ├── tailwind.config.ts
+│   │   ├── postcss.config.mjs
 │   │   ├── tsconfig.json
 │   │   └── package.json
 │   │
@@ -598,18 +601,62 @@ Activity points tracked off-chain in indexer database for future distribution.
 
 ## Frontend Routes
 
+### Consumer Pages (public browsing)
+
 | Route | Page | Description |
 |-------|------|-------------|
-| `/` | Landing/Explore | Game discovery, trending Drops/Reviews |
-| `/node/[id]` | Creator Node | Profile, Drops, Reviews, Shop, Grid, earnings |
-| `/drop/[id]` | Drop Detail | Guide content, purchase, Ping, Grid |
-| `/review/[id]` | Review Detail | Review content, verification badge, Shop link |
-| `/game/[slug]` | Game Hub | All Drops/Reviews for a game, Game Grid |
-| `/grid-market` | Grid Market | Browse all available Pixel Grids, purchase |
-| `/quest` | Quest Board | Open bounties, submit, track |
-| `/shop` | Shop | Game recommendations, bundles, affiliate |
-| `/dashboard` | Creator Dashboard | Revenue analytics, content management |
-| `/settings` | Settings | Profile, wallets, API connections, notifications |
+| `/` | Home Feed | YouTube-style content feed — trending drops & reviews, game category filter |
+| `/drops` | Guide Listings | All guides with category/sort filters, ContentCard grid |
+| `/reviews` | Review Listings | All reviews with rating/verification filters |
+| `/drop/[id]` | Drop Detail | Guide content (video-page layout), creator bar, related content sidebar |
+| `/review/[id]` | Review Detail | Review with ratings, verification badge, creator bar |
+| `/node/[id]` | Creator Channel | YouTube channel-style — banner, tabs (Content/Reviews/About), Subscribe |
+| `/game/[slug]` | Game Hub | All content for a game, category filters, shop links |
+| `/grid-market` | Grid Market | Browse Pixel Grids, purchase pixels |
+| `/quest` | Quest Board | Open bounties, accept & track |
+| `/shop` | Game Shop | Featured bundles, trending games, creator-curated recommendations |
+| `/search` | Search Results | Full-text search across guides, reviews, creators, games |
+| `/settings` | User Settings | Profile, wallets, game profiles, notifications |
+
+### Creator Studio (authenticated, separate UX)
+
+| Route | Page | Description |
+|-------|------|-------------|
+| `/studio` | Studio Overview | Revenue analytics, weekly chart, quick actions |
+| `/studio/content` | Content Management | Table of creator's content with search/filter/edit |
+| `/dashboard` | (Redirect) | Redirects to `/studio` |
+
+### Content Creation
+
+| Route | Page | Description |
+|-------|------|-------------|
+| `/drops/create` | Create Drop | Guide creation form with category, pricing, preview |
+| `/reviews/create` | Create Review | Review form with 5-category ratings, playtime verification |
+
+### UX Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ Header: [Logo] [========Search========] [+Create] [Avatar▼] │
+├─────────────────────────────────────────────────────────────┤
+│ CategoryBar: [All] [Monster Hunter] [Elden Ring] [FF7] ...  │
+├────────────┬────────────────────────────────────────────────┤
+│  Sidebar   │  Main Content                                  │
+│  ────────  │  ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐             │
+│  Home      │  │Card │ │Card │ │Card │ │Card │             │
+│  Trending  │  └─────┘ └─────┘ └─────┘ └─────┘             │
+│  Games ▼   │  ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐             │
+│  ────────  │  │Card │ │Card │ │Card │ │Card │             │
+│  Guides    │  └─────┘ └─────┘ └─────┘ └─────┘             │
+│  Reviews   │                                                │
+│  Shop      │  ContentCard = universal thumbnail card         │
+│  Quests    │  (game badge, price, author, views, rating)    │
+│  Grid Mkt  │                                                │
+└────────────┴────────────────────────────────────────────────┘
+
+Consumer UX: YouTube-style content discovery (sidebar + feed)
+Creator UX: /studio (separate, accessed via avatar menu)
+```
 
 ---
 
@@ -922,31 +969,67 @@ model PageView {
 
 ---
 
-## Implementation Priority
+## Implementation Status
 
-### Phase 1: MVP (Month 1~3)
+### Completed (v3.0)
+
+**Infrastructure:**
+- [x] Next.js 16 frontend with TailwindCSS v4 + Framer Motion
+- [x] Express + Prisma indexer with PostgreSQL (12 tables, all seeded)
+- [x] Move contracts: 10 modules deployed to Sui testnet
+- [x] Package ID: `0xc95c88dd38f337be32b012ec7729b86694bd69e6ba37cbbf0dafd657f97b78a7`
+- [x] Railway deployment (frontend + indexer + PostgreSQL)
+- [x] GitHub Actions CI/CD pipeline
+- [x] Wallet connection via @wallet-standard/core (Slush/Sui Wallet)
+
+**Consumer UX (YouTube-style):**
+- [x] Home page: content feed with game category filtering
+- [x] ContentCard: universal thumbnail card for all list views
+- [x] Header: centered search bar, Create button, UserMenu dropdown
+- [x] Sidebar: consumer browse navigation (Home, Trending, Games, Guides, Reviews)
+- [x] CategoryBar: horizontal scrollable game/content-type pills
+- [x] 18 routes, all with consistent layout
+
+**Creator Studio:**
+- [x] /studio: revenue overview, weekly chart, revenue breakdown
+- [x] /studio/content: content management table with search/filter
+- [x] Separated from consumer experience (accessed via avatar menu)
+
+**Content Creation:**
+- [x] /drops/create: guide form with category, pricing, markdown, preview
+- [x] /reviews/create: review form with 5-category ratings, playtime verification UI
+
+**User Actions (UI wired, pending on-chain integration):**
+- [x] Drop purchase button (wallet check + confirmation)
+- [x] Quest accept (wallet check + confirmation)
+- [x] Ping/tip (USDC amount prompt)
+- [x] Link subscribe (subscription confirmation)
+- [x] Helpful vote (local state + API fire-and-forget)
+- [x] Shop affiliate links (real store URLs: Steam/Epic/PS/Xbox)
+- [x] Grid advertise (wallet check + coming soon)
+- [x] Wire withdrawal (wallet check + confirmation)
+
+### Phase 1: MVP Remaining (Next)
 
 **Sprint 1~2: Core Infrastructure**
-- [ ] Move contracts: node.move, drop.move, revenue.move, rank.move
-- [ ] Frontend: layout, Node page, Drop editor/viewer
-- [ ] Indexer: basic event listener, PostgreSQL setup
-- [ ] zkLogin integration
-- [ ] Sponsored transaction setup
-- [ ] Walrus content upload/fetch
+- [ ] zkLogin integration (Google/Discord social login)
+- [ ] Sponsored transaction setup (gas-free for users)
+- [ ] Walrus content upload/fetch (guide text + images)
 
 **Sprint 3~4: Monetization**
-- [ ] Premium Drop purchase flow (USDC)
-- [ ] Ping (tip) system
-- [ ] Programmatic ad integration (Tier 2)
-- [ ] Revenue dashboard (basic)
-- [ ] Review system with playtime verification
+- [ ] Premium Drop purchase flow (on-chain USDC transaction)
+- [ ] Ping (tip) on-chain transaction
+- [ ] Revenue router: on-chain USDC splits (creator/protocol/referral)
+- [ ] Wire withdrawal (USDC transfer to external wallet)
+- [ ] Playtime verification via Steam/Riot API
 
-**Sprint 5~6: Community**
-- [ ] Link (subscription) system
-- [ ] Shop affiliate links (Phase 1 affiliate only)
-- [ ] Search and game pages
-- [ ] Creator onboarding flow
+**Sprint 5~6: Community & Polish**
+- [ ] Link (subscription) on-chain recurring payments
+- [ ] Helpful vote persistence (backend API)
+- [ ] Quest accept/submit/approve flow (on-chain escrow)
+- [ ] Loading states and error handling UI
 - [ ] Mobile PWA optimization
+- [ ] Creator onboarding flow (first Drop wizard)
 
 ### Phase 2: Growth (Month 4~6)
 
@@ -1010,23 +1093,33 @@ RAILWAY_ENVIRONMENT=production    # production | staging
 
 ---
 
-## Git & Deployment — GitHub Private + Railway Auto-Deploy
+## Deployment — GitHub + Railway
 
-### 초기 설정 (1회)
+### Current Production
+
+| Service | URL | Status |
+|---------|-----|--------|
+| Frontend | https://frontend-production-ffda.up.railway.app | Active |
+| Indexer API | https://indexer-production-87da.up.railway.app | Active |
+| PostgreSQL | postgres.railway.internal:5432 | Active |
+| GitHub | https://github.com/axellee8065/playnode | Public |
+| Sui Testnet | Package `0xc95c...78a7` | Deployed |
+
+### Railway Services
+
+- **frontend**: Next.js 16 (Dockerfile, port 3000)
+- **indexer**: Express + Prisma (Dockerfile, port 4000)
+- **Postgres**: Railway managed PostgreSQL
+
+### Git & Deployment
 
 ```bash
 # ─────────────────────────────────────────────
-# 1. GitHub Private Repo 생성
+# 1. GitHub Repository
 # ─────────────────────────────────────────────
 
-# GitHub CLI로 private repo 생성
-gh repo create playnode --private --clone
-cd playnode
-
-# 또는 기존 디렉토리에서
-cd playnode
-git init
-gh repo create playnode --private --source=. --push
+# Already set up:
+# gh repo create playnode --public --source=. --push
 
 # .gitignore 설정
 cat > .gitignore << 'EOF'
