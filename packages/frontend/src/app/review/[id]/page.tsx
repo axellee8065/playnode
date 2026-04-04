@@ -148,13 +148,16 @@ const ReviewPage: FC = () => {
         date: String(apiReview.createdAt ?? '').slice(0, 10),
         categories: (() => {
           const raw = apiReview.categoryRatings;
-          const arr = Array.isArray(raw) ? raw : (typeof raw === 'object' && raw ? Object.values(raw) : []);
-          return arr.length >= 5
-            ? arr.slice(0, 5).map((score: any, i: number) => ({
-                label: review.categories[i]?.label || `Category ${i + 1}`,
-                score: Number(score) / 10,
-                color: Number(score) / 10 >= 8 ? 'bg-pn-cyan' : 'bg-pn-amber',
-              }))
+          if (!raw || typeof raw !== 'object') return review.categories;
+          const labelMap: Record<string, string> = {
+            story: 'Story', sound: 'Sound', graphics: 'Graphics',
+            gameplay: 'Gameplay', combat: 'Combat', endgame: 'Endgame', value: 'Value',
+          };
+          const entries = Array.isArray(raw)
+            ? raw.map((s: any, i: number) => ({ label: review.categories[i]?.label || `Cat ${i+1}`, score: Number(s) }))
+            : Object.entries(raw).map(([k, v]) => ({ label: labelMap[k] || k, score: Number(v) }));
+          return entries.length > 0
+            ? entries.map(e => ({ ...e, score: e.score / 10, color: e.score / 10 >= 8 ? 'bg-pn-cyan' : 'bg-pn-amber' }))
             : review.categories;
         })(),
       }

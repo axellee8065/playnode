@@ -115,7 +115,7 @@ const ContentCard: FC<ContentCardProps> = ({
             </p>
             {type === 'review' && rating !== undefined && (
               <span className="inline-block mt-1 px-2 py-0.5 rounded-md bg-pn-cyan/10 text-pn-cyan text-[11px] font-semibold">
-                {rating.toFixed(1)}/10
+                {(rating > 10 ? rating / 10 : rating).toFixed(1)}/10
               </span>
             )}
           </div>
@@ -208,7 +208,7 @@ const ContentCard: FC<ContentCardProps> = ({
           </p>
           {type === 'review' && rating !== undefined && (
             <span className="inline-block mt-1.5 px-2 py-0.5 rounded-md bg-pn-cyan/10 text-pn-cyan text-[11px] font-semibold">
-              {rating.toFixed(1)}/10
+              {(rating > 10 ? rating / 10 : rating).toFixed(1)}/10
             </span>
           )}
           {type === 'review' && verifiedHours !== undefined && verifiedHours > 0 && (
