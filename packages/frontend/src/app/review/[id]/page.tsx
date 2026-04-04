@@ -107,9 +107,9 @@ const RatingBar: FC<{
   color: string;
   delay: number;
 }> = ({ label, score, color, delay }) => (
-  <div className="flex items-center gap-4">
-    <span className="w-20 text-sm text-pn-text shrink-0">{label}</span>
-    <div className="flex-1 h-3 bg-pn-surface-2 rounded-full overflow-hidden">
+  <div className="flex items-center gap-3">
+    <span className="w-[72px] text-xs font-medium text-pn-muted shrink-0 text-right">{label}</span>
+    <div className="flex-1 h-2 bg-pn-surface-2 rounded-full overflow-hidden">
       <motion.div
         className={`h-full rounded-full ${color}`}
         initial={{ width: 0 }}
@@ -117,7 +117,7 @@ const RatingBar: FC<{
         transition={{ duration: 0.8, delay, ease: 'easeOut' }}
       />
     </div>
-    <span className="font-mono text-sm font-bold text-pn-white w-8 text-right">
+    <span className="font-mono text-xs font-bold text-pn-white w-8 text-right">
       {score.toFixed(1)}
     </span>
   </div>
@@ -145,14 +145,18 @@ const ReviewPage: FC = () => {
           playtime: apiReview.verifiedPlaytimeHours,
         },
         helpful: apiReview.helpfulCount,
-        date: String(apiReview.createdAt).slice(0, 10),
-        categories: apiReview.categoryRatings?.length
-          ? apiReview.categoryRatings.map((score: number, i: number) => ({
-              label: review.categories[i]?.label || `Category ${i + 1}`,
-              score: score / 10,
-              color: score / 10 >= 8 ? 'bg-pn-cyan' : 'bg-pn-amber',
-            }))
-          : review.categories,
+        date: String(apiReview.createdAt ?? '').slice(0, 10),
+        categories: (() => {
+          const raw = apiReview.categoryRatings;
+          const arr = Array.isArray(raw) ? raw : (typeof raw === 'object' && raw ? Object.values(raw) : []);
+          return arr.length >= 5
+            ? arr.slice(0, 5).map((score: any, i: number) => ({
+                label: review.categories[i]?.label || `Category ${i + 1}`,
+                score: Number(score) / 10,
+                color: Number(score) / 10 >= 8 ? 'bg-pn-cyan' : 'bg-pn-amber',
+              }))
+            : review.categories;
+        })(),
       }
     : review;
 
@@ -259,40 +263,43 @@ const ReviewPage: FC = () => {
 
               {/* Overall Rating */}
               <Card>
-                <div className="flex flex-col sm:flex-row items-center gap-8">
-                  <div className="relative flex-shrink-0">
-                    <svg width="120" height="120" viewBox="0 0 120 120">
+                <div className="flex items-start gap-6 p-2">
+                  {/* Score circle */}
+                  <div className="relative flex-shrink-0 w-[100px] h-[100px]">
+                    <svg width="100" height="100" viewBox="0 0 100 100">
                       <circle
-                        cx="60" cy="60" r="52"
+                        cx="50" cy="50" r="42"
                         fill="none" stroke="currentColor"
-                        className="text-pn-surface-2" strokeWidth="6"
+                        className="text-pn-surface-2" strokeWidth="5"
                       />
                       <motion.circle
-                        cx="60" cy="60" r="52"
+                        cx="50" cy="50" r="42"
                         fill="none" stroke="currentColor"
-                        className="text-pn-cyan" strokeWidth="6"
+                        className="text-pn-cyan" strokeWidth="5"
                         strokeLinecap="round"
-                        strokeDasharray={2 * Math.PI * 52}
-                        strokeDashoffset={2 * Math.PI * 52}
+                        strokeDasharray={2 * Math.PI * 42}
+                        strokeDashoffset={2 * Math.PI * 42}
                         animate={{
                           strokeDashoffset:
-                            2 * Math.PI * 52 * (1 - displayReview.overall / 10),
+                            2 * Math.PI * 42 * (1 - displayReview.overall / 10),
                         }}
                         transition={{ duration: 1.2, ease: 'easeOut' }}
                         style={{
-                          transformOrigin: '60px 60px',
+                          transformOrigin: '50px 50px',
                           transform: 'rotate(-90deg)',
                         }}
                       />
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="font-mono text-5xl font-bold text-pn-cyan leading-none">
+                      <span className="font-mono text-3xl font-bold text-pn-cyan leading-none">
                         {displayReview.overall.toFixed(1)}
                       </span>
-                      <span className="font-mono text-xs text-pn-muted mt-1">/ 10</span>
+                      <span className="font-mono text-[10px] text-pn-muted mt-0.5">/ 10</span>
                     </div>
                   </div>
-                  <div className="flex-1 w-full space-y-3">
+
+                  {/* Category bars */}
+                  <div className="flex-1 space-y-2.5 pt-1">
                     {displayReview.categories.map((cat, i) => (
                       <RatingBar
                         key={cat.label}
