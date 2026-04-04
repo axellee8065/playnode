@@ -30,12 +30,7 @@ const UsdcAmount: FC<UsdcAmountProps> = ({ amount, size = 'md', showLabel = fals
         className,
       )}
     >
-      ${formatUsdc(amount)}
-      {showLabel && (
-        <span className="ml-1 text-pn-muted font-normal" style={{ fontSize: '0.7em' }}>
-          USDC
-        </span>
-      )}
+      {formatUsdc(amount)} USDC
     </span>
   );
 };

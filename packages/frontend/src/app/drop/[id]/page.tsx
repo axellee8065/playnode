@@ -20,6 +20,7 @@ import ContentCard from "@/components/feed/ContentCard";
 import { api, formatUsdc, formatViews } from "@/lib/api";
 import { useApi } from "@/hooks/useApi";
 import { useWallet } from "@/components/providers/SuiProvider";
+import { useSubscriptions } from "@/hooks/useSubscriptions";
 
 // ---------------------------------------------------------------------------
 // Mock data
@@ -30,7 +31,7 @@ const DROP = {
     name: "GameMaster_KR",
     avatar: null,
     rank: "DIAMOND",
-    bio: "10-year Monster Hunter series veteran. Charge Blade specialist creator. MH:W all-weapon solo clear.",
+    bio: "10-year Monster Hunter series veteran. Charge Blade specialist game curator. MH:W all-weapon solo clear.",
     verified: true,
   },
   date: "2024.03.15",
@@ -137,6 +138,7 @@ export default function DropDetailPage() {
   const params = useParams();
   const dropId = params.id as string;
   const { connected, connect } = useWallet();
+  const { toggle: toggleSubscription, isSubscribed } = useSubscriptions();
 
   // Fetch live data from API
   const { data: apiDrop } = useApi(() => api.getDrop(dropId), [dropId]);
@@ -162,6 +164,9 @@ export default function DropDetailPage() {
         category: apiDrop.category,
       }
     : { ...DROP, isPremium: true, category: 0 };
+
+  const curatorNodeId = apiDrop?.nodeId || 'mock-node';
+  const curatorSubscribed = isSubscribed(curatorNodeId);
 
   const relatedDrops =
     Array.isArray(apiRelated) && apiRelated.length > 0
@@ -216,7 +221,7 @@ export default function DropDetailPage() {
                 </span>
                 {drop.price > 0 && (
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-pn-green/10 text-pn-green font-mono text-xs font-bold">
-                    ${drop.price.toFixed(2)} USDC
+                    {drop.price.toFixed(2)} USDC
                   </span>
                 )}
                 {drop.price === 0 && (
@@ -226,7 +231,7 @@ export default function DropDetailPage() {
                 )}
               </div>
 
-              {/* Creator info bar */}
+              {/* Curator info bar */}
               <div className="flex items-center gap-3 py-3 border-y border-pn-border">
                 <AvatarCircle initials="GM" size="md" />
                 <div className="flex-1 min-w-0">
@@ -241,14 +246,15 @@ export default function DropDetailPage() {
                   </div>
                 </div>
                 <Button
-                  variant="primary"
+                  variant={curatorSubscribed ? 'secondary' : 'primary'}
                   size="sm"
                   onClick={() => {
                     if (!connected) { connect(); return; }
-                    alert('Subscribed!');
+                    toggleSubscription(curatorNodeId);
                   }}
+                  className={curatorSubscribed ? '!text-pn-green !border-pn-green' : ''}
                 >
-                  Subscribe
+                  {curatorSubscribed ? 'Subscribed' : 'Subscribe'}
                 </Button>
                 <Button
                   variant="secondary"
@@ -256,11 +262,11 @@ export default function DropDetailPage() {
                   onClick={() => {
                     if (!connected) { connect(); return; }
                     const amount = prompt('Enter tip amount in USDC (e.g. 1.00):');
-                    if (amount) alert(`Ping of $${amount} USDC sent!`);
+                    if (amount) alert(`Ping of ${amount} USDC sent!`);
                   }}
                 >
                   <Coffee className="h-3.5 w-3.5" />
-                  Ping $
+                  Ping
                 </Button>
               </div>
 
@@ -336,7 +342,7 @@ export default function DropDetailPage() {
                     <div>
                       <UsdcAmount amount={drop.price} size="lg" showLabel />
                       <p className="mt-1.5 text-xs text-pn-muted">
-                        80% of your purchase goes directly to the creator.
+                        80% of your purchase goes directly to the game curator.
                       </p>
                     </div>
                     <Button
@@ -345,7 +351,7 @@ export default function DropDetailPage() {
                       className="shrink-0"
                       onClick={() => {
                         if (!connected) { connect(); return; }
-                        alert(`Purchase initiated for $${drop.price} USDC.`);
+                        alert(`Purchase initiated for ${drop.price.toFixed(2)} USDC.`);
                       }}
                     >
                       <ShoppingCart className="h-4 w-4" />

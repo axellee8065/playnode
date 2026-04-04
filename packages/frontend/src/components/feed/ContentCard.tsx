@@ -1,7 +1,9 @@
 'use client';
 
 import { type FC } from 'react';
+import { Bookmark } from 'lucide-react';
 import { getGameLabel, getCategoryLabel } from '@/lib/games';
+import { useFavorites } from '@/hooks/useFavorites';
 
 interface ContentCardProps {
   type: 'drop' | 'review';
@@ -73,12 +75,12 @@ const ContentCard: FC<ContentCardProps> = ({
   const typeBadge = type === 'drop' ? 'GUIDE' : 'REVIEW';
   const categoryLabel = category !== undefined ? getCategoryLabel(category) : null;
   const isFree = !isPremium && (!price || price === '0');
+  const { toggleDrop, toggleReview, isDropFavorite, isReviewFavorite } = useFavorites();
+  const isFavorited = type === 'drop' ? isDropFavorite(id) : isReviewFavorite(id);
 
   return (
-    <a
-      href={href}
-      className="group block rounded-xl transition-all duration-200 hover:scale-[1.02] hover:border-pn-border-light"
-    >
+    <div className="group relative block rounded-xl transition-all duration-200 hover:scale-[1.02] hover:border-pn-border-light">
+      <a href={href} className="block">
       {/* Thumbnail */}
       <div
         className="relative aspect-video w-full rounded-xl overflow-hidden"
@@ -97,7 +99,7 @@ const ContentCard: FC<ContentCardProps> = ({
               : 'bg-pn-surface/80 text-pn-white'
           }`}
         >
-          {isFree ? 'FREE' : `$${price}`}
+          {isFree ? 'FREE' : `${price} USDC`}
         </span>
 
         {/* Type badge — bottom-right */}
@@ -115,7 +117,7 @@ const ContentCard: FC<ContentCardProps> = ({
 
       {/* Info area */}
       <div className="p-3 flex gap-3">
-        {/* Creator avatar */}
+        {/* Curator avatar */}
         <div className="flex-shrink-0 w-8 h-8 rounded-full bg-pn-surface-2 flex items-center justify-center text-xs font-bold text-pn-white uppercase">
           {author.charAt(0)}
         </div>
@@ -143,8 +145,25 @@ const ContentCard: FC<ContentCardProps> = ({
             </span>
           )}
         </div>
+
+        {/* Bookmark button */}
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            type === 'drop' ? toggleDrop(id) : toggleReview(id);
+          }}
+          className="flex-shrink-0 self-start mt-1"
+          title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+        >
+          <Bookmark
+            size={16}
+            className={isFavorited ? 'fill-pn-amber text-pn-amber' : 'text-pn-muted hover:text-pn-white'}
+          />
+        </button>
       </div>
-    </a>
+      </a>
+    </div>
   );
 };
 

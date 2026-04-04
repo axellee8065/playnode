@@ -50,7 +50,7 @@ const StudioSidebar: FC<{ active: StudioTab }> = ({ active }) => (
   <aside className="hidden md:flex flex-col w-[240px] fixed left-0 top-14 bottom-0 bg-pn-dark border-r border-pn-border overflow-y-auto">
     <div className="px-4 py-5">
       <p className="font-mono text-[10px] uppercase tracking-wider text-pn-muted mb-1">
-        Creator Studio
+        Curator Studio
       </p>
     </div>
     <nav className="flex-1 px-2 space-y-0.5">
@@ -188,7 +188,7 @@ const StudioPage: FC = () => {
           <div className="max-w-[1200px] mx-auto px-4 lg:px-6 py-8 space-y-8">
             {/* Page title */}
             <motion.div variants={fadeUp} initial="hidden" animate="show">
-              <h1 className="text-pn-white text-2xl font-bold">Creator Studio</h1>
+              <h1 className="text-pn-white text-2xl font-bold">Curator Studio</h1>
               <p className="text-pn-muted text-sm mt-1">
                 Track your revenue, manage content, and grow your audience.
               </p>
@@ -245,7 +245,7 @@ const StudioPage: FC = () => {
                       const heightPct = (d.value / revenueMax) * 100;
                       return (
                         <div key={d.day} className="flex-1 flex flex-col items-center gap-2">
-                          <span className="font-mono text-[10px] text-pn-green">${d.value}</span>
+                          <span className="font-mono text-[10px] text-pn-green">{d.value} USDC</span>
                           <div
                             className="w-full bg-pn-surface-2 rounded-sm overflow-hidden relative"
                             style={{ height: '100px' }}

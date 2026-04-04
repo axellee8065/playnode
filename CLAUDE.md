@@ -5,7 +5,7 @@
 - **Stack:** Next.js 16 + React 19 + TailwindCSS v4 | Move on Sui | Express + Prisma + PostgreSQL
 - **Deploy:** Railway (auto-deploy via `railway up`)
 - **Currency:** USDC only (no custom token)
-- **UX Model:** YouTube-style — content feed home, sidebar navigation, Creator Studio separated
+- **UX Model:** YouTube-style — content feed home, sidebar navigation, Curator Studio separated
 
 ## Live URLs
 - **Frontend:** https://frontend-production-ffda.up.railway.app
@@ -28,7 +28,7 @@
 
 ## UX Architecture
 - **Consumer pages:** Home feed, /drops, /reviews, /drop/[id], /review/[id], /node/[id], /game/[slug], /search, /shop, /quest, /grid-market, /settings
-- **Creator Studio:** /studio (revenue), /studio/content (management) — accessed via avatar dropdown
+- **Curator Studio:** /studio (revenue), /studio/content (management) — accessed via avatar dropdown
 - **Content creation:** /drops/create, /reviews/create
 - **Layout:** Header (centered search) + Sidebar (consumer browse) + CategoryBar (game filters)
 - **ContentCard:** Universal thumbnail card used across all list/grid views
@@ -38,7 +38,7 @@
 - Use gamer vocabulary: Drop, Review, Shop, Grid, Wire, Ping, Link, Quest, Rank
 - UI language: English (all user-facing text)
 - Consumer-first: content discovery is the default experience
-- Creator tools hidden behind /studio (like YouTube Studio)
+- Curator tools hidden behind /studio (like YouTube Studio)
 - Dark theme ONLY
 - USDC amounts in JetBrains Mono font, green color (#00FF88)
 - All revenue in USDC (6 decimals)

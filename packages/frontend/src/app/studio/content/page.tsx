@@ -46,7 +46,7 @@ const StudioSidebar: FC<{ active: StudioTab }> = ({ active }) => (
   <aside className="hidden md:flex flex-col w-[240px] fixed left-0 top-14 bottom-0 bg-pn-dark border-r border-pn-border overflow-y-auto">
     <div className="px-4 py-5">
       <p className="font-mono text-[10px] uppercase tracking-wider text-pn-muted mb-1">
-        Creator Studio
+        Curator Studio
       </p>
     </div>
     <nav className="flex-1 px-2 space-y-0.5">

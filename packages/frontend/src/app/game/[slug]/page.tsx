@@ -30,7 +30,7 @@ const mockGame = {
   subtitle: 'The ultimate hunting experience awaits',
   developer: 'Capcom',
   releaseDate: '2025-02-28',
-  stats: { drops: 234, reviews: 89, creators: 56 },
+  stats: { drops: 234, reviews: 89, curators: 56 },
 };
 
 const shopLinks = [
@@ -59,7 +59,7 @@ const GameHubPage: FC = () => {
         stats: {
           drops: apiGameDrops?.length ?? mockGame.stats.drops,
           reviews: apiGameReviews?.length ?? mockGame.stats.reviews,
-          creators: mockGame.stats.creators,
+          curators: mockGame.stats.curators,
         },
       }
     : { title: mockGame.title, stats: mockGame.stats };
@@ -114,7 +114,7 @@ const GameHubPage: FC = () => {
               {displayGame.title}
             </h1>
             <p className="text-sm text-pn-muted mt-1">
-              {displayGame.stats.drops} guides &middot; {displayGame.stats.reviews} reviews &middot; {displayGame.stats.creators} creators
+              {displayGame.stats.drops} guides &middot; {displayGame.stats.reviews} reviews &middot; {displayGame.stats.curators} game curators
             </p>
 
             {/* Tabs */}

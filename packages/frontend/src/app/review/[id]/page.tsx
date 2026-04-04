@@ -213,7 +213,7 @@ const ReviewPage: FC = () => {
                 <span className="text-xs text-pn-muted">{displayReview.date}</span>
               </div>
 
-              {/* Creator bar */}
+              {/* Curator bar */}
               <div className="flex items-center gap-3 py-3 border-y border-pn-border">
                 <div className="w-10 h-10 rounded-full bg-pn-surface-2 border border-pn-border flex items-center justify-center">
                   <span className="font-mono text-xs text-pn-cyan">

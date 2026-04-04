@@ -77,7 +77,7 @@ const UserMenu: FC = () => {
                 className="flex items-center gap-3 px-3 py-2 text-sm text-pn-text hover:text-pn-white hover:bg-pn-surface-2 rounded-lg transition-colors"
               >
                 <Clapperboard size={16} className="text-pn-muted" />
-                Creator Studio
+                Curator Studio
               </a>
               <a
                 href="/settings"

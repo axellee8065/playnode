@@ -15,8 +15,8 @@ import { useWallet } from '@/components/providers/SuiProvider';
 const stats = [
   { label: 'Total Grids', value: '1,240' },
   { label: 'Available Pixels', value: '48.2K' },
-  { label: 'Avg Price/Pixel', value: '$2.40' },
-  { label: 'Monthly Revenue', value: '$28.4K', change: '+14%' },
+  { label: 'Avg Price/Pixel', value: '2.40 USDC' },
+  { label: 'Monthly Revenue', value: '28.4K USDC', change: '+14%' },
 ];
 
 type SortOption = 'popular' | 'price' | 'availability';
@@ -112,7 +112,7 @@ const GridMarketPage: FC = () => {
 
   const displayGrids = apiGrids
     ? apiGrids.map((g) => ({
-        creator: 'Creator',
+        creator: 'Game Curator',
         pageTitle: `Grid ${String(g.id).slice(0, 8)}`,
         pixels: gridListings[0].pixels,
         occupancy: g.totalPixels > 0 ? Math.round((g.soldPixels / g.totalPixels) * 100) : 0,

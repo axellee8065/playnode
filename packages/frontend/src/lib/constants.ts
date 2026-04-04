@@ -29,7 +29,7 @@ export const BRAND = {
   name: "PlayNode",
   tagline: "Play. Share. Earn.",
   taglineKR: "Where guides become revenue.",
-  description: "Game Creator Economy Platform on Sui",
+  description: "Game Curator Economy Platform on Sui",
   url: "https://playnode.gg",
 } as const;
 
@@ -79,7 +79,7 @@ export const FEATURES = [
     key: "rank",
     label: "RANK",
     title: "Ranking & Honor",
-    description: "Climb the creator rankings and earn prestige.",
+    description: "Climb the game curator rankings and earn prestige.",
     color: "pn-red",
     icon: "Trophy",
   },
@@ -87,7 +87,7 @@ export const FEATURES = [
 
 // Stats (mock data for landing)
 export const STATS = [
-  { label: "Creator Revenue", value: "$2.4M+" },
-  { label: "Active Creators", value: "12K+" },
+  { label: "Curator Revenue", value: "$2.4M+" },
+  { label: "Active Curators", value: "12K+" },
   { label: "Drops Published", value: "180K+" },
 ] as const;

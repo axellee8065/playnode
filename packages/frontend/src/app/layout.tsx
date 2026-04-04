@@ -25,19 +25,19 @@ const notoSansKR = Noto_Sans_KR({
 export const metadata: Metadata = {
   title: "PlayNode — Game Guides, Reviews & Walkthroughs",
   description:
-    "Find the best game guides, verified reviews, and walkthroughs. Browse content from top gaming creators.",
+    "Find the best game guides, verified reviews, and walkthroughs. Browse content from top game curators.",
   keywords: [
     "PlayNode",
     "game guides",
     "game reviews",
     "walkthroughs",
     "gaming",
-    "creator economy",
+    "game curator economy",
     "Sui",
   ],
   openGraph: {
     title: "PlayNode — Game Guides, Reviews & Walkthroughs",
-    description: "Find the best game guides, verified reviews, and walkthroughs. Browse content from top gaming creators.",
+    description: "Find the best game guides, verified reviews, and walkthroughs. Browse content from top game curators.",
     type: "website",
     locale: "en_US",
   },

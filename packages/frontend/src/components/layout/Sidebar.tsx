@@ -12,9 +12,13 @@ import {
   LayoutGrid,
   ChevronDown,
   ChevronUp,
+  Bookmark,
+  Users,
 } from 'lucide-react';
 import clsx from 'clsx';
 import { GAME_CATEGORIES } from '@/lib/games';
+import { useFavorites } from '@/hooks/useFavorites';
+import { useSubscriptions } from '@/hooks/useSubscriptions';
 
 interface NavItemDef {
   icon: React.ReactNode;
@@ -65,6 +69,104 @@ function NavItem({
       <span className="flex-shrink-0">{item.icon}</span>
       {!collapsed && <span>{item.label}</span>}
     </a>
+  );
+}
+
+function FavoritesSection({ collapsed }: { collapsed: boolean }) {
+  const { favorites } = useFavorites();
+  const favoriteGames = GAME_CATEGORIES.filter((g) => favorites.games.includes(g.tag));
+
+  if (collapsed) {
+    return (
+      <div className="py-3 px-2">
+        <a
+          href="/favorites"
+          title="Favorites"
+          className="flex items-center justify-center px-0 py-3 rounded-lg text-pn-text hover:bg-pn-surface hover:text-pn-white transition-colors"
+        >
+          <Bookmark size={20} />
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <div className="py-3 px-3">
+      <a
+        href="/favorites"
+        className="flex items-center gap-4 px-3 py-2.5 rounded-lg text-sm text-pn-text hover:bg-pn-surface hover:text-pn-white transition-colors"
+      >
+        <Bookmark size={20} />
+        <span>Favorites</span>
+      </a>
+      <div className="ml-8 mt-1 flex flex-col gap-0.5">
+        {favoriteGames.length > 0 ? (
+          favoriteGames.map((game) => (
+            <a
+              key={game.slug}
+              href={`/game/${game.slug}`}
+              className="px-3 py-1.5 rounded-md text-xs text-pn-muted hover:text-pn-white hover:bg-pn-surface transition-colors truncate"
+            >
+              {game.label}
+            </a>
+          ))
+        ) : (
+          <p className="px-3 py-1.5 text-xs text-pn-muted">No favorites yet</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function SubscriptionsSection({ collapsed }: { collapsed: boolean }) {
+  const { subscriptions } = useSubscriptions();
+
+  if (collapsed) {
+    return (
+      <div className="py-3 px-2">
+        <a
+          href="/subscriptions"
+          title="Subscriptions"
+          className="flex items-center justify-center px-0 py-3 rounded-lg text-pn-text hover:bg-pn-surface hover:text-pn-white transition-colors"
+        >
+          <Users size={20} />
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <div className="py-3 px-3">
+      <p className="px-3 mb-1 text-[10px] uppercase tracking-wider text-pn-muted font-semibold">
+        Subscriptions
+      </p>
+      {subscriptions.length > 0 ? (
+        <>
+          <div className="flex flex-col gap-0.5">
+            {subscriptions.map((nodeId) => (
+              <a
+                key={nodeId}
+                href={`/node/${nodeId}`}
+                className="flex items-center gap-4 px-3 py-2.5 rounded-lg text-sm text-pn-text hover:bg-pn-surface hover:text-pn-white transition-colors"
+              >
+                <Users size={20} />
+                <span className="truncate">{nodeId.length > 12 ? `${nodeId.slice(0, 6)}...${nodeId.slice(-4)}` : nodeId}</span>
+              </a>
+            ))}
+          </div>
+          <a
+            href="/subscriptions"
+            className="block px-3 py-1.5 mt-1 text-xs text-pn-green hover:text-pn-green/80 transition-colors"
+          >
+            Manage
+          </a>
+        </>
+      ) : (
+        <p className="px-3 py-1.5 text-xs text-pn-muted">
+          Subscribe to curators to see them here
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -148,6 +250,18 @@ const Sidebar: FC<SidebarProps> = ({ collapsed = false }) => {
           />
         ))}
       </div>
+
+      {/* Divider */}
+      <div className={clsx('border-b border-pn-border', collapsed ? 'mx-2' : 'mx-3')} />
+
+      {/* Favorites section */}
+      <FavoritesSection collapsed={collapsed} />
+
+      {/* Divider */}
+      <div className={clsx('border-b border-pn-border', collapsed ? 'mx-2' : 'mx-3')} />
+
+      {/* Subscriptions section */}
+      <SubscriptionsSection collapsed={collapsed} />
 
       {/* Divider */}
       <div className={clsx('border-b border-pn-border', collapsed ? 'mx-2' : 'mx-3')} />

@@ -85,7 +85,7 @@ function dropsToFeedItems(drops: Drop[]): FeedItem[] {
     id: d.id,
     title: d.title,
     gameTag: d.gameTag,
-    author: d.node?.displayName || d.author?.slice(0, 8) || 'Creator',
+    author: d.node?.displayName || d.author?.slice(0, 8) || 'Game Curator',
     views: Number(d.totalViews),
     price: Number(d.price),
     isPremium: d.isPremium,

@@ -1,18 +1,18 @@
 # PlayNode — PRD.md
-## Game Creator Economy Platform on Sui
+## Game Curator Economy Platform on Sui
 ### Version 3.0 | April 2026
 
 ---
 
 ## Project Overview
 
-PlayNode is a consumer-first game content platform where guides, reviews, and recommendations generate USDC revenue for creators — built on the Sui blockchain.
+PlayNode is a consumer-first game content platform where guides, reviews, and recommendations generate USDC revenue for game curators — built on the Sui blockchain.
 
-**One-liner:** Find the best game guides and reviews. Creators earn USDC.
+**One-liner:** Find the best game guides and reviews. Game Curators earn USDC.
 
-**Core Thesis:** Build a YouTube-style discovery experience for game content, where the audience comes first and creators are empowered with transparent, instant revenue. No custom token — USDC only.
+**Core Thesis:** Build a YouTube-style discovery experience for game content, where the audience comes first and game curators are empowered with transparent, instant revenue. No custom token — USDC only.
 
-**UX Philosophy:** Consumer-first. Content is king. Creator tools are hidden behind a separate Studio interface, just like YouTube separates YouTube from YouTube Studio.
+**UX Philosophy:** Consumer-first. Content is king. Curator tools are hidden behind a separate Studio interface, just like YouTube separates YouTube from YouTube Studio.
 
 ---
 
@@ -86,15 +86,15 @@ playnode/
 │   │   │   │   ├── reviews/create/page.tsx     # Create Review form
 │   │   │   │   ├── drop/[id]/page.tsx          # Drop detail (video-page style)
 │   │   │   │   ├── review/[id]/page.tsx        # Review detail
-│   │   │   │   ├── node/[id]/page.tsx          # Creator channel (YouTube channel-style)
+│   │   │   │   ├── node/[id]/page.tsx          # Curator channel (YouTube channel-style)
 │   │   │   │   ├── game/[slug]/page.tsx        # Game hub with tabs
 │   │   │   │   ├── grid-market/page.tsx        # Pixel Grid marketplace
 │   │   │   │   ├── quest/page.tsx              # Quest/bounty board
 │   │   │   │   ├── shop/page.tsx               # Game shop with affiliate links
-│   │   │   │   ├── search/page.tsx             # Search results (guides/reviews/creators)
+│   │   │   │   ├── search/page.tsx             # Search results (guides/reviews/curators)
 │   │   │   │   ├── settings/page.tsx           # User settings
-│   │   │   │   ├── studio/page.tsx             # Creator Studio — revenue overview
-│   │   │   │   ├── studio/content/page.tsx     # Creator Studio — content management
+│   │   │   │   ├── studio/page.tsx             # Curator Studio — revenue overview
+│   │   │   │   ├── studio/content/page.tsx     # Curator Studio — content management
 │   │   │   │   └── dashboard/page.tsx          # Redirect → /studio
 │   │   │   ├── components/
 │   │   │   │   ├── layout/      # Header (YouTube-style), Sidebar (consumer), CategoryBar, UserMenu
@@ -159,7 +159,7 @@ playnode/
 
 ## Data Model — Move Objects
 
-### Node (Creator Home)
+### Node (Curator Home)
 
 ```move
 module playnode::node {
@@ -584,7 +584,7 @@ Activity points tracked off-chain in indexer database for future distribution.
 **Phase 3: Token launch gate (ALL conditions required):**
 - Monthly revenue >= $100,000 USDC for 3 consecutive months
 - MAU >= 50,000
-- Active creators >= 1,000
+- Active game curators >= 1,000
 - Publisher partnerships >= 3
 - Community vote >= 70% approval
 
@@ -608,22 +608,22 @@ Activity points tracked off-chain in indexer database for future distribution.
 | `/` | Home Feed | YouTube-style content feed — trending drops & reviews, game category filter |
 | `/drops` | Guide Listings | All guides with category/sort filters, ContentCard grid |
 | `/reviews` | Review Listings | All reviews with rating/verification filters |
-| `/drop/[id]` | Drop Detail | Guide content (video-page layout), creator bar, related content sidebar |
-| `/review/[id]` | Review Detail | Review with ratings, verification badge, creator bar |
-| `/node/[id]` | Creator Channel | YouTube channel-style — banner, tabs (Content/Reviews/About), Subscribe |
+| `/drop/[id]` | Drop Detail | Guide content (video-page layout), curator bar, related content sidebar |
+| `/review/[id]` | Review Detail | Review with ratings, verification badge, curator bar |
+| `/node/[id]` | Curator Channel | YouTube channel-style — banner, tabs (Content/Reviews/About), Subscribe |
 | `/game/[slug]` | Game Hub | All content for a game, category filters, shop links |
 | `/grid-market` | Grid Market | Browse Pixel Grids, purchase pixels |
 | `/quest` | Quest Board | Open bounties, accept & track |
-| `/shop` | Game Shop | Featured bundles, trending games, creator-curated recommendations |
-| `/search` | Search Results | Full-text search across guides, reviews, creators, games |
+| `/shop` | Game Shop | Featured bundles, trending games, curator-curated recommendations |
+| `/search` | Search Results | Full-text search across guides, reviews, game curators, games |
 | `/settings` | User Settings | Profile, wallets, game profiles, notifications |
 
-### Creator Studio (authenticated, separate UX)
+### Curator Studio (authenticated, separate UX)
 
 | Route | Page | Description |
 |-------|------|-------------|
 | `/studio` | Studio Overview | Revenue analytics, weekly chart, quick actions |
-| `/studio/content` | Content Management | Table of creator's content with search/filter/edit |
+| `/studio/content` | Content Management | Table of curator's content with search/filter/edit |
 | `/dashboard` | (Redirect) | Redirects to `/studio` |
 
 ### Content Creation
@@ -655,7 +655,7 @@ Activity points tracked off-chain in indexer database for future distribution.
 └────────────┴────────────────────────────────────────────────┘
 
 Consumer UX: YouTube-style content discovery (sidebar + feed)
-Creator UX: /studio (separate, accessed via avatar menu)
+Curator UX: /studio (separate, accessed via avatar menu)
 ```
 
 ---
@@ -990,7 +990,7 @@ model PageView {
 - [x] CategoryBar: horizontal scrollable game/content-type pills
 - [x] 18 routes, all with consistent layout
 
-**Creator Studio:**
+**Curator Studio:**
 - [x] /studio: revenue overview, weekly chart, revenue breakdown
 - [x] /studio/content: content management table with search/filter
 - [x] Separated from consumer experience (accessed via avatar menu)
@@ -1029,7 +1029,7 @@ model PageView {
 - [ ] Quest accept/submit/approve flow (on-chain escrow)
 - [ ] Loading states and error handling UI
 - [ ] Mobile PWA optimization
-- [ ] Creator onboarding flow (first Drop wizard)
+- [ ] Curator onboarding flow (first Drop wizard)
 
 ### Phase 2: Growth (Month 4~6)
 

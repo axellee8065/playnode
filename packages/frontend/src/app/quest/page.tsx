@@ -13,9 +13,9 @@ import { useWallet } from '@/components/providers/SuiProvider';
 /* ------------------------------------------------------------------ */
 const stats = [
   { label: 'Open Quests', value: '24' },
-  { label: 'Total Rewarded', value: '$12.4K', change: '+32%' },
-  { label: 'Avg Reward', value: '$180' },
-  { label: 'Active Creators', value: '89', change: '+8%' },
+  { label: 'Total Rewarded', value: '12.4K USDC', change: '+32%' },
+  { label: 'Avg Reward', value: '180 USDC' },
+  { label: 'Active Curators', value: '89', change: '+8%' },
 ];
 
 type QuestCategory = 'all' | 'writing' | 'review' | 'video' | 'translation';

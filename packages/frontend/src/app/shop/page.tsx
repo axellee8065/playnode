@@ -190,9 +190,9 @@ const ShopPage: FC = () => {
               </div>
             </div>
 
-            {/* Creator Picks */}
+            {/* Curator Picks */}
             <div>
-              <h2 className="font-mono text-xs font-semibold uppercase tracking-wider text-pn-muted mb-4">Creator Picks</h2>
+              <h2 className="font-mono text-xs font-semibold uppercase tracking-wider text-pn-muted mb-4">Curator Picks</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {creatorPicks.map((pick) => (
                   <Card key={pick.gameTitle + pick.creator} className="h-full">

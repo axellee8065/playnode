@@ -63,7 +63,7 @@ function SearchContent() {
     { key: 'all', label: 'All' },
     { key: 'guides', label: 'Guides' },
     { key: 'reviews', label: 'Reviews' },
-    { key: 'creators', label: 'Creators' },
+    { key: 'creators', label: 'Game Curators' },
   ];
 
   const showDrops = filterTab === 'all' || filterTab === 'guides';
@@ -113,7 +113,7 @@ function SearchContent() {
       {!loading && !query && (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <SearchIcon className="h-12 w-12 text-pn-muted/30 mb-4" />
-          <p className="text-pn-muted text-lg">Enter a search term to find guides, reviews, and creators</p>
+          <p className="text-pn-muted text-lg">Enter a search term to find guides, reviews, and game curators</p>
         </div>
       )}
 
@@ -192,13 +192,13 @@ function SearchContent() {
             </div>
           )}
 
-          {/* Creators */}
+          {/* Game Curators */}
           {showNodes && results.nodes.length > 0 && (
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <User className="h-4 w-4 text-pn-purple" />
                 <h2 className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-pn-muted">
-                  Creators
+                  Game Curators
                 </h2>
                 <span className="ml-1 rounded-full bg-pn-surface-2 px-2 py-0.5 text-[10px] font-mono text-pn-muted">
                   {results.nodes.length}

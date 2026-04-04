@@ -11,13 +11,14 @@ import ContentCard from "@/components/feed/ContentCard";
 import { api, formatUsdc, formatViews } from "@/lib/api";
 import { useApi } from "@/hooks/useApi";
 import { useWallet } from "@/components/providers/SuiProvider";
+import { useSubscriptions } from "@/hooks/useSubscriptions";
 
 // ---------------------------------------------------------------------------
 // Mock data
 // ---------------------------------------------------------------------------
 const CREATOR = {
   displayName: "GameMaster_KR",
-  bio: "Monster Hunter & Elden Ring specialist guide creator. 842 hours of verified playtime.",
+  bio: "Monster Hunter & Elden Ring specialist game curator. 842 hours of verified playtime.",
   rank: "DIAMOND",
   verified: true,
 };
@@ -44,6 +45,8 @@ export default function NodeProfilePage() {
   const nodeId = params.id as string;
   const [activeTab, setActiveTab] = useState<Tab>("content");
   const { connected, connect } = useWallet();
+  const { toggle: toggleSubscription, isSubscribed } = useSubscriptions();
+  const nodeSubscribed = isSubscribed(nodeId);
 
   // Fetch live data from API
   const { data: apiNode } = useApi(() => api.getNode(nodeId), [nodeId]);
@@ -132,14 +135,15 @@ export default function NodeProfilePage() {
               {/* Actions */}
               <div className="flex items-center gap-2 shrink-0">
                 <Button
-                  variant="primary"
+                  variant={nodeSubscribed ? 'secondary' : 'primary'}
                   size="sm"
                   onClick={() => {
                     if (!connected) { connect(); return; }
-                    alert('Subscribed!');
+                    toggleSubscription(nodeId);
                   }}
+                  className={nodeSubscribed ? '!text-pn-green !border-pn-green' : ''}
                 >
-                  Subscribe
+                  {nodeSubscribed ? 'Subscribed' : 'Subscribe'}
                 </Button>
                 <Button
                   variant="secondary"
@@ -147,11 +151,11 @@ export default function NodeProfilePage() {
                   onClick={() => {
                     if (!connected) { connect(); return; }
                     const amount = prompt('Enter tip amount in USDC (e.g. 1.00):');
-                    if (amount) alert(`Ping of $${amount} USDC sent!`);
+                    if (amount) alert(`Ping of ${amount} USDC sent!`);
                   }}
                 >
                   <Coffee className="h-3.5 w-3.5" />
-                  Ping $
+                  Ping
                 </Button>
               </div>
             </div>
