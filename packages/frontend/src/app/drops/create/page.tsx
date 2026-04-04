@@ -4,7 +4,6 @@ import { useState, type FormEvent } from 'react';
 import { motion } from 'framer-motion';
 import { FileText, Eye, DollarSign, Lock, Unlock, AlertCircle } from 'lucide-react';
 import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
 import { Card } from '@/components/common';
 import { useWallet } from '@/components/providers/SuiProvider';
 
@@ -87,9 +86,9 @@ export default function CreateDropPage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-pn-black flex flex-col">
+      <div className="min-h-screen bg-pn-black">
         <Header />
-        <main className="flex-1 flex items-center justify-center px-4">
+        <main className="pt-16 flex-1 flex items-center justify-center px-4 min-h-[calc(100vh-64px)]">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -130,28 +129,16 @@ export default function CreateDropPage() {
             </div>
           </motion.div>
         </main>
-        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-pn-black flex flex-col">
+    <div className="min-h-screen bg-pn-black">
       <Header />
 
-      {/* Background effects */}
-      <div
-        className="pointer-events-none fixed inset-0 z-0"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(42,42,50,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(42,42,50,0.3) 1px, transparent 1px)',
-          backgroundSize: '60px 60px',
-        }}
-      />
-      <div className="pointer-events-none absolute left-1/2 top-0 z-0 h-[600px] w-[800px] -translate-x-1/2 -translate-y-1/3 rounded-full bg-pn-green/5 blur-[120px]" />
-
-      <main className="relative z-10 flex-1">
-        <div className="max-w-3xl mx-auto px-4 lg:px-6 pt-12 pb-20">
+      <main className="pt-16">
+        <div className="max-w-3xl mx-auto px-4 lg:px-6 pt-6 pb-20">
           {/* Heading */}
           <motion.div
             custom={0}
@@ -423,8 +410,6 @@ export default function CreateDropPage() {
           </form>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

@@ -1,24 +1,10 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { User, Wallet, Gamepad2, Bell, AlertTriangle, ExternalLink, Info } from 'lucide-react';
+import { User, Wallet, Gamepad2, Bell, AlertTriangle, Info } from 'lucide-react';
 import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
+import Sidebar from '@/components/layout/Sidebar';
 import { Card, Button } from '@/components/common';
 import { useWallet } from '@/components/providers/SuiProvider';
-
-/* ------------------------------------------------------------------ */
-/*  Animation helpers                                                  */
-/* ------------------------------------------------------------------ */
-const stagger = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.08 } },
-};
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 18 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
-};
 
 /* ------------------------------------------------------------------ */
 /*  Sub-components                                                     */
@@ -69,7 +55,7 @@ function ToggleRow({ label, description, disabled = true }: { label: string; des
   );
 }
 
-function GameProfileRow({ platform, connected = false }: { platform: string; connected?: boolean }) {
+function GameProfileRow({ platform }: { platform: string }) {
   return (
     <div className="flex items-center justify-between py-3 border-b border-pn-border last:border-b-0">
       <div className="flex items-center gap-3">
@@ -78,15 +64,10 @@ function GameProfileRow({ platform, connected = false }: { platform: string; con
         </div>
         <div>
           <p className="text-sm font-medium text-pn-text">{platform}</p>
-          <p className="text-xs text-pn-muted">
-            {connected ? 'Connected' : 'Not connected'}
-          </p>
+          <p className="text-xs text-pn-muted">Not connected</p>
         </div>
       </div>
-      <button
-        disabled
-        className="px-3 py-1.5 rounded-lg bg-pn-surface border border-pn-border text-xs text-pn-muted cursor-not-allowed opacity-50"
-      >
+      <button disabled className="px-3 py-1.5 rounded-lg bg-pn-surface border border-pn-border text-xs text-pn-muted cursor-not-allowed opacity-50">
         Connect
       </button>
     </div>
@@ -100,150 +81,98 @@ export default function SettingsPage() {
   const { connected, address, connect } = useWallet();
 
   return (
-    <div className="min-h-screen bg-pn-black flex flex-col">
+    <div className="min-h-screen bg-pn-black">
       <Header />
+      <div className="flex">
+        <Sidebar />
+        <main className="flex-1 ml-0 lg:ml-56 pt-16">
+          <div className="max-w-3xl px-4 lg:px-6 py-6 space-y-6">
+            {/* Title */}
+            <div>
+              <h1 className="text-xl font-bold text-pn-white">Settings</h1>
+              <p className="mt-1 text-sm text-pn-muted">
+                Manage your PlayNode profile and preferences
+              </p>
+            </div>
 
-      {/* Background effects */}
-      <div
-        className="pointer-events-none fixed inset-0 z-0"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(42,42,50,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(42,42,50,0.3) 1px, transparent 1px)',
-          backgroundSize: '60px 60px',
-        }}
-      />
-
-      <main className="relative z-10 flex-1">
-        <div className="max-w-3xl mx-auto px-4 lg:px-6 pt-16 pb-20">
-          {/* Hero */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-8"
-          >
-            <h1 className="font-primary text-3xl font-extrabold text-pn-white sm:text-4xl tracking-tight">
-              Settings
-            </h1>
-            <p className="mt-2 text-pn-muted">
-              Manage your PlayNode profile and preferences
-            </p>
-          </motion.div>
-
-          {/* Coming-soon banner */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.4 }}
-            className="mb-8"
-          >
+            {/* Coming-soon banner */}
             <div className="flex items-start gap-3 rounded-xl border border-pn-amber/20 bg-pn-amber/5 px-4 py-3">
               <Info className="h-5 w-5 text-pn-amber shrink-0 mt-0.5" />
               <p className="text-sm text-pn-amber leading-relaxed">
                 Profile editing will be available when on-chain Node creation is live.
               </p>
             </div>
-          </motion.div>
 
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            animate="show"
-            className="space-y-6"
-          >
-            {/* ---- Profile ---- */}
-            <motion.div variants={fadeUp}>
-              <Card>
-                <SectionHeader icon={User} title="Profile" />
-                <div className="space-y-0">
-                  <FieldRow label="Display Name" placeholder="Your display name" />
-                  <FieldRow label="Bio" placeholder="Tell us about yourself" />
-                  <FieldRow label="Avatar URL" placeholder="https://..." />
-                </div>
-                <p className="mt-3 text-xs text-pn-muted/60 italic">Coming soon</p>
-              </Card>
-            </motion.div>
+            {/* Profile */}
+            <Card>
+              <SectionHeader icon={User} title="Profile" />
+              <div className="space-y-0">
+                <FieldRow label="Display Name" placeholder="Your display name" />
+                <FieldRow label="Bio" placeholder="Tell us about yourself" />
+                <FieldRow label="Avatar URL" placeholder="https://..." />
+              </div>
+              <p className="mt-3 text-xs text-pn-muted/60 italic">Coming soon</p>
+            </Card>
 
-            {/* ---- Connected Wallets ---- */}
-            <motion.div variants={fadeUp}>
-              <Card>
-                <SectionHeader icon={Wallet} title="Connected Wallets" />
-                {connected && address ? (
-                  <div className="flex items-center justify-between py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="h-2 w-2 rounded-full bg-pn-green animate-pulse" />
-                      <div>
-                        <p className="text-sm font-mono text-pn-text">
-                          {address.slice(0, 6)}...{address.slice(-4)}
-                        </p>
-                        <p className="text-xs text-pn-green">Connected</p>
-                      </div>
+            {/* Connected Wallets */}
+            <Card>
+              <SectionHeader icon={Wallet} title="Connected Wallets" />
+              {connected && address ? (
+                <div className="flex items-center justify-between py-3">
+                  <div className="flex items-center gap-3">
+                    <div className="h-2 w-2 rounded-full bg-pn-green animate-pulse" />
+                    <div>
+                      <p className="text-sm font-mono text-pn-text">
+                        {address.slice(0, 6)}...{address.slice(-4)}
+                      </p>
+                      <p className="text-xs text-pn-green">Connected</p>
                     </div>
-                    <span className="rounded-md bg-pn-green/10 px-2 py-1 font-mono text-[10px] text-pn-green uppercase tracking-wider">
-                      Sui
-                    </span>
                   </div>
-                ) : (
-                  <div className="flex flex-col items-center py-6 gap-3">
-                    <p className="text-sm text-pn-muted">No wallet connected</p>
-                    <Button variant="primary" size="sm" onClick={connect}>
-                      <Wallet className="h-4 w-4" />
-                      Connect Wallet
-                    </Button>
-                  </div>
-                )}
-              </Card>
-            </motion.div>
-
-            {/* ---- Game Profiles ---- */}
-            <motion.div variants={fadeUp}>
-              <Card>
-                <SectionHeader icon={Gamepad2} title="Game Profiles" />
-                <div className="space-y-0">
-                  <GameProfileRow platform="Steam" />
-                  <GameProfileRow platform="Riot Games" />
-                  <GameProfileRow platform="Xbox" />
+                  <span className="rounded-md bg-pn-green/10 px-2 py-1 font-mono text-[10px] text-pn-green uppercase tracking-wider">Sui</span>
                 </div>
-              </Card>
-            </motion.div>
-
-            {/* ---- Notifications ---- */}
-            <motion.div variants={fadeUp}>
-              <Card>
-                <SectionHeader icon={Bell} title="Notifications" />
-                <div className="space-y-0">
-                  <ToggleRow
-                    label="Email Notifications"
-                    description="Receive updates about your drops and reviews"
-                  />
-                  <ToggleRow
-                    label="Push Notifications"
-                    description="Get browser notifications for new activity"
-                  />
+              ) : (
+                <div className="flex flex-col items-center py-6 gap-3">
+                  <p className="text-sm text-pn-muted">No wallet connected</p>
+                  <Button variant="primary" size="sm" onClick={connect}>
+                    <Wallet className="h-4 w-4" />
+                    Connect Wallet
+                  </Button>
                 </div>
-              </Card>
-            </motion.div>
+              )}
+            </Card>
 
-            {/* ---- Danger Zone ---- */}
-            <motion.div variants={fadeUp}>
-              <Card className="!border-pn-red/20">
-                <SectionHeader icon={AlertTriangle} title="Danger Zone" />
-                <p className="text-sm text-pn-muted mb-4">
-                  Permanently delete your account and all associated data. This action cannot be undone.
-                </p>
-                <button
-                  disabled
-                  className="px-4 py-2 rounded-lg bg-pn-red/10 border border-pn-red/20 text-sm font-medium text-pn-red cursor-not-allowed opacity-50"
-                >
-                  Delete Account
-                </button>
-              </Card>
-            </motion.div>
-          </motion.div>
-        </div>
-      </main>
+            {/* Game Profiles */}
+            <Card>
+              <SectionHeader icon={Gamepad2} title="Game Profiles" />
+              <div className="space-y-0">
+                <GameProfileRow platform="Steam" />
+                <GameProfileRow platform="Riot Games" />
+                <GameProfileRow platform="Xbox" />
+              </div>
+            </Card>
 
-      <Footer />
+            {/* Notifications */}
+            <Card>
+              <SectionHeader icon={Bell} title="Notifications" />
+              <div className="space-y-0">
+                <ToggleRow label="Email Notifications" description="Receive updates about your drops and reviews" />
+                <ToggleRow label="Push Notifications" description="Get browser notifications for new activity" />
+              </div>
+            </Card>
+
+            {/* Danger Zone */}
+            <Card className="!border-pn-red/20">
+              <SectionHeader icon={AlertTriangle} title="Danger Zone" />
+              <p className="text-sm text-pn-muted mb-4">
+                Permanently delete your account and all associated data. This action cannot be undone.
+              </p>
+              <button disabled className="px-4 py-2 rounded-lg bg-pn-red/10 border border-pn-red/20 text-sm font-medium text-pn-red cursor-not-allowed opacity-50">
+                Delete Account
+              </button>
+            </Card>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

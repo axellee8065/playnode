@@ -18,7 +18,7 @@ const AppLayout: FC<AppLayoutProps> = ({ children, activePath = '/', rightPanel 
 
       <div className="flex flex-1">
         {/* Sidebar - desktop only */}
-        <Sidebar activePath={activePath} />
+        <Sidebar />
 
         {/* Main content */}
         <main className="flex-1 min-w-0">

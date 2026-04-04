@@ -1,27 +1,14 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { Search as SearchIcon, FileText, Star, User, Loader2, Eye } from 'lucide-react';
+import { Search as SearchIcon, FileText, Star, User, Loader2 } from 'lucide-react';
 import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import { Card, Badge } from '@/components/common';
+import Sidebar from '@/components/layout/Sidebar';
+import ContentCard from '@/components/feed/ContentCard';
+import { Card } from '@/components/common';
 import { api, formatViews } from '@/lib/api';
 import { useApi } from '@/hooks/useApi';
-
-/* ------------------------------------------------------------------ */
-/*  Animation helpers                                                  */
-/* ------------------------------------------------------------------ */
-const stagger = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.06 } },
-};
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 18 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
-};
 
 /* ------------------------------------------------------------------ */
 /*  Mock search results                                                */
@@ -30,14 +17,14 @@ function getMockResults(q: string) {
   const lower = q.toLowerCase();
   return {
     drops: [
-      { id: 'mock-d1', type: 'drop', title: 'Charge Blade Master Guide', gameTag: 'MH_WILDS', author: 'GameMaster_KR', views: '24.3K' },
-      { id: 'mock-d2', type: 'drop', title: 'Elden Ring Speedrun Route v4', gameTag: 'ELDEN_RING', author: 'SpeedKing', views: '18.1K' },
-      { id: 'mock-d3', type: 'drop', title: 'Valorant Tier List S8', gameTag: 'VALORANT', author: 'TierGod', views: '41.2K' },
+      { id: 'mock-d1', type: 'drop', title: 'Charge Blade Master Guide', gameTag: 'MH_WILDS', author: 'GameMaster_KR', views: '24300', createdAt: new Date(Date.now() - 86400000 * 3).toISOString(), price: '3990000', isPremium: true, category: 0 },
+      { id: 'mock-d2', type: 'drop', title: 'Elden Ring Speedrun Route v4', gameTag: 'ELDEN_RING', author: 'SpeedKing', views: '18100', createdAt: new Date(Date.now() - 86400000 * 7).toISOString(), price: '0', isPremium: false, category: 4 },
+      { id: 'mock-d3', type: 'drop', title: 'Valorant Tier List S8', gameTag: 'VALORANT', author: 'TierGod', views: '41200', createdAt: new Date(Date.now() - 86400000 * 1).toISOString(), price: '1990000', isPremium: true, category: 3 },
     ].filter((d) => d.title.toLowerCase().includes(lower) || d.gameTag.toLowerCase().includes(lower)),
     reviews: [
-      { id: 'mock-r1', type: 'review', title: 'Elden Ring', rating: 92, author: 'DragonSlayer', views: '18.4K' },
-      { id: 'mock-r2', type: 'review', title: 'Baldur\'s Gate 3', rating: 95, author: 'CriticalGamer', views: '31.2K' },
-    ].filter((r) => r.title.toLowerCase().includes(lower)),
+      { id: 'mock-r1', type: 'review', title: 'Elden Ring Review', gameTag: 'ELDEN_RING', rating: 92, author: 'DragonSlayer', views: '18400', createdAt: new Date(Date.now() - 86400000 * 10).toISOString(), verifiedHours: 240 },
+      { id: 'mock-r2', type: 'review', title: "Baldur's Gate 3 Review", gameTag: 'BG3', rating: 95, author: 'CriticalGamer', views: '31200', createdAt: new Date(Date.now() - 86400000 * 14).toISOString(), verifiedHours: 180 },
+    ].filter((r) => r.title.toLowerCase().includes(lower) || r.gameTag.toLowerCase().includes(lower)),
     nodes: [
       { id: 'mock-n1', type: 'node', displayName: 'GameMaster_KR', rank: 4, totalDrops: 12, totalReviews: 5 },
       { id: 'mock-n2', type: 'node', displayName: 'SpeedKing', rank: 3, totalDrops: 8, totalReviews: 3 },
@@ -45,54 +32,21 @@ function getMockResults(q: string) {
   };
 }
 
-/* ------------------------------------------------------------------ */
-/*  Result section component                                           */
-/* ------------------------------------------------------------------ */
-function ResultSection({
-  title,
-  icon: Icon,
-  color,
-  children,
-  count,
-}: {
-  title: string;
-  icon: React.ElementType;
-  color: string;
-  children: React.ReactNode;
-  count: number;
-}) {
-  if (count === 0) return null;
-  return (
-    <div className="mb-8">
-      <div className="flex items-center gap-2 mb-4">
-        <Icon className={`h-4 w-4 ${color}`} />
-        <h2 className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-pn-muted">
-          {title}
-        </h2>
-        <span className="ml-1 rounded-full bg-pn-surface-2 px-2 py-0.5 text-[10px] font-mono text-pn-muted">
-          {count}
-        </span>
-      </div>
-      <motion.div variants={stagger} initial="hidden" animate="show" className="space-y-3">
-        {children}
-      </motion.div>
-    </div>
-  );
-}
+type FilterTab = 'all' | 'guides' | 'reviews' | 'creators';
 
 /* ------------------------------------------------------------------ */
-/*  Inner search content (uses useSearchParams)                        */
+/*  Inner search content                                               */
 /* ------------------------------------------------------------------ */
 function SearchContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
+  const [filterTab, setFilterTab] = useState<FilterTab>('all');
 
   const { data: apiResults, loading, error } = useApi(
     () => (query ? api.search(query) : Promise.resolve(null)),
     [query],
   );
 
-  // Normalize API results or fall back to mock
   const results = apiResults && !error
     ? {
         drops: Array.isArray(apiResults.drops) ? apiResults.drops : [],
@@ -105,26 +59,48 @@ function SearchContent() {
 
   const totalResults = results.drops.length + results.reviews.length + results.nodes.length;
 
+  const filterTabs: { key: FilterTab; label: string }[] = [
+    { key: 'all', label: 'All' },
+    { key: 'guides', label: 'Guides' },
+    { key: 'reviews', label: 'Reviews' },
+    { key: 'creators', label: 'Creators' },
+  ];
+
+  const showDrops = filterTab === 'all' || filterTab === 'guides';
+  const showReviews = filterTab === 'all' || filterTab === 'reviews';
+  const showNodes = filterTab === 'all' || filterTab === 'creators';
+
   return (
     <>
-      {/* Hero */}
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="mb-10"
-      >
-        <h1 className="font-primary text-3xl font-extrabold text-pn-white sm:text-4xl tracking-tight">
-          Search Results
-        </h1>
+      {/* Search header */}
+      <div className="mb-6">
         {query && (
-          <p className="mt-2 text-pn-muted text-lg">
+          <p className="text-pn-muted text-sm">
             {loading
               ? 'Searching...'
               : `${totalResults} result${totalResults !== 1 ? 's' : ''} for "${query}"`}
           </p>
         )}
-      </motion.div>
+      </div>
+
+      {/* Filter tabs */}
+      {query && !loading && totalResults > 0 && (
+        <div className="flex gap-2 mb-6">
+          {filterTabs.map((t) => (
+            <button
+              key={t.key}
+              onClick={() => setFilterTab(t.key)}
+              className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                filterTab === t.key
+                  ? 'bg-pn-white text-pn-black font-semibold'
+                  : 'bg-pn-surface-2 text-pn-muted hover:text-pn-white'
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Loading */}
       {loading && (
@@ -152,89 +128,106 @@ function SearchContent() {
 
       {/* Results */}
       {!loading && totalResults > 0 && (
-        <>
+        <div className="space-y-8">
           {/* Drops */}
-          <ResultSection title="Drops" icon={FileText} color="text-pn-green" count={results.drops.length}>
-            {results.drops.map((drop: any) => (
-              <motion.a key={drop.id} href={`/drop/${drop.id}`} variants={fadeUp}>
-                <Card className="!p-4 group cursor-pointer hover:border-pn-border-light transition-colors">
-                  <div className="flex items-center gap-4">
-                    <div className="shrink-0 flex h-10 w-10 items-center justify-center rounded-lg bg-pn-green/10 border border-pn-green/20">
-                      <FileText className="h-4 w-4 text-pn-green" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <Badge variant="drop">DROP</Badge>
-                        <span className="font-mono text-[9px] uppercase text-pn-amber">
-                          {drop.gameTag}
-                        </span>
-                      </div>
-                      <h3 className="text-sm font-semibold text-pn-white mt-1 group-hover:text-pn-green transition-colors truncate">
-                        {drop.title}
-                      </h3>
-                      <p className="text-xs text-pn-muted mt-0.5">
-                        by {drop.node?.displayName || drop.author}
-                        {drop.views || drop.totalViews ? ` · ${formatViews(drop.views || drop.totalViews)} views` : ''}
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-              </motion.a>
-            ))}
-          </ResultSection>
+          {showDrops && results.drops.length > 0 && (
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <FileText className="h-4 w-4 text-pn-green" />
+                <h2 className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-pn-muted">
+                  Guides
+                </h2>
+                <span className="ml-1 rounded-full bg-pn-surface-2 px-2 py-0.5 text-[10px] font-mono text-pn-muted">
+                  {results.drops.length}
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {results.drops.map((drop: any) => (
+                  <ContentCard
+                    key={drop.id}
+                    type="drop"
+                    id={drop.id}
+                    title={drop.title}
+                    gameTag={drop.gameTag}
+                    author={drop.node?.displayName || drop.author}
+                    views={formatViews(drop.views || drop.totalViews)}
+                    price={drop.isPremium ? String(Number(drop.price) / 1_000_000) : undefined}
+                    isPremium={drop.isPremium}
+                    createdAt={drop.createdAt || new Date().toISOString()}
+                    category={drop.category}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Reviews */}
-          <ResultSection title="Reviews" icon={Star} color="text-pn-cyan" count={results.reviews.length}>
-            {results.reviews.map((review: any) => (
-              <motion.a key={review.id} href={`/review/${review.id}`} variants={fadeUp}>
-                <Card className="!p-4 group cursor-pointer hover:border-pn-border-light transition-colors">
-                  <div className="flex items-center gap-4">
-                    <div className="shrink-0 flex h-10 w-10 items-center justify-center rounded-lg bg-pn-cyan/10 border border-pn-cyan/20">
-                      <span className="font-mono text-sm font-bold text-pn-cyan">
-                        {review.rating}
-                      </span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <Badge variant="review">REVIEW</Badge>
-                      </div>
-                      <h3 className="text-sm font-semibold text-pn-white mt-1 group-hover:text-pn-cyan transition-colors truncate">
-                        {review.title || review.gameTag?.replace(/_/g, ' ')}
-                      </h3>
-                      <p className="text-xs text-pn-muted mt-0.5">
-                        by {review.node?.displayName || review.author}
-                        {review.views || review.totalViews ? ` · ${formatViews(review.views || review.totalViews)} views` : ''}
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-              </motion.a>
-            ))}
-          </ResultSection>
+          {showReviews && results.reviews.length > 0 && (
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <Star className="h-4 w-4 text-pn-cyan" />
+                <h2 className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-pn-muted">
+                  Reviews
+                </h2>
+                <span className="ml-1 rounded-full bg-pn-surface-2 px-2 py-0.5 text-[10px] font-mono text-pn-muted">
+                  {results.reviews.length}
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {results.reviews.map((review: any) => (
+                  <ContentCard
+                    key={review.id}
+                    type="review"
+                    id={review.id}
+                    title={review.title || review.gameTag?.replace(/_/g, ' ')}
+                    gameTag={review.gameTag || ''}
+                    author={review.node?.displayName || review.author}
+                    views={formatViews(review.views || review.totalViews)}
+                    rating={review.rating ? review.rating / 10 : undefined}
+                    verifiedHours={review.verifiedHours}
+                    createdAt={review.createdAt || new Date().toISOString()}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
 
-          {/* Nodes */}
-          <ResultSection title="Nodes" icon={User} color="text-pn-purple" count={results.nodes.length}>
-            {results.nodes.map((node: any) => (
-              <motion.a key={node.id} href={`/node/${node.id}`} variants={fadeUp}>
-                <Card className="!p-4 group cursor-pointer hover:border-pn-border-light transition-colors">
-                  <div className="flex items-center gap-4">
-                    <div className="shrink-0 flex h-10 w-10 items-center justify-center rounded-full bg-pn-purple/10 border border-pn-purple/20 font-mono text-sm font-bold text-pn-purple">
-                      {(node.displayName || '?')[0].toUpperCase()}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-semibold text-pn-white group-hover:text-pn-purple transition-colors truncate">
-                        {node.displayName}
-                      </h3>
-                      <p className="text-xs text-pn-muted mt-0.5">
-                        Rank {node.rank} · {node.totalDrops} drops · {node.totalReviews} reviews
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-              </motion.a>
-            ))}
-          </ResultSection>
-        </>
+          {/* Creators */}
+          {showNodes && results.nodes.length > 0 && (
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <User className="h-4 w-4 text-pn-purple" />
+                <h2 className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-pn-muted">
+                  Creators
+                </h2>
+                <span className="ml-1 rounded-full bg-pn-surface-2 px-2 py-0.5 text-[10px] font-mono text-pn-muted">
+                  {results.nodes.length}
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {results.nodes.map((node: any) => (
+                  <a key={node.id} href={`/node/${node.id}`} className="block">
+                    <Card className="!p-4 group cursor-pointer hover:border-pn-border-light transition-colors">
+                      <div className="flex items-center gap-4">
+                        <div className="shrink-0 flex h-10 w-10 items-center justify-center rounded-full bg-pn-purple/10 border border-pn-purple/20 font-mono text-sm font-bold text-pn-purple">
+                          {(node.displayName || '?')[0].toUpperCase()}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-sm font-semibold text-pn-white group-hover:text-pn-purple transition-colors truncate">
+                            {node.displayName}
+                          </h3>
+                          <p className="text-xs text-pn-muted mt-0.5">
+                            Rank {node.rank} &middot; {node.totalDrops} guides &middot; {node.totalReviews} reviews
+                          </p>
+                        </div>
+                      </div>
+                    </Card>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       )}
     </>
   );
@@ -245,34 +238,24 @@ function SearchContent() {
 /* ------------------------------------------------------------------ */
 export default function SearchPage() {
   return (
-    <div className="min-h-screen bg-pn-black flex flex-col">
+    <div className="min-h-screen bg-pn-black">
       <Header />
-
-      {/* Background effects */}
-      <div
-        className="pointer-events-none fixed inset-0 z-0"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(42,42,50,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(42,42,50,0.3) 1px, transparent 1px)',
-          backgroundSize: '60px 60px',
-        }}
-      />
-
-      <main className="relative z-10 flex-1">
-        <div className="max-w-4xl mx-auto px-4 lg:px-6 pt-16 pb-20">
-          <Suspense
-            fallback={
-              <div className="flex items-center justify-center py-20">
-                <Loader2 className="h-6 w-6 text-pn-green animate-spin" />
-              </div>
-            }
-          >
-            <SearchContent />
-          </Suspense>
-        </div>
-      </main>
-
-      <Footer />
+      <div className="flex">
+        <Sidebar />
+        <main className="flex-1 ml-0 lg:ml-56 pt-16">
+          <div className="px-4 lg:px-6 py-6">
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center py-20">
+                  <Loader2 className="h-6 w-6 text-pn-green animate-spin" />
+                </div>
+              }
+            >
+              <SearchContent />
+            </Suspense>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

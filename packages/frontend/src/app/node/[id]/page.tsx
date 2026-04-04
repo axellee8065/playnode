@@ -3,38 +3,14 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import {
-  CheckCircle,
-  Eye,
-  Link2,
-  Clock,
-  Gamepad2,
-  ShieldCheck,
-  ChevronRight,
-} from "lucide-react";
-import { Badge, Button, Card, UsdcAmount } from "@/components/common";
+import { CheckCircle, Coffee, Link2 } from "lucide-react";
+import { Button, Card } from "@/components/common";
 import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+import Sidebar from "@/components/layout/Sidebar";
+import ContentCard from "@/components/feed/ContentCard";
 import { api, formatUsdc, formatViews } from "@/lib/api";
 import { useApi } from "@/hooks/useApi";
 import { useWallet } from "@/components/providers/SuiProvider";
-
-// ---------------------------------------------------------------------------
-// Animation helpers
-// ---------------------------------------------------------------------------
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] },
-  }),
-};
-
-const stagger = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.1 } },
-};
 
 // ---------------------------------------------------------------------------
 // Mock data
@@ -46,98 +22,19 @@ const CREATOR = {
   verified: true,
 };
 
-const STATS = [
-  { label: "Total Drops", value: "47" },
-  { label: "Total Reviews", value: "12" },
-  { label: "Total Views", value: "284K" },
-  { label: "Links", value: "1,240" },
-  { label: "Total Earned", value: "$4,280.00", usdc: true },
-];
-
 const PLATFORMS = [
-  {
-    name: "Steam",
-    username: "GameMaster_KR",
-    verified: true,
-    hours: "2,400",
-    color: "pn-cyan",
-  },
-  {
-    name: "Riot",
-    username: "GM_Korea#KR1",
-    verified: true,
-    hours: "380",
-    color: "pn-red",
-  },
+  { name: "Steam", username: "GameMaster_KR", verified: true, hours: "2,400" },
+  { name: "Riot", username: "GM_Korea#KR1", verified: true, hours: "380" },
 ];
 
-const TABS = ["Drops", "Reviews", "Shop", "Grid"] as const;
-type Tab = (typeof TABS)[number];
+type Tab = "content" | "reviews" | "about";
 
-interface Drop {
-  id: number;
-  title: string;
-  game: string;
-  gameVariant: "drop" | "review" | "shop" | "grid" | "quest" | "rank";
-  price: number | null;
-  views: string;
-  date: string;
-}
-
-const DROPS: Drop[] = [
-  {
-    id: 1,
-    title: "MH Wilds: Charge Blade Master Guide",
-    game: "MH Wilds",
-    gameVariant: "drop",
-    price: 3.99,
-    views: "48.2K",
-    date: "2026-03-15",
-  },
-  {
-    id: 2,
-    title: "Elden Ring DLC Complete Boss Walkthrough",
-    game: "Elden Ring",
-    gameVariant: "quest",
-    price: 5.99,
-    views: "112K",
-    date: "2026-02-28",
-  },
-  {
-    id: 3,
-    title: "VALORANT Season 8 Iso Complete Guide",
-    game: "VALORANT",
-    gameVariant: "rank",
-    price: null,
-    views: "23.1K",
-    date: "2026-03-22",
-  },
-  {
-    id: 4,
-    title: "MH Wilds: Bow Build & Combo Routes Complete Guide",
-    game: "MH Wilds",
-    gameVariant: "drop",
-    price: 3.99,
-    views: "31.7K",
-    date: "2026-01-10",
-  },
+const MOCK_DROPS = [
+  { id: "nd-1", title: "MH Wilds: Charge Blade Master Guide", gameTag: "MH_WILDS", price: "3990000", views: "48200", isPremium: true, createdAt: new Date(Date.now() - 86400000 * 5).toISOString(), category: 0 },
+  { id: "nd-2", title: "Elden Ring DLC Complete Boss Walkthrough", gameTag: "ELDEN_RING", price: "5990000", views: "112000", isPremium: true, createdAt: new Date(Date.now() - 86400000 * 12).toISOString(), category: 0 },
+  { id: "nd-3", title: "VALORANT Season 8 Iso Complete Guide", gameTag: "VALORANT", price: "0", views: "23100", isPremium: false, createdAt: new Date(Date.now() - 86400000 * 2).toISOString(), category: 5 },
+  { id: "nd-4", title: "MH Wilds: Bow Build & Combo Routes Complete Guide", gameTag: "MH_WILDS", price: "3990000", views: "31700", isPremium: true, createdAt: new Date(Date.now() - 86400000 * 20).toISOString(), category: 1 },
 ];
-
-// Pixel grid colors for preview
-const PIXEL_COLORS = [
-  [1, 0, 0, 2, 0, 3, 0, 0, 1, 0],
-  [0, 3, 0, 0, 1, 0, 2, 0, 0, 0],
-  [0, 0, 2, 0, 0, 0, 0, 1, 0, 3],
-  [1, 0, 0, 0, 3, 0, 0, 0, 2, 0],
-  [0, 2, 0, 1, 0, 0, 3, 0, 0, 1],
-];
-
-const pixelColorMap: Record<number, string> = {
-  0: "bg-pn-surface-2",
-  1: "bg-pn-green",
-  2: "bg-pn-cyan",
-  3: "bg-pn-purple",
-};
 
 // ---------------------------------------------------------------------------
 // Page component
@@ -145,7 +42,7 @@ const pixelColorMap: Record<number, string> = {
 export default function NodeProfilePage() {
   const params = useParams();
   const nodeId = params.id as string;
-  const [activeTab, setActiveTab] = useState<Tab>("Drops");
+  const [activeTab, setActiveTab] = useState<Tab>("content");
   const { connected, connect } = useWallet();
 
   // Fetch live data from API
@@ -153,7 +50,6 @@ export default function NodeProfilePage() {
   const { data: apiDrops } = useApi(() => api.getNodeDrops(nodeId), [nodeId]);
   const { data: apiReviews } = useApi(() => api.getNodeReviews(nodeId), [nodeId]);
 
-  // Map API node to display values, fall back to mock
   const creator = apiNode
     ? {
         displayName: apiNode.displayName,
@@ -163,186 +59,119 @@ export default function NodeProfilePage() {
       }
     : CREATOR;
 
-  const nodeStats = apiNode
-    ? [
-        { label: "Total Drops", value: String(apiNode.totalDrops) },
-        { label: "Total Reviews", value: String(apiNode.totalReviews) },
-        { label: "Total Views", value: formatViews(apiNode.totalViews) },
-        { label: "Links", value: STATS[3].value },
-        { label: "Total Earned", value: `$${formatUsdc(apiNode.totalEarned)}`, usdc: true },
-      ]
-    : STATS;
-
   const displayDrops = apiDrops
     ? apiDrops.map((d, i) => ({
-        id: i + 1,
+        id: d.id || `nd-${i}`,
         title: d.title,
-        game: d.gameTag,
-        gameVariant: 'drop' as const,
-        price: d.isPremium ? Number(d.price) / 1_000_000 : null,
-        views: formatViews(d.totalViews),
-        date: String(d.createdAt).slice(0, 10),
+        gameTag: d.gameTag,
+        price: d.price,
+        views: d.totalViews,
+        isPremium: d.isPremium,
+        createdAt: d.createdAt,
+        category: d.category ?? 5,
+        author: d.node?.displayName || d.author,
       }))
-    : DROPS;
+    : MOCK_DROPS.map((d) => ({ ...d, author: creator.displayName }));
+
+  const displayReviews = apiReviews
+    ? apiReviews.map((r, i) => ({
+        id: r.id || `nr-${i}`,
+        title: `${r.gameTag?.replace(/_/g, ' ')} Review`,
+        gameTag: r.gameTag,
+        author: r.node?.displayName || r.author,
+        rating: r.rating / 10,
+        views: r.totalViews,
+        verifiedHours: r.verifiedPlaytimeHours,
+        createdAt: r.createdAt,
+      }))
+    : [];
+
+  const tabs: { key: Tab; label: string }[] = [
+    { key: "content", label: "Content" },
+    { key: "reviews", label: "Reviews" },
+    { key: "about", label: "About" },
+  ];
 
   return (
-    <div className="min-h-screen bg-pn-black text-pn-white">
+    <div className="min-h-screen bg-pn-black">
       <Header />
-      {/* ----------------------------------------------------------------- */}
-      {/* Banner + Avatar */}
-      {/* ----------------------------------------------------------------- */}
-      <div className="relative">
-        {/* Banner */}
-        <motion.div
-          initial={{ opacity: 0, scale: 1.02 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="h-[240px] w-full bg-gradient-to-br from-pn-green/20 via-pn-surface to-pn-purple/10"
-        >
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-pn-black via-pn-black/40 to-transparent" />
-        </motion.div>
+      <div className="flex">
+        <Sidebar />
+        <main className="flex-1 ml-0 lg:ml-56 pt-16">
+          {/* Channel banner */}
+          <div className="h-[200px] w-full bg-gradient-to-br from-pn-green/20 via-pn-surface to-pn-purple/10 relative">
+            <div className="absolute inset-0 bg-gradient-to-t from-pn-black via-pn-black/40 to-transparent" />
+          </div>
 
-        {/* Avatar + Identity */}
-        <div className="relative mx-auto max-w-6xl px-6">
-          <div className="flex flex-col items-start gap-4 -mt-12 sm:flex-row sm:items-end sm:gap-6">
-            {/* Avatar */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="h-24 w-24 shrink-0 rounded-full border-2 border-pn-green bg-pn-surface-2 flex items-center justify-center text-3xl font-bold text-pn-green select-none"
-            >
-              GM
-            </motion.div>
+          {/* Channel info row */}
+          <div className="px-4 lg:px-6 -mt-10 relative z-10">
+            <div className="flex flex-col sm:flex-row sm:items-end gap-4 mb-6">
+              {/* Avatar */}
+              <div className="h-20 w-20 shrink-0 rounded-full border-2 border-pn-green bg-pn-surface-2 flex items-center justify-center text-2xl font-bold text-pn-green select-none">
+                {creator.displayName.charAt(0)}
+              </div>
 
-            {/* Name + badges */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-              className="flex flex-col gap-2 pb-1"
-            >
-              <div className="flex items-center gap-3 flex-wrap">
-                <h1
-                  className="font-primary font-extrabold text-pn-white leading-tight"
-                  style={{ fontSize: "32px" }}
-                >
-                  {creator.displayName}
-                </h1>
-                {creator.verified && (
-                  <span className="flex items-center gap-1 rounded-full bg-pn-blue/15 px-2.5 py-0.5 text-pn-blue">
-                    <CheckCircle size={14} />
-                    <span className="text-xs font-medium">Verified</span>
+              {/* Name + meta */}
+              <div className="flex-1 min-w-0 pb-1">
+                <div className="flex items-center gap-3 flex-wrap">
+                  <h1 className="text-2xl font-bold text-pn-white">
+                    {creator.displayName}
+                  </h1>
+                  {creator.verified && (
+                    <CheckCircle size={16} className="text-pn-green" />
+                  )}
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-md font-bold">
+                    {creator.rank}
                   </span>
-                )}
-                <span className="flex items-center gap-1 rounded-full bg-pn-blue/10 px-2.5 py-0.5 text-pn-blue font-mono text-[10px] uppercase tracking-widest font-bold">
-                  {creator.rank} RANK
-                </span>
+                </div>
+                <p className="text-sm text-pn-muted mt-1">
+                  1,240 subscribers
+                </p>
               </div>
-              <p className="text-pn-text text-sm max-w-xl leading-relaxed">
-                {creator.bio}
-              </p>
-            </motion.div>
-          </div>
-        </div>
-      </div>
 
-      {/* ----------------------------------------------------------------- */}
-      {/* Main content area */}
-      {/* ----------------------------------------------------------------- */}
-      <div className="mx-auto max-w-6xl px-6 mt-10">
-        {/* Stats Row */}
-        <motion.div
-          variants={stagger}
-          initial="hidden"
-          animate="visible"
-          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-10"
-        >
-          {nodeStats.map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              variants={fadeUp}
-              custom={i}
-              className="bg-pn-surface border border-pn-border rounded-xl p-4"
-            >
-              <p className="font-mono text-[10px] uppercase tracking-wider text-pn-muted mb-1.5">
-                {stat.label}
-              </p>
-              {stat.usdc ? (
-                <UsdcAmount amount={apiNode ? Number(apiNode.totalEarned) / 1_000_000 : 4280} size="sm" showLabel />
-              ) : (
-                <span className="text-pn-white font-bold text-xl leading-none">
-                  {stat.value}
-                </span>
-              )}
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Game Profiles */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-          className="mb-10"
-        >
-          <h2 className="font-mono text-[10px] uppercase tracking-wider text-pn-muted mb-3">
-            Connected Game Profiles
-          </h2>
-          <div className="flex flex-wrap gap-3">
-            {PLATFORMS.map((p) => (
-              <div
-                key={p.name}
-                className="flex items-center gap-3 bg-pn-surface border border-pn-border rounded-xl px-4 py-3"
-              >
-                <div
-                  className={`h-9 w-9 rounded-lg bg-pn-surface-2 flex items-center justify-center text-${p.color}`}
+              {/* Actions */}
+              <div className="flex items-center gap-2 shrink-0">
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => {
+                    if (!connected) { connect(); return; }
+                    alert('Subscribed!');
+                  }}
                 >
-                  <Gamepad2 size={18} />
-                </div>
-                <div className="flex flex-col">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-sm font-semibold text-pn-white">
-                      {p.name}
-                    </span>
-                    {p.verified && (
-                      <ShieldCheck size={13} className="text-pn-green" />
-                    )}
-                  </div>
-                  <span className="text-xs text-pn-muted">{p.username}</span>
-                </div>
-                <div className="ml-3 flex items-center gap-1 text-pn-muted">
-                  <Clock size={12} />
-                  <span className="font-mono text-xs">{p.hours}hrs</span>
-                </div>
+                  Subscribe
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => {
+                    if (!connected) { connect(); return; }
+                    const amount = prompt('Enter tip amount in USDC (e.g. 1.00):');
+                    if (amount) alert(`Ping of $${amount} USDC sent!`);
+                  }}
+                >
+                  <Coffee className="h-3.5 w-3.5" />
+                  Ping $
+                </Button>
               </div>
-            ))}
-          </div>
-        </motion.div>
+            </div>
 
-        {/* ----------------------------------------------------------------- */}
-        {/* Two-column layout: Content + Sidebar */}
-        {/* ----------------------------------------------------------------- */}
-        <div className="flex gap-8">
-          {/* Left: Tabs + Content */}
-          <div className="flex-1 min-w-0">
-            {/* Tab bar */}
-            <div className="flex border-b border-pn-border mb-6">
-              {TABS.map((tab) => (
+            {/* Tabs */}
+            <div className="flex border-b border-pn-border">
+              {tabs.map((t) => (
                 <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`relative px-5 py-3 text-sm font-medium transition-colors duration-150 ${
-                    activeTab === tab
+                  key={t.key}
+                  onClick={() => setActiveTab(t.key)}
+                  className={`relative px-5 py-3 text-sm font-medium transition-colors ${
+                    activeTab === t.key
                       ? "text-pn-white"
                       : "text-pn-muted hover:text-pn-text"
                   }`}
                 >
-                  {tab}
-                  {activeTab === tab && (
+                  {t.label}
+                  {activeTab === t.key && (
                     <motion.div
-                      layoutId="activeTab"
+                      layoutId="nodeActiveTab"
                       className="absolute bottom-0 left-0 right-0 h-0.5 bg-pn-green"
                       transition={{ duration: 0.25 }}
                     />
@@ -350,166 +179,121 @@ export default function NodeProfilePage() {
                 </button>
               ))}
             </div>
-
-            {/* Tab content */}
-            {activeTab === "Drops" && (
-              <motion.div
-                variants={stagger}
-                initial="hidden"
-                animate="visible"
-                className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-16"
-              >
-                {displayDrops.map((drop, i) => (
-                  <motion.div key={drop.id} variants={fadeUp} custom={i}>
-                    <Card className="flex flex-col gap-3 hover:border-pn-green/30">
-                      {/* Thumbnail placeholder */}
-                      <div className="h-36 w-full rounded-lg bg-pn-surface-2 flex items-center justify-center text-pn-muted">
-                        <Gamepad2 size={32} className="opacity-30" />
-                      </div>
-
-                      {/* Info */}
-                      <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                          <Badge variant={drop.gameVariant}>
-                            {drop.game}
-                          </Badge>
-                        </div>
-                        <h3 className="text-sm font-semibold text-pn-white leading-snug line-clamp-2">
-                          {drop.title}
-                        </h3>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3 text-pn-muted text-xs">
-                            <span className="flex items-center gap-1">
-                              <Eye size={12} />
-                              {drop.views}
-                            </span>
-                            <span>{drop.date}</span>
-                          </div>
-                          {drop.price !== null ? (
-                            <span className="font-mono text-sm font-bold text-pn-green">
-                              ${drop.price.toFixed(2)}
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center rounded-md bg-pn-green/10 px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-pn-green">
-                              FREE
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </Card>
-                  </motion.div>
-                ))}
-              </motion.div>
-            )}
-
-            {activeTab === "Reviews" && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex flex-col items-center justify-center py-20 text-pn-muted"
-              >
-                <p className="text-sm">12 reviews coming soon.</p>
-              </motion.div>
-            )}
-
-            {activeTab === "Shop" && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex flex-col items-center justify-center py-20 text-pn-muted"
-              >
-                <p className="text-sm">Shop items coming soon...</p>
-              </motion.div>
-            )}
-
-            {activeTab === "Grid" && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex flex-col items-center justify-center py-20 text-pn-muted"
-              >
-                <p className="text-sm">Full Pixel Grid view coming soon...</p>
-              </motion.div>
-            )}
           </div>
 
-          {/* Right Sidebar (desktop) */}
-          <aside className="hidden lg:flex w-72 shrink-0 flex-col gap-4">
-            {/* Ping button */}
-            <Card className="flex flex-col gap-3">
-              <Button
-                variant="secondary"
-                size="lg"
-                className="w-full border-pn-red/40 text-pn-red hover:bg-pn-red/10 hover:border-pn-red/60"
-                onClick={() => {
-                  if (!connected) { connect(); return; }
-                  const amount = prompt('Enter tip amount in USDC (e.g. 1.00):');
-                  if (amount) alert(`Ping of $${amount} USDC sent! Transaction will be processed on-chain.`);
-                }}
-              >
-                <span className="mr-1">☕</span> Send Ping
-              </Button>
-              <p className="text-[11px] text-pn-muted text-center">
-                Send a tip to support this creator
-              </p>
-            </Card>
-
-            {/* Link (subscribe) button */}
-            <Card className="flex flex-col gap-3">
-              <Button
-                variant="secondary"
-                size="lg"
-                className="w-full border-pn-red/40 text-pn-red hover:bg-pn-red/10 hover:border-pn-red/60"
-                onClick={() => {
-                  if (!connected) { connect(); return; }
-                  alert('Link subscription of $4.99/mo started! Recurring payments will be set up on-chain.');
-                }}
-              >
-                <Link2 size={16} className="mr-1" />
-                Link Subscribe $4.99/mo
-              </Button>
-              <p className="text-[11px] text-pn-muted text-center">
-                Exclusive content and early access
-              </p>
-            </Card>
-
-            {/* Pixel Grid preview */}
-            <Card className="flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <h3 className="font-mono text-[10px] uppercase tracking-wider text-pn-muted">
-                  Pixel Grid
-                </h3>
-                <ChevronRight size={14} className="text-pn-muted" />
+          {/* Tab content */}
+          <div className="px-4 lg:px-6 py-6">
+            {activeTab === "content" && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {displayDrops.map((drop) => (
+                  <ContentCard
+                    key={drop.id}
+                    type="drop"
+                    id={drop.id}
+                    title={drop.title}
+                    gameTag={drop.gameTag}
+                    author={drop.author || creator.displayName}
+                    views={formatViews(drop.views)}
+                    price={drop.isPremium ? String(Number(drop.price) / 1_000_000) : undefined}
+                    isPremium={drop.isPremium}
+                    createdAt={drop.createdAt}
+                    category={drop.category}
+                  />
+                ))}
+                {displayDrops.length === 0 && (
+                  <p className="text-pn-muted text-sm col-span-full text-center py-12">
+                    No content yet.
+                  </p>
+                )}
               </div>
-              <div className="flex flex-col gap-1">
-                {PIXEL_COLORS.map((row, ri) => (
-                  <div key={ri} className="flex gap-1">
-                    {row.map((c, ci) => (
+            )}
+
+            {activeTab === "reviews" && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {displayReviews.map((r) => (
+                  <ContentCard
+                    key={r.id}
+                    type="review"
+                    id={r.id}
+                    title={r.title}
+                    gameTag={r.gameTag}
+                    author={r.author}
+                    views={formatViews(r.views)}
+                    rating={r.rating}
+                    verifiedHours={r.verifiedHours}
+                    createdAt={r.createdAt}
+                  />
+                ))}
+                {displayReviews.length === 0 && (
+                  <p className="text-pn-muted text-sm col-span-full text-center py-12">
+                    No reviews yet.
+                  </p>
+                )}
+              </div>
+            )}
+
+            {activeTab === "about" && (
+              <div className="max-w-2xl space-y-6">
+                {/* Bio */}
+                <Card>
+                  <h3 className="font-mono text-xs font-semibold uppercase tracking-wider text-pn-muted mb-3">
+                    About
+                  </h3>
+                  <p className="text-sm text-pn-text leading-relaxed">
+                    {creator.bio}
+                  </p>
+                </Card>
+
+                {/* Game Profiles */}
+                <Card>
+                  <h3 className="font-mono text-xs font-semibold uppercase tracking-wider text-pn-muted mb-3">
+                    Connected Game Profiles
+                  </h3>
+                  <div className="space-y-3">
+                    {PLATFORMS.map((p) => (
                       <div
-                        key={ci}
-                        className={`h-5 flex-1 rounded-sm ${pixelColorMap[c]} ${c !== 0 ? "opacity-80" : ""}`}
-                      />
+                        key={p.name}
+                        className="flex items-center justify-between py-2 border-b border-pn-border last:border-0"
+                      >
+                        <div>
+                          <p className="text-sm font-medium text-pn-white">{p.name}</p>
+                          <p className="text-xs text-pn-muted">{p.username}</p>
+                        </div>
+                        <span className="font-mono text-xs text-pn-muted">{p.hours} hrs</span>
+                      </div>
                     ))}
                   </div>
-                ))}
-              </div>
-            </Card>
+                </Card>
 
-            {/* Advertise link */}
-            <button
-              className="flex items-center justify-center gap-1.5 py-3 text-xs text-pn-muted hover:text-pn-text transition-colors"
-              onClick={() => {
-                if (!connected) { connect(); return; }
-                alert('Pixel purchase flow coming soon. Select pixels and pay with USDC.');
-              }}
-            >
-              <span>Advertise on this Node</span>
-              <ChevronRight size={13} />
-            </button>
-          </aside>
-        </div>
+                {/* Stats */}
+                <Card>
+                  <h3 className="font-mono text-xs font-semibold uppercase tracking-wider text-pn-muted mb-3">
+                    Stats
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-xs text-pn-muted">Total Content</p>
+                      <p className="text-lg font-bold text-pn-white">{apiNode?.totalDrops ?? 47}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-pn-muted">Total Reviews</p>
+                      <p className="text-lg font-bold text-pn-white">{apiNode?.totalReviews ?? 12}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-pn-muted">Total Views</p>
+                      <p className="text-lg font-bold text-pn-white">{apiNode ? formatViews(apiNode.totalViews) : '284K'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-pn-muted">Subscribers</p>
+                      <p className="text-lg font-bold text-pn-white">1,240</p>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+            )}
+          </div>
+        </main>
       </div>
-      <Footer />
     </div>
   );
 }

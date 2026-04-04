@@ -1,43 +1,27 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Eye, Clock, ChevronDown, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import { Card, Badge, UsdcAmount } from '@/components/common';
-import { api, formatViews, formatUsdc, type Drop } from '@/lib/api';
+import Sidebar from '@/components/layout/Sidebar';
+import ContentCard from '@/components/feed/ContentCard';
+import CategoryBar from '@/components/layout/CategoryBar';
+import { CONTENT_CATEGORIES } from '@/lib/games';
+import { api, formatViews, type Drop } from '@/lib/api';
 import { useApi } from '@/hooks/useApi';
-
-/* ------------------------------------------------------------------ */
-/*  Animation helpers                                                  */
-/* ------------------------------------------------------------------ */
-const stagger = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.06 } },
-};
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 18 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
-};
 
 /* ------------------------------------------------------------------ */
 /*  Constants                                                          */
 /* ------------------------------------------------------------------ */
-const CATEGORIES = [
-  { label: 'All', value: -1 },
-  { label: 'Boss', value: 0 },
-  { label: 'Build', value: 1 },
-  { label: 'Quest', value: 2 },
-  { label: 'Tier List', value: 3 },
-  { label: 'Speedrun', value: 4 },
-  { label: 'General', value: 5 },
-] as const;
+const CATEGORY_ITEMS = CONTENT_CATEGORIES.map((c) => ({
+  label: c.label,
+  value: String(c.id),
+}));
 
-type SortMode = 'newest' | 'most-viewed' | 'top-earning';
+type SortMode = 'trending' | 'newest' | 'most-viewed' | 'top-earning';
 
 const SORT_OPTIONS: { label: string; value: SortMode }[] = [
+  { label: 'Trending', value: 'trending' },
   { label: 'Newest', value: 'newest' },
   { label: 'Most Viewed', value: 'most-viewed' },
   { label: 'Top Earning', value: 'top-earning' },
@@ -46,7 +30,7 @@ const SORT_OPTIONS: { label: string; value: SortMode }[] = [
 /* ------------------------------------------------------------------ */
 /*  Mock data                                                          */
 /* ------------------------------------------------------------------ */
-const MOCK_DROPS: Drop[] = Array.from({ length: 12 }, (_, i) => ({
+const MOCK_DROPS: Drop[] = Array.from({ length: 24 }, (_, i) => ({
   id: `mock-drop-${i}`,
   nodeId: `node-${i}`,
   author: ['GameMaster_KR', 'SpeedKing', 'MetaHunter', 'ProBuilder', 'QuestWalker', 'TierGod'][i % 6],
@@ -54,49 +38,61 @@ const MOCK_DROPS: Drop[] = Array.from({ length: 12 }, (_, i) => ({
     'Charge Blade Master Guide',
     'Elden Ring Speedrun Route v4',
     'Valorant Tier List S8',
-    'Baldur\'s Gate 3 Optimal Builds',
+    "Baldur's Gate 3 Optimal Builds",
     'Zelda TotK All Shrines',
     'Palworld Base Building Meta',
     'FF7 Rebirth Boss Rush Guide',
     'Helldivers 2 Loadout Optimizer',
-    'Dragon\'s Dogma 2 Vocation Tier List',
+    "Dragon's Dogma 2 Vocation Tier List",
     'Stellar Blade Combo Guide',
     'Like a Dragon Infinite Wealth Quest Log',
     'Monster Hunter Wilds Gunlance Guide',
+    'Hades II Heat 32 Guide',
+    'Hollow Knight Silksong Charms',
+    'Elden Ring Nightreign Co-op Builds',
+    'Palworld Breeding Calculator',
+    'Valorant Ascent Smoke Lineups',
+    'MH Wilds Lance Counter Timing',
+    'FF7 Rebirth Hard Mode Walkthrough',
+    'Stellar Blade Nano Suit Locations',
+    'GTA VI Early Mission Guide',
+    'Civilization VII Science Victory',
+    'Lost Ark Season 3 Engravings',
+    'Monster Hunter Wilds Bow Guide',
   ][i],
   contentHash: '',
   walrusBlobId: '',
   category: i % 6,
-  gameTag: ['MH_WILDS', 'ELDEN_RING', 'VALORANT', 'BG3', 'ZELDA_TOTK', 'PALWORLD', 'FF7_REBIRTH', 'HELLDIVERS_2', 'DD2', 'STELLAR_BLADE', 'LAD_IW', 'MH_WILDS'][i],
-  price: String([3990000, 0, 1990000, 4990000, 2990000, 0, 3490000, 1990000, 0, 2490000, 1490000, 3990000][i]),
+  gameTag: ['MH_WILDS', 'ELDEN_RING', 'VALORANT', 'BG3', 'ZELDA_TOTK', 'PALWORLD', 'FF7_REBIRTH', 'HELLDIVERS_2', 'DD2', 'STELLAR_BLADE', 'LAD_IW', 'MH_WILDS', 'HADES_2', 'HOLLOW_KNIGHT', 'ELDEN_RING', 'PALWORLD', 'VALORANT', 'MH_WILDS', 'FF7_REBIRTH', 'STELLAR_BLADE', 'GTA_VI', 'CIV_VII', 'LOST_ARK', 'MH_WILDS'][i],
+  price: String([3990000, 0, 1990000, 4990000, 2990000, 0, 3490000, 1990000, 0, 2490000, 1490000, 3990000, 0, 2990000, 4990000, 0, 1990000, 3990000, 5990000, 2490000, 0, 3490000, 2990000, 3990000][i]),
   isPremium: i % 3 !== 1,
-  totalViews: String([24300, 18100, 41200, 12800, 9400, 31500, 8700, 22100, 15600, 6300, 19800, 11200][i]),
-  totalPurchases: [842, 0, 1203, 567, 234, 0, 445, 890, 0, 178, 623, 394][i],
-  totalEarned: String([3359000000, 0, 2394000000, 2830000000, 699000000, 0, 1553000000, 1771000000, 0, 443000000, 929000000, 1569000000][i]),
+  totalViews: String([24300, 18100, 41200, 12800, 9400, 31500, 8700, 22100, 15600, 6300, 19800, 11200, 28400, 16700, 35200, 21000, 44100, 13500, 27800, 8900, 52300, 19400, 23600, 30100][i]),
+  totalPurchases: [842, 0, 1203, 567, 234, 0, 445, 890, 0, 178, 623, 394, 0, 312, 1105, 0, 876, 423, 1340, 195, 0, 687, 534, 812][i],
+  totalEarned: String([3359000000, 0, 2394000000, 2830000000, 699000000, 0, 1553000000, 1771000000, 0, 443000000, 929000000, 1569000000, 0, 933000000, 5510000000, 0, 1743000000, 1685000000, 8023000000, 486000000, 0, 2399000000, 1597000000, 3235000000][i]),
   version: 1,
-  createdAt: new Date(Date.now() - i * 86400000 * 3).toISOString(),
-  updatedAt: new Date(Date.now() - i * 86400000 * 2).toISOString(),
+  createdAt: new Date(Date.now() - i * 86400000 * 2).toISOString(),
+  updatedAt: new Date(Date.now() - i * 86400000).toISOString(),
 }));
 
 /* ------------------------------------------------------------------ */
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
 export default function DropsPage() {
-  const [activeCategory, setActiveCategory] = useState(-1);
-  const [sort, setSort] = useState<SortMode>('newest');
-  const [visibleCount, setVisibleCount] = useState(12);
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [sort, setSort] = useState<SortMode>('trending');
+  const [visibleCount, setVisibleCount] = useState(24);
 
-  const categoryParam = activeCategory >= 0 ? String(activeCategory) : undefined;
+  const categoryParam = activeCategory !== 'all' ? activeCategory : undefined;
   const { data: apiDrops, loading } = useApi(
-    () => api.getDrops({ take: 20, category: categoryParam }),
+    () => api.getDrops({ take: 24, category: categoryParam }),
     [categoryParam],
   );
 
-  const drops = (apiDrops && apiDrops.length > 0 ? apiDrops : MOCK_DROPS);
+  const drops = apiDrops && apiDrops.length > 0 ? apiDrops : MOCK_DROPS;
 
   // Client-side filter + sort
   const filtered = drops
-    .filter((d) => activeCategory < 0 || d.category === activeCategory)
+    .filter((d) => activeCategory === 'all' || d.category === Number(activeCategory))
     .sort((a, b) => {
       if (sort === 'most-viewed') return Number(b.totalViews) - Number(a.totalViews);
       if (sort === 'top-earning') return Number(b.totalEarned) - Number(a.totalEarned);
@@ -106,180 +102,92 @@ export default function DropsPage() {
   const visible = filtered.slice(0, visibleCount);
 
   return (
-    <div className="min-h-screen bg-pn-black flex flex-col">
+    <div className="min-h-screen bg-pn-black">
       <Header />
+      <div className="flex">
+        <Sidebar />
+        <main className="flex-1 ml-0 lg:ml-56 pt-16">
+          {/* Category Bar */}
+          <CategoryBar
+            items={CATEGORY_ITEMS}
+            active={activeCategory}
+            onChange={setActiveCategory}
+          />
 
-      {/* Background effects */}
-      <div
-        className="pointer-events-none fixed inset-0 z-0"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(42,42,50,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(42,42,50,0.3) 1px, transparent 1px)',
-          backgroundSize: '60px 60px',
-        }}
-      />
-      <div className="pointer-events-none absolute left-1/2 top-0 z-0 h-[600px] w-[800px] -translate-x-1/2 -translate-y-1/3 rounded-full bg-pn-green/5 blur-[120px]" />
+          <div className="px-4 lg:px-6 py-6">
+            {/* Page title + sort pills */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+              <h1 className="font-mono text-sm font-semibold uppercase tracking-wider text-pn-muted">
+                Guides
+              </h1>
 
-      <main className="relative z-10 flex-1">
-        <div className="max-w-[1440px] mx-auto px-4 lg:px-6 pt-16 pb-20">
-          {/* Hero */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-10"
-          >
-            <h1 className="font-primary text-4xl font-extrabold text-pn-white sm:text-5xl tracking-tight">
-              ALL DROPS
-            </h1>
-            <p className="mt-2 text-pn-muted text-lg">
-              Browse game guides and walkthroughs
-            </p>
-          </motion.div>
-
-          {/* Filter bar */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.4 }}
-            className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
-          >
-            {/* Category pills */}
-            <div className="flex flex-wrap gap-2">
-              {CATEGORIES.map((cat) => (
-                <button
-                  key={cat.value}
-                  onClick={() => setActiveCategory(cat.value)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                    activeCategory === cat.value
-                      ? 'bg-pn-green/20 text-pn-green border border-pn-green/30'
-                      : 'bg-pn-surface border border-pn-border text-pn-muted hover:text-pn-white hover:border-pn-border-light'
-                  }`}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Sort select */}
-            <div className="relative">
-              <select
-                value={sort}
-                onChange={(e) => setSort(e.target.value as SortMode)}
-                className="appearance-none bg-pn-surface border border-pn-border rounded-lg px-4 py-2 pr-8 text-sm text-pn-text cursor-pointer hover:border-pn-border-light transition-colors focus:outline-none focus:border-pn-green/50"
-              >
+              <div className="flex flex-wrap gap-2">
                 {SORT_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-pn-muted pointer-events-none" />
-            </div>
-          </motion.div>
-
-          {/* Loading state */}
-          {loading && (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 className="h-6 w-6 text-pn-green animate-spin" />
-            </div>
-          )}
-
-          {/* Grid */}
-          {!loading && (
-            <motion.div
-              variants={stagger}
-              initial="hidden"
-              animate="show"
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-            >
-              {visible.map((drop) => {
-                const price = Number(drop.price) / 1_000_000;
-                const isFree = price === 0;
-
-                return (
-                  <motion.a
-                    key={drop.id}
-                    href={`/drop/${drop.id}`}
-                    variants={fadeUp}
+                  <button
+                    key={opt.value}
+                    onClick={() => setSort(opt.value)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                      sort === opt.value
+                        ? 'bg-pn-white text-pn-black font-semibold'
+                        : 'bg-pn-surface-2 text-pn-muted hover:text-pn-white'
+                    }`}
                   >
-                    <Card className="!p-0 overflow-hidden group cursor-pointer hover:border-pn-border-light transition-colors h-full">
-                      {/* Thumbnail placeholder */}
-                      <div className="h-32 bg-pn-dark flex items-center justify-center border-b border-pn-border">
-                        <span className="font-mono text-xs text-pn-muted uppercase tracking-wider">
-                          {drop.gameTag}
-                        </span>
-                      </div>
-
-                      <div className="p-4 flex flex-col gap-2">
-                        {/* Game tag badge */}
-                        <span className="inline-flex self-start items-center rounded-md bg-pn-amber/10 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-pn-amber">
-                          {drop.gameTag}
-                        </span>
-
-                        {/* Title */}
-                        <h3 className="text-sm font-semibold text-pn-white leading-snug line-clamp-2 group-hover:text-pn-green transition-colors">
-                          {drop.title}
-                        </h3>
-
-                        {/* Author */}
-                        <p className="text-xs text-pn-muted">{drop.node?.displayName || drop.author}</p>
-
-                        {/* Footer row */}
-                        <div className="flex items-center justify-between mt-auto pt-2 border-t border-pn-border">
-                          {isFree ? (
-                            <span className="font-mono text-sm font-bold text-pn-green">FREE</span>
-                          ) : (
-                            <UsdcAmount amount={price} size="sm" showLabel />
-                          )}
-
-                          <div className="flex items-center gap-3 text-[11px] text-pn-muted">
-                            <span className="inline-flex items-center gap-1">
-                              <Eye className="h-3 w-3" />
-                              {formatViews(drop.totalViews)}
-                            </span>
-                            <span className="inline-flex items-center gap-1">
-                              <Clock className="h-3 w-3" />
-                              {new Date(drop.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  </motion.a>
-                );
-              })}
-            </motion.div>
-          )}
-
-          {/* Empty state */}
-          {!loading && visible.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-20 text-center">
-              <p className="text-pn-muted text-lg">No drops found</p>
-              <p className="text-pn-muted/60 text-sm mt-1">Try a different category or sort</p>
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
             </div>
-          )}
 
-          {/* Load More */}
-          {!loading && visibleCount < filtered.length && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="flex justify-center mt-10"
-            >
-              <button
-                onClick={() => setVisibleCount((c) => c + 12)}
-                className="px-6 py-3 rounded-xl bg-pn-surface border border-pn-border text-sm font-medium text-pn-text hover:text-pn-white hover:border-pn-border-light transition-colors"
-              >
-                Load More
-              </button>
-            </motion.div>
-          )}
-        </div>
-      </main>
+            {/* Loading state */}
+            {loading && (
+              <div className="flex items-center justify-center py-20">
+                <Loader2 className="h-6 w-6 text-pn-green animate-spin" />
+              </div>
+            )}
 
-      <Footer />
+            {/* Grid */}
+            {!loading && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {visible.map((drop) => (
+                  <ContentCard
+                    key={drop.id}
+                    type="drop"
+                    id={drop.id}
+                    title={drop.title}
+                    gameTag={drop.gameTag}
+                    author={drop.node?.displayName || drop.author}
+                    views={formatViews(drop.totalViews)}
+                    price={drop.isPremium ? String(Number(drop.price) / 1_000_000) : undefined}
+                    isPremium={drop.isPremium}
+                    createdAt={drop.createdAt}
+                    category={drop.category}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Empty state */}
+            {!loading && visible.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-20 text-center">
+                <p className="text-pn-muted text-lg">No guides found</p>
+                <p className="text-pn-muted/60 text-sm mt-1">Try a different category or sort</p>
+              </div>
+            )}
+
+            {/* Load More */}
+            {!loading && visibleCount < filtered.length && (
+              <div className="flex justify-center mt-10">
+                <button
+                  onClick={() => setVisibleCount((c) => c + 12)}
+                  className="px-6 py-3 rounded-xl bg-pn-surface border border-pn-border text-sm font-medium text-pn-muted hover:text-pn-white hover:border-pn-border-light transition-colors"
+                >
+                  Load More
+                </button>
+              </div>
+            )}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

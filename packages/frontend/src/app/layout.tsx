@@ -23,21 +23,21 @@ const notoSansKR = Noto_Sans_KR({
 });
 
 export const metadata: Metadata = {
-  title: "PlayNode — Play. Share. Earn.",
+  title: "PlayNode — Game Guides, Reviews & Walkthroughs",
   description:
-    "Where game guides become revenue. PlayNode is a Game Creator Economy Platform built on the Sui blockchain. Write guides, review, and trade.",
+    "Find the best game guides, verified reviews, and walkthroughs. Browse content from top gaming creators.",
   keywords: [
     "PlayNode",
-    "Sui",
-    "blockchain",
+    "game guides",
+    "game reviews",
+    "walkthroughs",
     "gaming",
     "creator economy",
-    "game guides",
-    "NFT",
+    "Sui",
   ],
   openGraph: {
-    title: "PlayNode — Play. Share. Earn.",
-    description: "Where game guides become revenue. Game Creator Economy Platform on Sui.",
+    title: "PlayNode — Game Guides, Reviews & Walkthroughs",
+    description: "Find the best game guides, verified reviews, and walkthroughs. Browse content from top gaming creators.",
     type: "website",
     locale: "en_US",
   },

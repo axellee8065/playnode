@@ -1,23 +1,13 @@
 'use client';
 
 import { type FC, useState, type FormEvent } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Search } from 'lucide-react';
+import { Search, Plus, Menu, X, ArrowLeft } from 'lucide-react';
 import Logo from '../common/Logo';
-import ConnectWalletButton from '../common/ConnectWalletButton';
+import UserMenu from './UserMenu';
 
-const navLinks = [
-  { label: 'Explore', href: '/' },
-  { label: 'Drops', href: '/drops' },
-  { label: 'Reviews', href: '/reviews' },
-  { label: 'Shop', href: '/shop' },
-  { label: 'Grid Market', href: '/grid-market' },
-  { label: 'Quests', href: '/quest' },
-];
-
-const Header: FC = () => {
-  const [mobileOpen, setMobileOpen] = useState(false);
+const Header: FC<{ onToggleSidebar?: () => void }> = ({ onToggleSidebar }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
@@ -28,81 +18,98 @@ const Header: FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-pn-black/80 backdrop-blur-xl border-b border-pn-border">
-      <div className="max-w-[1440px] mx-auto flex items-center justify-between h-16 px-4 lg:px-6">
-        {/* Left: logo */}
-        <a href="/" className="flex-shrink-0">
-          <Logo size={28} showWordmark />
-        </a>
-
-        {/* Center: nav links (desktop) */}
-        <nav className="hidden md:flex items-center gap-1">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="px-3 py-2 text-sm text-pn-muted hover:text-pn-white transition-colors rounded-lg hover:bg-pn-surface"
+    <header className="sticky top-0 z-50 h-14 bg-pn-black/95 backdrop-blur border-b border-pn-border">
+      <div className="flex items-center justify-between h-full px-4">
+        {/* Mobile search overlay */}
+        {mobileSearchOpen ? (
+          <div className="flex items-center gap-2 w-full sm:hidden">
+            <button
+              onClick={() => setMobileSearchOpen(false)}
+              className="flex-shrink-0 p-2 text-pn-muted hover:text-pn-white transition-colors"
+              aria-label="Close search"
             >
-              {link.label}
-            </a>
-          ))}
-        </nav>
-
-        {/* Search bar (desktop) */}
-        <form onSubmit={handleSearch} className="hidden md:flex items-center max-w-[240px]">
-          <div className="relative w-full">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-pn-muted pointer-events-none" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search guides, reviews, games..."
-              className="w-full bg-pn-surface border border-pn-border rounded-lg pl-8 pr-3 py-1.5 text-sm text-pn-text placeholder:text-pn-muted/50 focus:outline-none focus:border-pn-green/50 transition-colors"
-            />
+              <ArrowLeft size={20} />
+            </button>
+            <form onSubmit={handleSearch} className="flex-1">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search guides, reviews, games..."
+                autoFocus
+                className="w-full bg-pn-surface border border-pn-border rounded-full px-5 py-2 text-sm text-pn-text placeholder:text-pn-muted/50 focus:outline-none focus:border-pn-green/50 transition-colors"
+              />
+            </form>
           </div>
-        </form>
-
-        {/* Right: wallet + hamburger */}
-        <div className="flex items-center gap-3">
-          <ConnectWalletButton className="hidden sm:inline-flex" />
-
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 text-pn-muted hover:text-pn-white transition-colors"
-            aria-label="Toggle menu"
-          >
-            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile menu */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.nav
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="md:hidden overflow-hidden border-t border-pn-border bg-pn-black/95 backdrop-blur-xl"
-          >
-            <div className="px-4 py-3 flex flex-col gap-1">
-              {navLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  className="px-3 py-2.5 text-sm text-pn-muted hover:text-pn-white transition-colors rounded-lg hover:bg-pn-surface"
-                >
-                  {link.label}
-                </a>
-              ))}
-              <div className="pt-2 sm:hidden">
-                <ConnectWalletButton className="w-full" />
-              </div>
+        ) : (
+          <>
+            {/* Left section */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={onToggleSidebar}
+                className="p-2 text-pn-muted hover:text-pn-white transition-colors md:hidden"
+                aria-label="Toggle menu"
+              >
+                <Menu size={20} />
+              </button>
+              <a href="/" className="flex items-center gap-2">
+                <Logo size={24} />
+                <span className="font-bold text-lg">
+                  <span className="text-pn-white">Play</span>
+                  <span className="text-pn-green">Node</span>
+                </span>
+              </a>
             </div>
-          </motion.nav>
+
+            {/* Center: search (desktop) */}
+            <form
+              onSubmit={handleSearch}
+              className="hidden sm:flex flex-1 max-w-[600px] mx-auto items-center"
+            >
+              <div className="relative w-full">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search guides, reviews, games..."
+                  className="w-full bg-pn-surface border border-pn-border rounded-full px-5 py-2 pr-12 text-sm text-pn-text placeholder:text-pn-muted/50 focus:outline-none focus:border-pn-green/50 transition-colors"
+                />
+                <button
+                  type="submit"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 p-2 rounded-full bg-pn-surface-2 text-pn-muted hover:text-pn-white hover:bg-pn-surface-3 transition-colors"
+                  aria-label="Search"
+                >
+                  <Search size={16} />
+                </button>
+              </div>
+            </form>
+
+            {/* Right section */}
+            <div className="flex items-center gap-2">
+              {/* Create button */}
+              <a
+                href="/drops/create"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-pn-surface-2 text-pn-text text-sm hover:bg-pn-surface-3 transition-colors"
+              >
+                <Plus size={18} />
+                <span className="hidden sm:inline">Create</span>
+              </a>
+
+              {/* User menu */}
+              <UserMenu />
+
+              {/* Mobile search toggle */}
+              <button
+                onClick={() => setMobileSearchOpen(true)}
+                className="p-2 text-pn-muted hover:text-pn-white transition-colors sm:hidden"
+                aria-label="Search"
+              >
+                <Search size={20} />
+              </button>
+            </div>
+          </>
         )}
-      </AnimatePresence>
+      </div>
     </header>
   );
 };
