@@ -17,6 +17,7 @@ import Header from '@/components/layout/Header';
 import Sidebar from '@/components/layout/Sidebar';
 import ContentCard from '@/components/feed/ContentCard';
 import { api, formatViews } from '@/lib/api';
+import { getGameLabel } from '@/lib/games';
 import { useApi } from '@/hooks/useApi';
 import { useWallet } from '@/components/providers/SuiProvider';
 
@@ -137,7 +138,7 @@ const ReviewPage: FC = () => {
   const displayReview = apiReview
     ? {
         ...review,
-        title: apiReview.gameTag ? `${apiReview.gameTag.replace(/_/g, ' ')} Review` : review.title,
+        title: apiReview.gameTag ? `${getGameLabel(apiReview.gameTag)} Review` : review.title,
         game: apiReview.gameTag || review.game,
         overall: apiReview.rating / 10,
         verification: {

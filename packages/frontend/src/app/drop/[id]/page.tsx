@@ -18,6 +18,7 @@ import Header from "@/components/layout/Header";
 import Sidebar from "@/components/layout/Sidebar";
 import ContentCard from "@/components/feed/ContentCard";
 import { api, formatUsdc, formatViews } from "@/lib/api";
+import { getGameLabel } from "@/lib/games";
 import { useApi } from "@/hooks/useApi";
 import { useWallet } from "@/components/providers/SuiProvider";
 import { useSubscriptions } from "@/hooks/useSubscriptions";
@@ -199,7 +200,7 @@ export default function DropDetailPage() {
               <div className="flex items-center gap-2">
                 <span className="inline-flex items-center gap-1 rounded-md bg-pn-amber/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-pn-amber">
                   <Gamepad2 className="h-3 w-3" />
-                  {drop.gameTag}
+                  {getGameLabel(drop.gameTag)}
                 </span>
                 <Badge variant="drop">GUIDE</Badge>
               </div>
