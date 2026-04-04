@@ -161,10 +161,12 @@ export default function HomePage() {
             onChange={setActiveGame}
           />
           <div className="px-4 md:px-6 py-6">
-            {/* Loading skeleton */}
-            {loading && !apiDrops && !apiReviews && <FeedSkeleton />}
+            {/* Loading spinner — hide ALL content while loading */}
+            {loading && !apiDrops && !apiReviews ? (
+              <FeedSkeleton />
+            ) : (<>
 
-            {/* Trending section — top 4 items */}
+            {/* Trending section — top 3 items */}
             {activeGame === 'all' && (
               <section className="mb-8">
                 <h2 className="text-pn-white font-bold text-lg mb-4 font-mono">
@@ -260,6 +262,7 @@ export default function HomePage() {
                 </div>
               )}
             </section>
+            </>)}
           </div>
         </main>
       </div>
